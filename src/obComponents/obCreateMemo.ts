@@ -246,14 +246,24 @@ export async function createIndividualMemoFile(
   isTASK: boolean,
   date: moment.Moment,
 ): Promise<Model.Memo> {
-  const { vault } =
-    appStore.getState().dailyNotesState.app === undefined ? app : appStore.getState().dailyNotesState.app;
+  const appState = appStore.getState().dailyNotesState.app;
+  const vault = appState?.vault ?? app.vault;
+
+  // Validate date
+  if (!date || !date.isValid()) {
+    date = moment();
+  }
 
   // Ensure folder exists
   const folderPath = normalizePath(IndividualMemoFolder);
-  const existingFolder = vault.getAbstractFileByPath(folderPath);
-  if (!existingFolder) {
-    await vault.createFolder(folderPath);
+  try {
+    const existingFolder = vault.getAbstractFileByPath(folderPath);
+    if (!existingFolder) {
+      await vault.createFolder(folderPath);
+    }
+  } catch (error) {
+    console.error('Failed to create memo folder:', error);
+    throw new Error(`Failed to create folder: ${folderPath}`);
   }
 
   // Generate filename from content
@@ -283,7 +293,13 @@ export async function createIndividualMemoFile(
   }
 
   // Create the file
-  const file = await vault.create(filename, fileContent);
+  let file;
+  try {
+    file = await vault.create(filename, fileContent);
+  } catch (error) {
+    console.error('Failed to create memo file:', error);
+    throw new Error(`Failed to create memo file: ${filename}`);
+  }
 
   const id = timestamp + '001';
 

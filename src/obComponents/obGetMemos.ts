@@ -355,58 +355,76 @@ export async function getMemosFromNote(allMemos: any[], commentMemos: any[]): Pr
 /**
  * Get memos from individual memo files in the configured folder
  */
-export async function getMemosFromIndividualFiles(allMemos: any[], commentMemos: any[]): Promise<void> {
-  const { vault } = appStore.getState().dailyNotesState.app;
-  const folder = vault.getAbstractFileByPath(normalizePath(IndividualMemoFolder)) as TFolder;
+export async function getMemosFromIndividualFiles(allMemos: any[], _commentMemos: any[]): Promise<void> {
+  const appState = appStore.getState().dailyNotesState.app;
+  if (!appState?.vault) {
+    console.error('Vault not available');
+    return;
+  }
+  const { vault } = appState;
+  const folderPath = normalizePath(IndividualMemoFolder);
+  const folder = vault.getAbstractFileByPath(folderPath) as TFolder;
 
-  if (!folder) return;
+  if (!folder) {
+    new Notice(t('Individual memo folder not found: ') + folderPath);
+    return;
+  }
 
   const files = folder.children.filter(
     (file): file is TFile => file instanceof TFile && file.extension === 'md',
   );
 
   for (const file of files) {
-    const content = await vault.read(file);
-    const metadata = app.metadataCache.getFileCache(file);
+    try {
+      const content = await vault.read(file);
+      const metadata = app.metadataCache.getFileCache(file);
 
-    // Parse frontmatter for created date and type
-    const frontmatter = metadata?.frontmatter;
-    const createdAtStr = frontmatter?.created;
-    const memoTypeFromFrontmatter = frontmatter?.type;
+      // Parse frontmatter for created date and type
+      const frontmatter = metadata?.frontmatter;
+      const createdAtStr = frontmatter?.created;
+      const memoTypeFromFrontmatter = frontmatter?.type;
 
-    // Determine created date
-    let createDate: moment.Moment;
-    if (createdAtStr) {
-      createDate = moment(createdAtStr, 'YYYY-MM-DD HH:mm:ss');
-    } else {
-      createDate = moment(file.stat.ctime);
-    }
-
-    // Determine memo type
-    let memoType = 'JOURNAL';
-    if (memoTypeFromFrontmatter === 'task') {
-      // Check if task is done by looking for [x] or [X] in content
-      if (/- \[[xX]\]/.test(content)) {
-        memoType = 'TASK-DONE';
+      // Determine created date
+      let createDate: moment.Moment;
+      if (createdAtStr) {
+        createDate = moment(createdAtStr, 'YYYY-MM-DD HH:mm:ss');
+        // Validate parsed date
+        if (!createDate.isValid()) {
+          createDate = moment(file.stat.ctime);
+        }
       } else {
-        memoType = 'TASK-TODO';
+        createDate = moment(file.stat.ctime);
       }
+
+      // Determine memo type
+      let memoType = 'JOURNAL';
+      if (memoTypeFromFrontmatter === 'task') {
+        // Check if task is done by looking for [x] or [X] in content
+        if (/- \[[xX]\]/.test(content)) {
+          memoType = 'TASK-DONE';
+        } else {
+          memoType = 'TASK-TODO';
+        }
+      }
+
+      // Get content without frontmatter
+      const contentWithoutFrontmatter = content.replace(/^---[\s\S]*?---\n*/m, '').trim();
+
+      allMemos.push({
+        id: createDate.format('YYYYMMDDHHmmss') + '001',
+        content: contentWithoutFrontmatter,
+        user_id: 1,
+        createdAt: createDate.format('YYYY/MM/DD HH:mm:ss'),
+        updatedAt: moment(file.stat.mtime).format('YYYY/MM/DD HH:mm:ss'),
+        memoType: memoType,
+        hasId: '',
+        linkId: '',
+        path: file.path,
+      });
+    } catch (error) {
+      console.error(`Failed to read memo file ${file.path}:`, error);
+      // Continue with other files
     }
-
-    // Get content without frontmatter
-    const contentWithoutFrontmatter = content.replace(/^---[\s\S]*?---\n*/m, '').trim();
-
-    allMemos.push({
-      id: createDate.format('YYYYMMDDHHmmSS') + '001',
-      content: contentWithoutFrontmatter,
-      user_id: 1,
-      createdAt: createDate.format('YYYY/MM/DD HH:mm:SS'),
-      updatedAt: moment(file.stat.mtime).format('YYYY/MM/DD HH:mm:SS'),
-      memoType: memoType,
-      hasId: '',
-      linkId: '',
-      path: file.path,
-    });
   }
 }
 

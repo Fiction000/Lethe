@@ -29435,6 +29435,7 @@ const en = {
   "Filename Length Limit": "Filename Length Limit",
   "Maximum characters from memo content to use for filename.": "Maximum characters from memo content to use for filename.",
   "Default Tags": "Default Tags",
+  "Individual memo folder not found: ": "Individual memo folder not found: ",
   'Comma-separated tags to add to individual memo files (e.g., "memo, note").': 'Comma-separated tags to add to individual memo files (e.g., "memo, note").'
 };
 const enGB = {};
@@ -30388,6 +30389,12 @@ var utils;
   }
   utils2.createDailyNoteCheck = createDailyNoteCheck;
   function sanitizeFilename(content, maxLength = 30) {
+    if (!content || typeof content !== "string") {
+      return null;
+    }
+    if (maxLength < 1) {
+      maxLength = 30;
+    }
     const illegalChars = /[\[\]\/\\:*?"<>|#^\n\r]/g;
     let sanitized = content.replace(/<[^>]*>/g, " ");
     sanitized = sanitized.replace(illegalChars, "");
@@ -30404,12 +30411,17 @@ var utils;
   }
   utils2.sanitizeFilename = sanitizeFilename;
   async function generateUniqueFilename(vault, folder, baseName, timestamp) {
+    const MAX_ITERATIONS = 1e3;
     const nameToUse = baseName || timestamp;
     let filename = require$$0.normalizePath(`${folder}/${nameToUse}.md`);
     let counter = 1;
-    while (vault.getAbstractFileByPath(filename)) {
+    while (vault.getAbstractFileByPath(filename) && counter < MAX_ITERATIONS) {
       filename = require$$0.normalizePath(`${folder}/${nameToUse} (${counter}).md`);
       counter++;
+    }
+    if (counter >= MAX_ITERATIONS) {
+      const randomSuffix = Math.random().toString(36).slice(-6);
+      filename = require$$0.normalizePath(`${folder}/${timestamp}-${randomSuffix}.md`);
     }
     return filename;
   }
@@ -31446,46 +31458,61 @@ async function getMemosFromNote(allMemos, commentMemos) {
   }
   return;
 }
-async function getMemosFromIndividualFiles(allMemos, commentMemos) {
-  const { vault } = appStore.getState().dailyNotesState.app;
-  const folder = vault.getAbstractFileByPath(require$$0.normalizePath(IndividualMemoFolder));
-  if (!folder)
+async function getMemosFromIndividualFiles(allMemos, _commentMemos) {
+  const appState = appStore.getState().dailyNotesState.app;
+  if (!(appState == null ? void 0 : appState.vault)) {
+    console.error("Vault not available");
     return;
+  }
+  const { vault } = appState;
+  const folderPath = require$$0.normalizePath(IndividualMemoFolder);
+  const folder = vault.getAbstractFileByPath(folderPath);
+  if (!folder) {
+    new require$$0.Notice(t$1("Individual memo folder not found: ") + folderPath);
+    return;
+  }
   const files = folder.children.filter(
     (file) => file instanceof require$$0.TFile && file.extension === "md"
   );
   for (const file of files) {
-    const content = await vault.read(file);
-    const metadata = app.metadataCache.getFileCache(file);
-    const frontmatter = metadata == null ? void 0 : metadata.frontmatter;
-    const createdAtStr = frontmatter == null ? void 0 : frontmatter.created;
-    const memoTypeFromFrontmatter = frontmatter == null ? void 0 : frontmatter.type;
-    let createDate;
-    if (createdAtStr) {
-      createDate = require$$0.moment(createdAtStr, "YYYY-MM-DD HH:mm:ss");
-    } else {
-      createDate = require$$0.moment(file.stat.ctime);
-    }
-    let memoType = "JOURNAL";
-    if (memoTypeFromFrontmatter === "task") {
-      if (/- \[[xX]\]/.test(content)) {
-        memoType = "TASK-DONE";
+    try {
+      const content = await vault.read(file);
+      const metadata = app.metadataCache.getFileCache(file);
+      const frontmatter = metadata == null ? void 0 : metadata.frontmatter;
+      const createdAtStr = frontmatter == null ? void 0 : frontmatter.created;
+      const memoTypeFromFrontmatter = frontmatter == null ? void 0 : frontmatter.type;
+      let createDate;
+      if (createdAtStr) {
+        createDate = require$$0.moment(createdAtStr, "YYYY-MM-DD HH:mm:ss");
+        if (!createDate.isValid()) {
+          createDate = require$$0.moment(file.stat.ctime);
+        }
       } else {
-        memoType = "TASK-TODO";
+        createDate = require$$0.moment(file.stat.ctime);
       }
+      let memoType = "JOURNAL";
+      if (memoTypeFromFrontmatter === "task") {
+        if (/- \[[xX]\]/.test(content)) {
+          memoType = "TASK-DONE";
+        } else {
+          memoType = "TASK-TODO";
+        }
+      }
+      const contentWithoutFrontmatter = content.replace(/^---[\s\S]*?---\n*/m, "").trim();
+      allMemos.push({
+        id: createDate.format("YYYYMMDDHHmmss") + "001",
+        content: contentWithoutFrontmatter,
+        user_id: 1,
+        createdAt: createDate.format("YYYY/MM/DD HH:mm:ss"),
+        updatedAt: require$$0.moment(file.stat.mtime).format("YYYY/MM/DD HH:mm:ss"),
+        memoType,
+        hasId: "",
+        linkId: "",
+        path: file.path
+      });
+    } catch (error) {
+      console.error(`Failed to read memo file ${file.path}:`, error);
     }
-    const contentWithoutFrontmatter = content.replace(/^---[\s\S]*?---\n*/m, "").trim();
-    allMemos.push({
-      id: createDate.format("YYYYMMDDHHmmSS") + "001",
-      content: contentWithoutFrontmatter,
-      user_id: 1,
-      createdAt: createDate.format("YYYY/MM/DD HH:mm:SS"),
-      updatedAt: require$$0.moment(file.stat.mtime).format("YYYY/MM/DD HH:mm:SS"),
-      memoType,
-      hasId: "",
-      linkId: "",
-      path: file.path
-    });
   }
 }
 async function getMemos() {
@@ -31845,11 +31872,21 @@ ${post}`,
 }
 const getAllLinesFromFile$5 = (cache) => cache.split(/\r?\n/);
 async function createIndividualMemoFile(MemoContent, isTASK, date) {
-  const { vault } = appStore.getState().dailyNotesState.app === void 0 ? app : appStore.getState().dailyNotesState.app;
+  var _a;
+  const appState = appStore.getState().dailyNotesState.app;
+  const vault = (_a = appState == null ? void 0 : appState.vault) != null ? _a : app.vault;
+  if (!date || !date.isValid()) {
+    date = require$$0.moment();
+  }
   const folderPath = require$$0.normalizePath(IndividualMemoFolder);
-  const existingFolder = vault.getAbstractFileByPath(folderPath);
-  if (!existingFolder) {
-    await vault.createFolder(folderPath);
+  try {
+    const existingFolder = vault.getAbstractFileByPath(folderPath);
+    if (!existingFolder) {
+      await vault.createFolder(folderPath);
+    }
+  } catch (error) {
+    console.error("Failed to create memo folder:", error);
+    throw new Error(`Failed to create folder: ${folderPath}`);
   }
   const sanitizedName = utils$1.sanitizeFilename(MemoContent, IndividualMemoFileNameLength);
   const timestamp = date.format("YYYYMMDDHHmmss");
@@ -31874,7 +31911,13 @@ ${tags.map((t2) => `  - ${t2}`).join("\n")}`;
   } else {
     fileContent = frontmatter + contentWithNewlines;
   }
-  const file = await vault.create(filename, fileContent);
+  let file;
+  try {
+    file = await vault.create(filename, fileContent);
+  } catch (error) {
+    console.error("Failed to create memo file:", error);
+    throw new Error(`Failed to create memo file: ${filename}`);
+  }
   const id2 = timestamp + "001";
   return {
     id: id2,

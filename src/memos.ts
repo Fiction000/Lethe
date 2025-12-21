@@ -214,7 +214,7 @@ export let FetchMemosFromNote: boolean;
 export let ShowCommentOnMemos: boolean;
 export let UseDailyOrPeriodic: string;
 export let ShowLeftSideBar: boolean;
-export let MemoStorageMode: string;
+export let MemoStorageMode: 'daily-notes' | 'individual-files';
 export let IndividualMemoFolder: string;
 export let IndividualMemoFileNameLength: number;
 export let IndividualMemoTags: string;

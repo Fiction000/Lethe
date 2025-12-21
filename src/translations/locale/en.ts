@@ -228,6 +228,7 @@ export default {
   'Maximum characters from memo content to use for filename.':
     'Maximum characters from memo content to use for filename.',
   'Default Tags': 'Default Tags',
+  'Individual memo folder not found: ': 'Individual memo folder not found: ',
   'Comma-separated tags to add to individual memo files (e.g., "memo, note").':
     'Comma-separated tags to add to individual memo files (e.g., "memo, note").',
 };

@@ -269,6 +269,15 @@ namespace utils {
    * @returns sanitized string or null if empty after sanitization
    */
   export function sanitizeFilename(content: string, maxLength: number = 30): string | null {
+    // Input validation
+    if (!content || typeof content !== 'string') {
+      return null;
+    }
+
+    if (maxLength < 1) {
+      maxLength = 30;
+    }
+
     // Characters illegal in filenames: [ ] / \ : * ? " < > | # ^
     const illegalChars = /[\[\]\/\\:*?"<>|#^\n\r]/g;
 
@@ -300,6 +309,7 @@ namespace utils {
   /**
    * Generates a unique filename for a memo file
    * Handles duplicates by appending a number
+   * Has a max iteration limit to prevent infinite loops
    */
   export async function generateUniqueFilename(
     vault: Vault,
@@ -307,6 +317,8 @@ namespace utils {
     baseName: string | null,
     timestamp: string,
   ): Promise<string> {
+    const MAX_ITERATIONS = 1000;
+
     // Use timestamp as fallback if baseName is empty/null
     const nameToUse = baseName || timestamp;
 
@@ -314,9 +326,15 @@ namespace utils {
     let counter = 1;
 
     // Check for existing files and append counter if needed
-    while (vault.getAbstractFileByPath(filename)) {
+    while (vault.getAbstractFileByPath(filename) && counter < MAX_ITERATIONS) {
       filename = normalizePath(`${folder}/${nameToUse} (${counter}).md`);
       counter++;
+    }
+
+    // If we hit the limit, use timestamp with random suffix to guarantee uniqueness
+    if (counter >= MAX_ITERATIONS) {
+      const randomSuffix = Math.random().toString(36).slice(-6);
+      filename = normalizePath(`${folder}/${timestamp}-${randomSuffix}.md`);
     }
 
     return filename;
