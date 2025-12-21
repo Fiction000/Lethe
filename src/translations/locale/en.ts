@@ -215,4 +215,19 @@ export default {
     'Show left sidebar on PC even when the leaf width is less than 875px. False by default.',
   "You didn't set format for daily notes in both periodic-notes and daily-notes plugins.":
     "You didn't set format for daily notes in both periodic-notes and daily-notes plugins.",
+  'Storage Options': 'Storage Options',
+  'Memo Storage Mode': 'Memo Storage Mode',
+  'Choose how memos are stored: in daily notes or as individual files.':
+    'Choose how memos are stored: in daily notes or as individual files.',
+  'Daily Notes': 'Daily Notes',
+  'Individual Files': 'Individual Files',
+  'Individual Memo Folder': 'Individual Memo Folder',
+  'Folder path for individual memo files. Only used when storage mode is "Individual Files".':
+    'Folder path for individual memo files. Only used when storage mode is "Individual Files".',
+  'Filename Length Limit': 'Filename Length Limit',
+  'Maximum characters from memo content to use for filename.':
+    'Maximum characters from memo content to use for filename.',
+  'Default Tags': 'Default Tags',
+  'Comma-separated tags to add to individual memo files (e.g., "memo, note").':
+    'Comma-separated tags to add to individual memo files (e.g., "memo, note").',
 };

@@ -164,6 +164,10 @@ export class Memos extends ItemView {
     ShowCommentOnMemos = this.plugin.settings.ShowCommentOnMemos;
     UseDailyOrPeriodic = this.plugin.settings.UseDailyOrPeriodic;
     ShowLeftSideBar = this.plugin.settings.ShowLeftSideBar;
+    MemoStorageMode = this.plugin.settings.MemoStorageMode;
+    IndividualMemoFolder = this.plugin.settings.IndividualMemoFolder;
+    IndividualMemoFileNameLength = this.plugin.settings.IndividualMemoFileNameLength;
+    IndividualMemoTags = this.plugin.settings.IndividualMemoTags;
 
     this.memosComponent = React.createElement(App);
 
@@ -210,3 +214,7 @@ export let FetchMemosFromNote: boolean;
 export let ShowCommentOnMemos: boolean;
 export let UseDailyOrPeriodic: string;
 export let ShowLeftSideBar: boolean;
+export let MemoStorageMode: string;
+export let IndividualMemoFolder: string;
+export let IndividualMemoFileNameLength: number;
+export let IndividualMemoTags: string;

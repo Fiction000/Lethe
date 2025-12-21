@@ -1,6 +1,6 @@
-import { moment, Notice, TFile } from 'obsidian';
+import { moment, normalizePath, Notice, TFile, Vault } from 'obsidian';
 import { createDailyNote } from 'obsidian-daily-notes-interface';
-import { getDailyNoteSettings } from '_obsidian-daily-notes-interface@0.9.4@obsidian-daily-notes-interface';
+import { getDailyNoteSettings } from 'obsidian-daily-notes-interface';
 import { t } from '../translations/helper';
 import { UseDailyOrPeriodic } from '../memos';
 
@@ -261,6 +261,65 @@ namespace utils {
 
     file = await createDailyNote(date);
     return file;
+  }
+
+  /**
+   * Sanitizes a string for use as a filename
+   * Strips illegal characters and truncates to max length
+   * @returns sanitized string or null if empty after sanitization
+   */
+  export function sanitizeFilename(content: string, maxLength: number = 30): string | null {
+    // Characters illegal in filenames: [ ] / \ : * ? " < > | # ^
+    const illegalChars = /[\[\]\/\\:*?"<>|#^\n\r]/g;
+
+    // Remove HTML tags like <br>
+    let sanitized = content.replace(/<[^>]*>/g, ' ');
+
+    // Remove illegal characters
+    sanitized = sanitized.replace(illegalChars, '');
+
+    // Remove leading/trailing whitespace and collapse multiple spaces
+    sanitized = sanitized.trim().replace(/\s+/g, ' ');
+
+    // Truncate to max length, avoiding word breaks if possible
+    if (sanitized.length > maxLength) {
+      sanitized = sanitized.substring(0, maxLength);
+      // Try to end at a word boundary
+      const lastSpace = sanitized.lastIndexOf(' ');
+      if (lastSpace > maxLength * 0.5) {
+        sanitized = sanitized.substring(0, lastSpace);
+      }
+    }
+
+    sanitized = sanitized.trim();
+
+    // If empty after sanitization, return null (caller should use timestamp)
+    return sanitized || null;
+  }
+
+  /**
+   * Generates a unique filename for a memo file
+   * Handles duplicates by appending a number
+   */
+  export async function generateUniqueFilename(
+    vault: Vault,
+    folder: string,
+    baseName: string | null,
+    timestamp: string,
+  ): Promise<string> {
+    // Use timestamp as fallback if baseName is empty/null
+    const nameToUse = baseName || timestamp;
+
+    let filename = normalizePath(`${folder}/${nameToUse}.md`);
+    let counter = 1;
+
+    // Check for existing files and append counter if needed
+    while (vault.getAbstractFileByPath(filename)) {
+      filename = normalizePath(`${folder}/${nameToUse} (${counter}).md`);
+      counter++;
+    }
+
+    return filename;
   }
 }
 

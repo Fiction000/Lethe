@@ -1,7 +1,14 @@
-import { moment } from 'obsidian';
+import { moment, normalizePath } from 'obsidian';
 import { getAllDailyNotes, getDailyNote } from 'obsidian-daily-notes-interface';
 import appStore from '../stores/appStore';
-import { DefaultMemoComposition, InsertAfter } from '../memos';
+import {
+  DefaultMemoComposition,
+  IndividualMemoFolder,
+  IndividualMemoFileNameLength,
+  IndividualMemoTags,
+  InsertAfter,
+  MemoStorageMode,
+} from '../memos';
 import { dailyNotesService } from '../services';
 import utils from '../helpers/utils';
 
@@ -32,17 +39,22 @@ export function getLinesInString(input: string) {
 }
 
 export async function waitForInsert(MemoContent: string, isTASK: boolean, insertDate?: any): Promise<Model.Memo> {
-  // const plugin = window.plugin;
-  const { vault } =
-    appStore.getState().dailyNotesState.app === undefined ? app : appStore.getState().dailyNotesState.app;
-  const removeEnter = MemoContent.replace(/\n/g, '<br>');
   let date;
-
   if (insertDate !== undefined) {
     date = insertDate;
   } else {
     date = moment();
   }
+
+  // Check storage mode - if individual files, use that instead
+  if (MemoStorageMode === 'individual-files') {
+    return await createIndividualMemoFile(MemoContent, isTASK, date);
+  }
+
+  // Otherwise, use daily notes (existing logic)
+  const { vault } =
+    appStore.getState().dailyNotesState.app === undefined ? app : appStore.getState().dailyNotesState.app;
+  const removeEnter = MemoContent.replace(/\n/g, '<br>');
 
   const timeHour = date.format('HH');
   const timeMinute = date.format('mm');
@@ -224,3 +236,66 @@ export async function insertTextAfterPositionInBody(
 }
 
 const getAllLinesFromFile = (cache: string) => cache.split(/\r?\n/);
+
+/**
+ * Creates an individual memo file with frontmatter
+ * Returns the memo object
+ */
+export async function createIndividualMemoFile(
+  MemoContent: string,
+  isTASK: boolean,
+  date: moment.Moment,
+): Promise<Model.Memo> {
+  const { vault } =
+    appStore.getState().dailyNotesState.app === undefined ? app : appStore.getState().dailyNotesState.app;
+
+  // Ensure folder exists
+  const folderPath = normalizePath(IndividualMemoFolder);
+  const existingFolder = vault.getAbstractFileByPath(folderPath);
+  if (!existingFolder) {
+    await vault.createFolder(folderPath);
+  }
+
+  // Generate filename from content
+  const sanitizedName = utils.sanitizeFilename(MemoContent, IndividualMemoFileNameLength);
+  const timestamp = date.format('YYYYMMDDHHmmss');
+  const filename = await utils.generateUniqueFilename(vault, folderPath, sanitizedName, timestamp);
+
+  // Parse tags from settings (comma-separated)
+  const tags = IndividualMemoTags.split(',')
+    .map((t) => t.trim())
+    .filter((t) => t.length > 0);
+
+  // Build frontmatter
+  let frontmatter = `---\ncreated: ${date.format('YYYY-MM-DD HH:mm:ss')}\ntype: ${isTASK ? 'task' : 'memo'}`;
+  if (tags.length > 0) {
+    frontmatter += `\ntags:\n${tags.map((t) => `  - ${t}`).join('\n')}`;
+  }
+  frontmatter += `\n---\n\n`;
+
+  // Format content (convert <br> back to newlines for individual files)
+  const contentWithNewlines = MemoContent.replace(/<br>/g, '\n');
+  let fileContent: string;
+  if (isTASK) {
+    fileContent = frontmatter + `- [ ] ${contentWithNewlines.replace(/\n/g, '\n  ')}`;
+  } else {
+    fileContent = frontmatter + contentWithNewlines;
+  }
+
+  // Create the file
+  const file = await vault.create(filename, fileContent);
+
+  const id = timestamp + '001';
+
+  return {
+    id: id,
+    content: MemoContent,
+    deletedAt: '',
+    createdAt: date.format('YYYY/MM/DD HH:mm:ss'),
+    updatedAt: date.format('YYYY/MM/DD HH:mm:ss'),
+    memoType: isTASK ? 'TASK-TODO' : 'JOURNAL',
+    path: file.path,
+    hasId: '',
+    linkId: '',
+  };
+}

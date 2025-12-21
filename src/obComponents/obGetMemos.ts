@@ -8,6 +8,8 @@ import {
   DeleteFileName,
   FetchMemosFromNote,
   FetchMemosMark,
+  IndividualMemoFolder,
+  MemoStorageMode,
   ProcessEntriesBelow,
   QueryFileName,
 } from '../memos';
@@ -212,13 +214,8 @@ export async function getMemosFromDailyNote(
             // console.log(commentsInMemos[0].children.values[j].text);
             const hasId = '';
             let commentTime;
-<<<<<<< HEAD
-            if (/^\d{12}/.test(commentsInMemos[0].children.values[j].text)) {
-              commentTime = commentsInMemos[0].children.values[j].text?.match(/^\d{14}/)[0];
-=======
             if (/^\d{12}/.test(commentsInMemos[0].children[j].text)) {
               commentTime = commentsInMemos[0].children[j].text?.match(/^\d{14}/)[0];
->>>>>>> 4a164c298b6ec45f63cfe1973279f2e915033675
             } else {
               commentTime = startDate.format('YYYYMMDDHHmmSS');
             }
@@ -355,10 +352,76 @@ export async function getMemosFromNote(allMemos: any[], commentMemos: any[]): Pr
   return;
 }
 
+/**
+ * Get memos from individual memo files in the configured folder
+ */
+export async function getMemosFromIndividualFiles(allMemos: any[], commentMemos: any[]): Promise<void> {
+  const { vault } = appStore.getState().dailyNotesState.app;
+  const folder = vault.getAbstractFileByPath(normalizePath(IndividualMemoFolder)) as TFolder;
+
+  if (!folder) return;
+
+  const files = folder.children.filter(
+    (file): file is TFile => file instanceof TFile && file.extension === 'md',
+  );
+
+  for (const file of files) {
+    const content = await vault.read(file);
+    const metadata = app.metadataCache.getFileCache(file);
+
+    // Parse frontmatter for created date and type
+    const frontmatter = metadata?.frontmatter;
+    const createdAtStr = frontmatter?.created;
+    const memoTypeFromFrontmatter = frontmatter?.type;
+
+    // Determine created date
+    let createDate: moment.Moment;
+    if (createdAtStr) {
+      createDate = moment(createdAtStr, 'YYYY-MM-DD HH:mm:ss');
+    } else {
+      createDate = moment(file.stat.ctime);
+    }
+
+    // Determine memo type
+    let memoType = 'JOURNAL';
+    if (memoTypeFromFrontmatter === 'task') {
+      // Check if task is done by looking for [x] or [X] in content
+      if (/- \[[xX]\]/.test(content)) {
+        memoType = 'TASK-DONE';
+      } else {
+        memoType = 'TASK-TODO';
+      }
+    }
+
+    // Get content without frontmatter
+    const contentWithoutFrontmatter = content.replace(/^---[\s\S]*?---\n*/m, '').trim();
+
+    allMemos.push({
+      id: createDate.format('YYYYMMDDHHmmSS') + '001',
+      content: contentWithoutFrontmatter,
+      user_id: 1,
+      createdAt: createDate.format('YYYY/MM/DD HH:mm:SS'),
+      updatedAt: moment(file.stat.mtime).format('YYYY/MM/DD HH:mm:SS'),
+      memoType: memoType,
+      hasId: '',
+      linkId: '',
+      path: file.path,
+    });
+  }
+}
+
 export async function getMemos(): Promise<allKindsofMemos> {
   const memos: any[] | PromiseLike<any[]> = [];
   const commentMemos: any[] | PromiseLike<any[]> = [];
   const { vault } = appStore.getState().dailyNotesState.app;
+
+  // If using individual files mode, only fetch from individual files folder
+  if (MemoStorageMode === 'individual-files') {
+    await getMemosFromIndividualFiles(memos, commentMemos);
+    return { memos, commentMemos };
+  }
+
+  // Otherwise, use daily notes (existing logic)
   const folder = getDailyNotePath();
 
   if (folder === '' || folder === undefined) {

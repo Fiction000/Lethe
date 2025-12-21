@@ -41,6 +41,10 @@ export interface MemosSettings {
   FetchMemosFromNote: boolean;
   ShowCommentOnMemos: boolean;
   ShowLeftSideBar: boolean;
+  MemoStorageMode: 'daily-notes' | 'individual-files';
+  IndividualMemoFolder: string;
+  IndividualMemoFileNameLength: number;
+  IndividualMemoTags: string;
 }
 
 export const DEFAULT_SETTINGS: MemosSettings = {
@@ -80,6 +84,10 @@ export const DEFAULT_SETTINGS: MemosSettings = {
   FetchMemosFromNote: false,
   ShowCommentOnMemos: false,
   ShowLeftSideBar: false,
+  MemoStorageMode: 'daily-notes',
+  IndividualMemoFolder: 'Thino/Memos',
+  IndividualMemoFileNameLength: 30,
+  IndividualMemoTags: '',
 };
 
 export class MemosSettingTab extends PluginSettingTab {
@@ -562,6 +570,61 @@ export class MemosSettingTab extends PluginSettingTab {
             if (value === '') {
               this.plugin.settings.FetchMemosMark = DEFAULT_SETTINGS.FetchMemosMark;
             }
+            this.applySettingsUpdate();
+          }),
+      );
+
+    this.containerEl.createEl('h1', { text: t('Storage Options') });
+
+    new Setting(containerEl)
+      .setName(t('Memo Storage Mode'))
+      .setDesc(t('Choose how memos are stored: in daily notes or as individual files.'))
+      .addDropdown(async (d: DropdownComponent) => {
+        dropdown = d;
+        dropdown.addOption('daily-notes', t('Daily Notes'));
+        dropdown.addOption('individual-files', t('Individual Files'));
+        dropdown.setValue(this.plugin.settings.MemoStorageMode).onChange(async (value) => {
+          this.plugin.settings.MemoStorageMode = value as 'daily-notes' | 'individual-files';
+          this.applySettingsUpdate();
+        });
+      });
+
+    new Setting(containerEl)
+      .setName(t('Individual Memo Folder'))
+      .setDesc(t('Folder path for individual memo files. Only used when storage mode is "Individual Files".'))
+      .addText((text) =>
+        text
+          .setPlaceholder(DEFAULT_SETTINGS.IndividualMemoFolder)
+          .setValue(this.plugin.settings.IndividualMemoFolder)
+          .onChange(async (value) => {
+            this.plugin.settings.IndividualMemoFolder = value || DEFAULT_SETTINGS.IndividualMemoFolder;
+            this.applySettingsUpdate();
+          }),
+      );
+
+    new Setting(containerEl)
+      .setName(t('Filename Length Limit'))
+      .setDesc(t('Maximum characters from memo content to use for filename.'))
+      .addText((text) =>
+        text
+          .setPlaceholder('30')
+          .setValue(String(this.plugin.settings.IndividualMemoFileNameLength))
+          .onChange(async (value) => {
+            const num = parseInt(value) || 30;
+            this.plugin.settings.IndividualMemoFileNameLength = Math.min(Math.max(num, 10), 100);
+            this.applySettingsUpdate();
+          }),
+      );
+
+    new Setting(containerEl)
+      .setName(t('Default Tags'))
+      .setDesc(t('Comma-separated tags to add to individual memo files (e.g., "memo, note").'))
+      .addText((text) =>
+        text
+          .setPlaceholder('memo, note')
+          .setValue(this.plugin.settings.IndividualMemoTags)
+          .onChange(async (value) => {
+            this.plugin.settings.IndividualMemoTags = value;
             this.applySettingsUpdate();
           }),
       );
