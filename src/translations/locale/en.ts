@@ -2,8 +2,8 @@
 
 export default {
   // setting.ts
-  welcome: 'Welcome to the Memos',
-  ribbonIconTitle: 'Memos',
+  welcome: 'Welcome to Lethe',
+  ribbonIconTitle: 'Lethe',
   to: 'to',
   months: [
     'January',

@@ -98,7 +98,7 @@ export class Memos extends ItemView {
 
     this.registerEvent(
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      (<any>this.app.workspace).on('obsidian-memos:settings-updated', this.onMemosSettingsUpdate),
+      (<any>this.app.workspace).on('lethe:settings-updated', this.onMemosSettingsUpdate),
     );
 
     this.registerEvent(this.app.vault.on('create', this.onFileCreated));

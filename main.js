@@ -29242,8 +29242,8 @@ const cz = {};
 const da = {};
 const de = {};
 const en = {
-  welcome: "Welcome to the Memos",
-  ribbonIconTitle: "Memos",
+  welcome: "Welcome to Lethe",
+  ribbonIconTitle: "Lethe",
   to: "to",
   months: [
     "January",
@@ -32762,9 +32762,9 @@ const AboutSiteDialog = ({
         className: "title-text",
         children: [/* @__PURE__ */ jsx("span", {
           className: "icon-text",
-          children: "\u{1F920}"
+          children: "\u{1F30A}"
         }), "About ", /* @__PURE__ */ jsx("b", {
-          children: "Obsidian-Memos"
+          children: "Lethe"
         })]
       }), /* @__PURE__ */ jsx("button", {
         className: "btn close-btn",
@@ -32775,36 +32775,21 @@ const AboutSiteDialog = ({
       })]
     }), /* @__PURE__ */ jsxs("div", {
       className: "dialog-content-container",
-      children: ["Hi, I am Quorafind(Boninall), if you are interested in this project, please support my work and enthusiasm by buying me a coffee on ", /* @__PURE__ */ jsx("a", {
-        href: "https://www.buymeacoffee.com/boninall",
-        children: "https://www.buymeacoffee.com/boninall"
-      }), /* @__PURE__ */ jsx("a", {
-        href: "https://www.buymeacoffee.com/boninall",
-        children: /* @__PURE__ */ jsx("img", {
-          src: `https://img.buymeacoffee.com/button-api/?text=Buy me a coffee&emoji=&slug=boninall&button_colour=6495ED&font_colour=ffffff&font_family=Lato&outline_colour=000000&coffee_colour=FFDD00`
-        })
+      children: [/* @__PURE__ */ jsx("p", {
+        children: "Lethe is a quick capture plugin for Obsidian."
       }), /* @__PURE__ */ jsx("br", {}), /* @__PURE__ */ jsxs("p", {
-        children: ["\u57FA\u4E8E ", /* @__PURE__ */ jsx("a", {
+        children: ["Based on the ", /* @__PURE__ */ jsx("a", {
           href: "https://github.com/justmemos/memos",
           children: "memos"
-        }), " \u5F00\u6E90\u9879\u76EE\u6240\u6784\u5EFA\u7684\u9879\u76EE\u3002 NOTE: Based on", " ", /* @__PURE__ */ jsx("a", {
-          href: "https://github.com/justmemos/memos",
-          children: "memos"
-        }), " project to build."]
+        }), " project."]
       }), /* @__PURE__ */ jsx("br", {}), /* @__PURE__ */ jsxs("p", {
-        children: ["\u{1F3D7} This project is working in progress, ", /* @__PURE__ */ jsx("br", {}), " and very pleasure to welcome your", " ", /* @__PURE__ */ jsx("a", {
-          href: "https://github.com/Quorafind/obsidian-memos/issues",
-          children: "issues"
-        }), " and", " ", /* @__PURE__ */ jsx("a", {
-          href: "https://github.com/Quorafind/obsidian-memos/pulls",
-          children: "Pull Request"
+        children: ["Found an issue or have a suggestion?", " ", /* @__PURE__ */ jsx("a", {
+          href: "https://github.com/Fiction000/lethe/issues",
+          children: "Open an issue"
+        }), " or", " ", /* @__PURE__ */ jsx("a", {
+          href: "https://github.com/Fiction000/lethe/pulls",
+          children: "submit a PR"
         }), "."]
-      }), /* @__PURE__ */ jsx("hr", {}), /* @__PURE__ */ jsxs("p", {
-        className: "normal-text",
-        children: ["Last updated on ", /* @__PURE__ */ jsx("span", {
-          className: "pre-text",
-          children: "2022/01/04 22:55:15"
-        }), " \u{1F389}"]
       })]
     })]
   });
@@ -32871,7 +32856,7 @@ const MenuBtnsPopup = (props) => {
   }, []);
   const handleMyAccountBtnClick = () => {
     app2.setting.open();
-    app2.setting.openTabById("obsidian-memos");
+    app2.setting.openTabById("lethe");
   };
   const handleMemosTrashBtnClick = () => {
     locationService.pushHistory("/recycle");
@@ -41155,7 +41140,7 @@ class Memos extends require$$0.ItemView {
     this.onFileDeleted = this.onFileDeleted.bind(this);
     this.onFileModified = this.onFileModified.bind(this);
     this.registerEvent(
-      this.app.workspace.on("obsidian-memos:settings-updated", this.onMemosSettingsUpdate)
+      this.app.workspace.on("lethe:settings-updated", this.onMemosSettingsUpdate)
     );
     this.registerEvent(this.app.vault.on("create", this.onFileCreated));
     this.registerEvent(this.app.vault.on("delete", this.onFileDeleted));
@@ -41595,10 +41580,6 @@ class MemosSettingTab extends require$$0.PluginSettingTab {
         this.applySettingsUpdate();
       })
     );
-    this.containerEl.createEl("h1", { text: t$1("Say Thank You") });
-    new require$$0.Setting(containerEl).setName(t$1("Donate")).setDesc(t$1("If you like this plugin, consider donating to support continued development:")).addButton((bt) => {
-      bt.buttonEl.outerHTML = `<a href="https://www.buymeacoffee.com/boninall"><img src="https://img.buymeacoffee.com/button-api/?text=Buy me a coffee&emoji=&slug=boninall&button_colour=6495ED&font_colour=ffffff&font_family=Inter&outline_colour=000000&coffee_colour=FFDD00"></a>`;
-    });
   }
 }
 class MemosPlugin extends require$$0.Plugin {
@@ -41607,7 +41588,7 @@ class MemosPlugin extends require$$0.Plugin {
     __publicField(this, "settings");
   }
   async onload() {
-    console.log("obsidian-memos loading...");
+    console.log("lethe loading...");
     await this.loadSettings();
     this.registerView(MEMOS_VIEW_TYPE, (leaf) => new Memos(leaf, this));
     this.app.workspace.onLayoutReady(this.onLayoutReady.bind(this));

@@ -69,7 +69,7 @@ const MenuBtnsPopup: React.FC<Props> = (props: Props) => {
     //@ts-expect-error, private method
     app.setting.open();
     //@ts-expect-error, private method
-    app.setting.openTabById('obsidian-memos');
+    app.setting.openTabById('lethe');
   };
 
   const handleMemosTrashBtnClick = () => {

@@ -11,7 +11,7 @@ export default class MemosPlugin extends Plugin {
   public settings: MemosSettings;
 
   async onload(): Promise<void> {
-    console.log('obsidian-memos loading...');
+    console.log('lethe loading...');
     await this.loadSettings();
 
     this.registerView(MEMOS_VIEW_TYPE, (leaf) => new Memos(leaf, this));

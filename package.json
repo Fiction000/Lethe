@@ -1,8 +1,8 @@
 {
-  "name": "obsidian-memos",
-  "version": "1.9.7",
-  "description": "A Quick Capture Plugin For Obsidian Daily Notes",
-  "author": "boninall",
+  "name": "lethe",
+  "version": "1.0.0",
+  "description": "A Quick Capture Plugin for Obsidian",
+  "author": "Fiction000",
   "main": "main.js",
   "scripts": {
     "lint": "eslint . --ext .ts",

@@ -629,14 +629,5 @@ export class MemosSettingTab extends PluginSettingTab {
           }),
       );
 
-    this.containerEl.createEl('h1', { text: t('Say Thank You') });
-
-    new Setting(containerEl)
-      .setName(t('Donate'))
-      .setDesc(t('If you like this plugin, consider donating to support continued development:'))
-      // .setClass("AT-extra")
-      .addButton((bt) => {
-        bt.buttonEl.outerHTML = `<a href="https://www.buymeacoffee.com/boninall"><img src="https://img.buymeacoffee.com/button-api/?text=Buy me a coffee&emoji=&slug=boninall&button_colour=6495ED&font_colour=ffffff&font_family=Inter&outline_colour=000000&coffee_colour=FFDD00"></a>`;
-      });
   }
 }
