@@ -4,6 +4,7 @@ import { MEMOS_VIEW_TYPE } from './constants';
 import addIcons from './obComponents/customIcons';
 import { DEFAULT_SETTINGS, MemosSettings, MemosSettingTab } from './setting';
 import showDailyMemoDiaryDialog from './components/DailyMemoDiaryDialog';
+import { QuickCaptureModal } from './obComponents/QuickCaptureModal';
 import { t } from './translations/helper';
 import { memoService } from './services';
 
@@ -84,8 +85,15 @@ export default class MemosPlugin extends Plugin {
     this.addSettingTab(new MemosSettingTab(this.app, this));
     this.addCommand({
       id: 'open-memos',
-      name: 'Open Memos',
+      name: 'Open Lethe',
       callback: () => this.openMemos(),
+      hotkeys: [],
+    });
+
+    this.addCommand({
+      id: 'quick-capture',
+      name: 'Quick Capture',
+      callback: () => this.quickCapture(),
       hotkeys: [],
     });
 
@@ -136,7 +144,6 @@ export default class MemosPlugin extends Plugin {
     }
 
     this.addRibbonIcon('Memos', t('ribbonIconTitle'), () => {
-      new Notice(t('Open Memos Successfully'));
       this.openMemos();
     });
 
@@ -261,5 +268,9 @@ export default class MemosPlugin extends Plugin {
     if (leaf.view.containerEl.querySelector('textarea') !== undefined) {
       leaf.view.containerEl.querySelector('textarea').focus();
     }
+  }
+
+  quickCapture() {
+    new QuickCaptureModal(this.app).open();
   }
 }

@@ -41582,6 +41582,125 @@ class MemosSettingTab extends require$$0.PluginSettingTab {
     );
   }
 }
+class QuickCaptureModal extends require$$0.Modal {
+  constructor(app2) {
+    super(app2);
+    __publicField(this, "inputEl");
+    __publicField(this, "isTask", false);
+  }
+  onOpen() {
+    const { contentEl } = this;
+    contentEl.addClass("lethe-quick-capture");
+    const container = contentEl.createDiv({ cls: "quick-capture-container" });
+    this.inputEl = container.createEl("textarea", {
+      cls: "quick-capture-input",
+      attr: {
+        placeholder: "Capture your thought...",
+        rows: "3"
+      }
+    });
+    const buttonRow = container.createDiv({ cls: "quick-capture-buttons" });
+    const taskToggle = buttonRow.createEl("button", {
+      cls: "quick-capture-toggle",
+      text: "\u2610 Task"
+    });
+    taskToggle.addEventListener("click", () => {
+      this.isTask = !this.isTask;
+      taskToggle.setText(this.isTask ? "\u2611 Task" : "\u2610 Task");
+      taskToggle.toggleClass("is-active", this.isTask);
+    });
+    const saveBtn = buttonRow.createEl("button", {
+      cls: "quick-capture-save mod-cta",
+      text: "Save"
+    });
+    saveBtn.addEventListener("click", () => this.save());
+    this.inputEl.focus();
+    this.inputEl.addEventListener("keydown", (e) => {
+      if (e.key === "Enter" && (e.ctrlKey || e.metaKey)) {
+        e.preventDefault();
+        this.save();
+      }
+    });
+    this.addStyles();
+  }
+  async save() {
+    const content = this.inputEl.value.trim();
+    if (!content) {
+      new require$$0.Notice("Cannot save empty memo");
+      return;
+    }
+    try {
+      const newMemo = await memoService.createMemo(content, this.isTask);
+      memoService.pushMemo(newMemo);
+      new require$$0.Notice("Captured!");
+      this.close();
+    } catch (error) {
+      console.error("Failed to save memo:", error);
+      new require$$0.Notice("Failed to save memo");
+    }
+  }
+  addStyles() {
+    const styleEl = document.createElement("style");
+    styleEl.id = "lethe-quick-capture-styles";
+    if (!document.getElementById(styleEl.id)) {
+      styleEl.textContent = `
+        .lethe-quick-capture {
+          padding: 0;
+        }
+        .lethe-quick-capture .modal-content {
+          padding: 0;
+        }
+        .quick-capture-container {
+          padding: 16px;
+          display: flex;
+          flex-direction: column;
+          gap: 12px;
+        }
+        .quick-capture-input {
+          width: 100%;
+          min-width: 400px;
+          resize: vertical;
+          font-size: 14px;
+          padding: 12px;
+          border: 1px solid var(--background-modifier-border);
+          border-radius: 6px;
+          background: var(--background-primary);
+          color: var(--text-normal);
+        }
+        .quick-capture-input:focus {
+          outline: none;
+          border-color: var(--interactive-accent);
+        }
+        .quick-capture-buttons {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+        }
+        .quick-capture-toggle {
+          background: transparent;
+          border: 1px solid var(--background-modifier-border);
+          padding: 6px 12px;
+          border-radius: 4px;
+          cursor: pointer;
+          color: var(--text-muted);
+        }
+        .quick-capture-toggle.is-active {
+          background: var(--interactive-accent);
+          color: var(--text-on-accent);
+          border-color: var(--interactive-accent);
+        }
+        .quick-capture-save {
+          padding: 8px 20px;
+        }
+      `;
+      document.head.appendChild(styleEl);
+    }
+  }
+  onClose() {
+    const { contentEl } = this;
+    contentEl.empty();
+  }
+}
 class MemosPlugin extends require$$0.Plugin {
   constructor() {
     super(...arguments);
@@ -41643,8 +41762,14 @@ class MemosPlugin extends require$$0.Plugin {
     this.addSettingTab(new MemosSettingTab(this.app, this));
     this.addCommand({
       id: "open-memos",
-      name: "Open Memos",
+      name: "Open Lethe",
       callback: () => this.openMemos(),
+      hotkeys: []
+    });
+    this.addCommand({
+      id: "quick-capture",
+      name: "Quick Capture",
+      callback: () => this.quickCapture(),
       hotkeys: []
     });
     this.addCommand({
@@ -41687,7 +41812,6 @@ class MemosPlugin extends require$$0.Plugin {
       this.registerMobileEvent();
     }
     this.addRibbonIcon("Memos", t$1("ribbonIconTitle"), () => {
-      new require$$0.Notice(t$1("Open Memos Successfully"));
       this.openMemos();
     });
     const leaves = this.app.workspace.getLeavesOfType(MEMOS_VIEW_TYPE);
@@ -41788,6 +41912,9 @@ class MemosPlugin extends require$$0.Plugin {
     if (leaf.view.containerEl.querySelector("textarea") !== void 0) {
       leaf.view.containerEl.querySelector("textarea").focus();
     }
+  }
+  quickCapture() {
+    new QuickCaptureModal(this.app).open();
   }
 }
 module.exports = MemosPlugin;
