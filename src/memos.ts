@@ -32,28 +32,25 @@ export class Memos extends ItemView {
 
   private onMemosSettingsUpdate(): void {
     memoService.clearMemos();
-    memoService.fetchAllMemos();
+    memoService.fetchAllMemos(true); // Force refetch on settings change
   }
 
   private async onFileDeleted(file: TFile): Promise<void> {
     if (getDateFromFile(file, 'day')) {
       await dailyNotesService.getMyAllDailyNotes();
       memoService.clearMemos();
-      memoService.fetchAllMemos();
+      memoService.fetchAllMemos(true); // Force refetch on file delete
     }
   }
 
   private async onFileModified(file: TFile): Promise<void> {
     const date = getDateFromFile(file, 'day');
-    console.log('debounce');
     if (globalStateService.getState().changedByMemos) {
       globalStateService.setChangedByMemos(false);
       return;
     }
     if (date && this.memosComponent) {
-      // memoService.clearMemos();
-
-      memoService.fetchAllMemos();
+      memoService.fetchAllMemos(true); // Force refetch on file modify
     }
   }
 
@@ -61,8 +58,7 @@ export class Memos extends ItemView {
     if (this.app.workspace.layoutReady && this.memosComponent) {
       if (getDateFromFile(file, 'day')) {
         dailyNotesService.getMyAllDailyNotes();
-        // memoService.clearMemos();
-        memoService.fetchAllMemos();
+        memoService.fetchAllMemos(true); // Force refetch on file create
       }
     }
   }

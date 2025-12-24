@@ -29,7 +29,8 @@ const MemosHeader: React.FC<Props> = () => {
   }, [filter, queries]);
 
   const handleMemoTextClick = useCallback(() => {
-    memoService.fetchAllMemos().catch(() => {
+    // Force refresh when user clicks header
+    memoService.fetchAllMemos(true).catch(() => {
       // do nth
     });
   }, []);

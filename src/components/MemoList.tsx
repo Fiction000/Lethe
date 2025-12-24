@@ -131,26 +131,20 @@ const MemoList: React.FC<Props> = () => {
   copyShownMemos = shownMemos;
 
   useEffect(() => {
-    setTimeout(() => {
-      memoService
-        .fetchAllMemos()
-        .then(() => {
-          setFetchStatus(false);
-        })
-        .catch(() => {
-          new Notice(t('Fetch Error'));
-        });
-    }, 400);
-    dailyNotesService
-      .getMyAllDailyNotes()
+    // Fetch memos (uses cache if already loaded)
+    memoService
+      .fetchAllMemos()
       .then(() => {
         setFetchStatus(false);
       })
       .catch(() => {
-        new Notice('😭 Fetch DailyNotes Error');
+        new Notice(t('Fetch Error'));
       });
-    dailyNotesService.getState();
-    memoService.getState();
+
+    // Also ensure daily notes are loaded
+    dailyNotesService.getMyAllDailyNotes().catch(() => {
+      new Notice('😭 Fetch DailyNotes Error');
+    });
   }, []);
 
   useEffect(() => {

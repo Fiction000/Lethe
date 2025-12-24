@@ -11,17 +11,44 @@ import { commentMemo } from '../obComponents/obCommentMemo';
 
 class MemoService {
   public initialized = false;
+  private isFetching = false;
+  private pendingFetch: Promise<any[]> | null = null;
 
   public getState() {
     return appStore.getState().memoState;
   }
 
-  public async fetchAllMemos() {
-    // if (!userService.getState().user) {
-    //   return false;
-    // }
+  /**
+   * Fetch all memos with deduplication
+   * @param force - Force refetch even if already initialized
+   */
+  public async fetchAllMemos(force = false): Promise<any[]> {
+    // Return cached memos if already loaded and not forced
+    if (this.initialized && !force) {
+      const currentMemos = this.getState().memos;
+      if (currentMemos.length > 0) {
+        return currentMemos;
+      }
+    }
 
-    // const { data } = await api.getMyMemos();
+    // Deduplicate concurrent fetches - return pending promise if already fetching
+    if (this.isFetching && this.pendingFetch) {
+      return this.pendingFetch;
+    }
+
+    this.isFetching = true;
+    this.pendingFetch = this._doFetch();
+
+    try {
+      const result = await this.pendingFetch;
+      return result;
+    } finally {
+      this.isFetching = false;
+      this.pendingFetch = null;
+    }
+  }
+
+  private async _doFetch(): Promise<any[]> {
     const data = await api.getMyMemos();
     const memos = [] as any[];
     const commentMemos = [] as any[];

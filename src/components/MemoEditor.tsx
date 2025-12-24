@@ -505,7 +505,10 @@ const MemoEditor: React.FC<Props> = () => {
     const { editMemoId } = globalStateService.getState();
     content = content.replaceAll('&nbsp;', ' ');
 
+    // Clear editor immediately for speed perception
     setEditorContentCache('');
+    editorRef.current?.setContent('');
+
     try {
       if (editMemoId) {
         const prevMemo = memoService.getMemoById(editMemoId);
@@ -525,14 +528,11 @@ const MemoEditor: React.FC<Props> = () => {
       } else {
         const newMemo = await memoService.createMemo(content, isList);
         memoService.pushMemo(newMemo);
-        // memoService.fetchAllMemos();
         locationService.clearQuery();
       }
     } catch (error: any) {
       new Notice(error.message);
     }
-
-    setEditorContentCache('');
   }, []);
 
   const handleCancelBtnClick = useCallback(() => {

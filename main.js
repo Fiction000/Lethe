@@ -32392,11 +32392,33 @@ ${post}`,
 class MemoService {
   constructor() {
     __publicField(this, "initialized", false);
+    __publicField(this, "isFetching", false);
+    __publicField(this, "pendingFetch", null);
   }
   getState() {
     return appStore.getState().memoState;
   }
-  async fetchAllMemos() {
+  async fetchAllMemos(force = false) {
+    if (this.initialized && !force) {
+      const currentMemos = this.getState().memos;
+      if (currentMemos.length > 0) {
+        return currentMemos;
+      }
+    }
+    if (this.isFetching && this.pendingFetch) {
+      return this.pendingFetch;
+    }
+    this.isFetching = true;
+    this.pendingFetch = this._doFetch();
+    try {
+      const result = await this.pendingFetch;
+      return result;
+    } finally {
+      this.isFetching = false;
+      this.pendingFetch = null;
+    }
+  }
+  async _doFetch() {
     const data = await api$1.getMyMemos();
     const memos = [];
     const commentMemos = [];
@@ -39850,6 +39872,7 @@ const MemoEditor = () => {
     }
   }, []);
   const handleSaveBtnClick = react.exports.useCallback(async (content) => {
+    var _a;
     if (content === "") {
       new require$$0.Notice(t$1("Content cannot be empty"));
       return;
@@ -39859,6 +39882,7 @@ const MemoEditor = () => {
     } = globalStateService.getState();
     content = content.replaceAll("&nbsp;", " ");
     setEditorContentCache("");
+    (_a = editorRef.current) == null ? void 0 : _a.setContent("");
     try {
       if (editMemoId) {
         const prevMemo = memoService.getMemoById(editMemoId);
@@ -39877,7 +39901,6 @@ const MemoEditor = () => {
     } catch (error) {
       new require$$0.Notice(error.message);
     }
-    setEditorContentCache("");
   }, []);
   const handleCancelBtnClick = react.exports.useCallback(() => {
     var _a;
@@ -40247,7 +40270,7 @@ const MemosHeader = () => {
     }
   }, [filter, queries]);
   const handleMemoTextClick = react.exports.useCallback(() => {
-    memoService.fetchAllMemos().catch(() => {
+    memoService.fetchAllMemos(true).catch(() => {
     });
   }, []);
   const handleShowSidebarBtnClick = react.exports.useCallback(() => {
@@ -40376,20 +40399,14 @@ const MemoList = () => {
   });
   copyShownMemos = shownMemos;
   react.exports.useEffect(() => {
-    setTimeout(() => {
-      memoService.fetchAllMemos().then(() => {
-        setFetchStatus(false);
-      }).catch(() => {
-        new require$$0.Notice(t$1("Fetch Error"));
-      });
-    }, 400);
-    dailyNotesService.getMyAllDailyNotes().then(() => {
+    memoService.fetchAllMemos().then(() => {
       setFetchStatus(false);
     }).catch(() => {
+      new require$$0.Notice(t$1("Fetch Error"));
+    });
+    dailyNotesService.getMyAllDailyNotes().catch(() => {
       new require$$0.Notice("\u{1F62D} Fetch DailyNotes Error");
     });
-    dailyNotesService.getState();
-    memoService.getState();
   }, []);
   react.exports.useEffect(() => {
     var _a;
@@ -41088,31 +41105,30 @@ class Memos extends require$$0.ItemView {
   }
   onMemosSettingsUpdate() {
     memoService.clearMemos();
-    memoService.fetchAllMemos();
+    memoService.fetchAllMemos(true);
   }
   async onFileDeleted(file) {
     if (getDateFromFile_1(file, "day")) {
       await dailyNotesService.getMyAllDailyNotes();
       memoService.clearMemos();
-      memoService.fetchAllMemos();
+      memoService.fetchAllMemos(true);
     }
   }
   async onFileModified(file) {
     const date = getDateFromFile_1(file, "day");
-    console.log("debounce");
     if (globalStateService.getState().changedByMemos) {
       globalStateService.setChangedByMemos(false);
       return;
     }
     if (date && this.memosComponent) {
-      memoService.fetchAllMemos();
+      memoService.fetchAllMemos(true);
     }
   }
   onFileCreated(file) {
     if (this.app.workspace.layoutReady && this.memosComponent) {
       if (getDateFromFile_1(file, "day")) {
         dailyNotesService.getMyAllDailyNotes();
-        memoService.fetchAllMemos();
+        memoService.fetchAllMemos(true);
       }
     }
   }
