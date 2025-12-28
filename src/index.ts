@@ -7,6 +7,7 @@ import showDailyMemoDiaryDialog from './components/DailyMemoDiaryDialog';
 import { QuickCaptureModal } from './obComponents/QuickCaptureModal';
 import { t } from './translations/helper';
 import { memoService } from './services';
+import { dailyNotePreCreationService } from './services/dailyNotePreCreationService';
 
 export default class MemosPlugin extends Plugin {
   public settings: MemosSettings;
@@ -83,6 +84,24 @@ export default class MemosPlugin extends Plugin {
   async onLayoutReady(): Promise<void> {
     addIcons();
     this.addSettingTab(new MemosSettingTab(this.app, this));
+
+    // Set plugin instance for daily note pre-creation service
+    dailyNotePreCreationService.setPlugin(this);
+
+    // Pre-create daily notes (non-blocking) if enabled in settings
+    if (this.settings.PreCreateDailyNotes) {
+      dailyNotePreCreationService.initialize().catch((err) => {
+        console.error('[Lethe] Failed to initialize daily note pre-creation:', err);
+      });
+    }
+
+    // Register midnight rollover check (every 60 seconds)
+    this.registerInterval(
+      window.setInterval(() => {
+        dailyNotePreCreationService.checkAndRollover();
+      }, 60 * 1000),
+    );
+
     this.addCommand({
       id: 'open-memos',
       name: 'Open Lethe',
