@@ -158,6 +158,13 @@ export default class MemosPlugin extends Plugin {
       hotkeys: [],
     });
 
+    this.addCommand({
+      id: 'toggle-sidebar-display',
+      name: 'Toggle Sidebar Display',
+      callback: () => this.toggleSidebarDisplay(),
+      hotkeys: [],
+    });
+
     if (Platform.isMobile) {
       this.registerMobileEvent();
     }
@@ -296,6 +303,39 @@ export default class MemosPlugin extends Plugin {
 
     if (leaf.view.containerEl.querySelector('textarea') !== undefined) {
       leaf.view.containerEl.querySelector('textarea').focus();
+    }
+  }
+
+  async toggleSidebarDisplay() {
+    // Toggle the setting
+    this.settings.ShowInSidebar = !this.settings.ShowInSidebar;
+    await this.saveSettings();
+
+    // Trigger settings update event
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    (<any>this.app.workspace).trigger('lethe:settings-updated');
+
+    // Reopen Lethe with new setting
+    const workspace = this.app.workspace;
+    const leaves = workspace.getLeavesOfType(MEMOS_VIEW_TYPE);
+
+    if (leaves.length > 0) {
+      // Close current instance and reopen with new setting
+      workspace.detachLeavesOfType(MEMOS_VIEW_TYPE);
+      await this.openMemos();
+
+      new Notice(
+        this.settings.ShowInSidebar
+          ? 'Lethe will now open in sidebar'
+          : 'Lethe will now open in tab'
+      );
+    } else {
+      // Just save the setting
+      new Notice(
+        this.settings.ShowInSidebar
+          ? 'Lethe will open in sidebar next time'
+          : 'Lethe will open in tab next time'
+      );
     }
   }
 

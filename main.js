@@ -41990,6 +41990,12 @@ class MemosPlugin extends require$$0.Plugin {
       callback: () => this.showInPopover(),
       hotkeys: []
     });
+    this.addCommand({
+      id: "toggle-sidebar-display",
+      name: "Toggle Sidebar Display",
+      callback: () => this.toggleSidebarDisplay(),
+      hotkeys: []
+    });
     if (require$$0.Platform.isMobile) {
       this.registerMobileEvent();
     }
@@ -42099,6 +42105,24 @@ class MemosPlugin extends require$$0.Plugin {
     }
     if (leaf.view.containerEl.querySelector("textarea") !== void 0) {
       leaf.view.containerEl.querySelector("textarea").focus();
+    }
+  }
+  async toggleSidebarDisplay() {
+    this.settings.ShowInSidebar = !this.settings.ShowInSidebar;
+    await this.saveSettings();
+    this.app.workspace.trigger("lethe:settings-updated");
+    const workspace = this.app.workspace;
+    const leaves = workspace.getLeavesOfType(MEMOS_VIEW_TYPE);
+    if (leaves.length > 0) {
+      workspace.detachLeavesOfType(MEMOS_VIEW_TYPE);
+      await this.openMemos();
+      new require$$0.Notice(
+        this.settings.ShowInSidebar ? "Lethe will now open in sidebar" : "Lethe will now open in tab"
+      );
+    } else {
+      new require$$0.Notice(
+        this.settings.ShowInSidebar ? "Lethe will open in sidebar next time" : "Lethe will open in tab next time"
+      );
     }
   }
   quickCapture() {
