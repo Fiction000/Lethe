@@ -5,7 +5,7 @@ import utils from '../helpers/utils';
 import { getTextWithMemoType } from '../helpers/filter';
 import '../less/memo-filter.less';
 import { moment, Notice } from 'obsidian';
-import Copy from '../icons/copy.svg?component';
+import Copy from '../icons/copy.svg?react';
 import { copyShownMemos } from './MemoList';
 import { getMemosByDate, transferMemosIntoText } from '../obComponents/obCopyMemos';
 import { t } from '../translations/helper';

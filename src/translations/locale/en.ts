@@ -25,8 +25,10 @@ export default {
   year: null,
   month: null,
   'Basic Options': 'Basic Options',
-  'User name in Memos': 'User name in Memos',
-  "Set your user name here. 'Memos 😏' By default": "Set your user name here. 'Memos 😏' By default",
+  'User name in Lethe': 'User name in Lethe',
+  'User name in Memos': 'User name in Lethe',
+  "Set your user name here. 'MEMO 😉' By default": "Set your user name here. 'MEMO 😉' By default",
+  "Set your user name here. 'Memos 😏' By default": "Set your user name here. 'MEMO 😉' By default",
   'Insert after heading': 'Insert after heading',
   'You should set the same heading below if you want to insert and process memos below the same heading.':
     'You should set the same heading below if you want to insert and process memos below the same heading.',
@@ -37,13 +39,19 @@ export default {
   'Save Memo button label': 'Save Memo button label',
   "The text shown on the save Memo button in the UI. 'NOTEIT' by default.":
     "The text shown on the save Memo button in the UI. 'NOTEIT' by default.",
-  'Focus on editor when open memos': 'Focus on editor when open memos',
-  'Focus on editor when open memos. Focus by default.': 'Focus on editor when open memos. Focus by default.',
-  'Open daily memos with open memos': 'Open daily memos with open memos',
-  'Open daily memos with open memos. Open by default.': 'Open daily memos with open memos. Open by default.',
-  'Open Memos when obsidian opens': 'Open Memos when obsidian opens',
+  'Focus on editor when open Lethe': 'Focus on editor when open Lethe',
+  'Focus on editor when opening Lethe. Focus by default.': 'Focus on editor when opening Lethe. Focus by default.',
+  'Focus on editor when open memos': 'Focus on editor when open Lethe',
+  'Focus on editor when open memos. Focus by default.': 'Focus on editor when opening Lethe. Focus by default.',
+  'Open daily memos with Lethe': 'Open daily memos with Lethe',
+  'Open daily memos when opening Lethe. Open by default.': 'Open daily memos when opening Lethe. Open by default.',
+  'Open daily memos with open memos': 'Open daily memos with Lethe',
+  'Open daily memos with open memos. Open by default.': 'Open daily memos when opening Lethe. Open by default.',
+  'Open Lethe when obsidian opens': 'Open Lethe when obsidian opens',
+  'When enabled, Lethe will open when Obsidian opens. False by default.': 'When enabled, Lethe will open when Obsidian opens. False by default.',
+  'Open Memos when obsidian opens': 'Open Lethe when obsidian opens',
   'When enable this, Memos will open when Obsidian opens. False by default.':
-    'When enable this, Memos will open when Obsidian opens. False by default.',
+    'When enabled, Lethe will open when Obsidian opens. False by default.',
   'Hide done tasks in Memo list': 'Hide done tasks in Memo list',
   'Hide all done tasks in Memo list. Show done tasks by default.':
     'Hide all done tasks in Memo list. Show done tasks by default.',
@@ -165,7 +173,8 @@ export default {
   'Default Memo Composition': 'Default Memo Composition',
   'Show Tasks Label': 'Show Tasks Label',
   'Show tasks label near the time text. False by default': 'Show tasks label near the time text. False by default',
-  'Please Open Memos First': 'Please Open Memos First',
+  'Please Open Lethe First': 'Please Open Lethe First',
+  'Please Open Memos First': 'Please Open Lethe First',
   DATE: 'DATE',
   OBSIDIAN_NLDATES_PLUGIN_NOT_ENABLED: 'OBSIDIAN_NLDATES_PLUGIN_NOT_ENABLED',
   BEFORE: 'BEFORE',
@@ -184,7 +193,8 @@ export default {
   'Check if you opened Daily Notes Plugin Or Periodic Notes Plugin':
     'Check if you opened Daily Notes Plugin Or Periodic Notes Plugin',
   'Please finish the last filter setting first': 'Please finish the last filter setting first',
-  'Close Memos Successfully': 'Close Memos Successfully',
+  'Close Lethe Successfully': 'Close Lethe Successfully',
+  'Close Memos Successfully': 'Close Lethe Successfully',
   'Insert as Memo': 'Insert as Memo',
   'Insert file as memo content': 'Insert file as memo content',
   'Image load failed': 'Image load failed',
@@ -197,9 +207,12 @@ export default {
   'Fetch Memos From Particular Notes': 'Fetch Memos From Particular Notes',
   'You can set any Dataview Query for memos to fetch it. All memos in those notes will show on list. "#memo" by default':
     'You can set any Dataview Query for memos to fetch it. All memos in those notes will show on list. "#memo" by default',
-  'Allow Memos to Fetch Memo from Notes': 'Allow Memos to Fetch Memo from Notes',
+  'Allow Lethe to Fetch Memos from All Notes': 'Allow Lethe to Fetch Memos from All Notes',
+  'Use Lethe to manage all memos in your notes, not only in daily notes. False by default':
+    'Use Lethe to manage all memos in your notes, not only in daily notes. False by default',
+  'Allow Memos to Fetch Memo from Notes': 'Allow Lethe to Fetch Memos from All Notes',
   'Use Memos to manage all memos in your notes, not only in daily notes. False by default':
-    'Use Memos to manage all memos in your notes, not only in daily notes. False by default',
+    'Use Lethe to manage all memos in your notes, not only in daily notes. False by default',
   'Always Show Memo Comments': 'Always Show Memo Comments',
   'Always show memo comments on memos. False by default': 'Always show memo comments on memos. False by default',
   "You didn't set folder for daily notes in both periodic-notes and daily-notes plugins.":
@@ -207,12 +220,21 @@ export default {
   'Please check your daily note plugin OR periodic notes plugin settings':
     'Please check your daily note plugin OR periodic notes plugin settings',
   "Use Which Plugin's Default Configuration": "Use Which Plugin's Default Configuration",
+  "Lethe uses the plugin's default configuration to fetch memos from daily notes, 'Daily' by default.":
+    "Lethe uses the plugin's default configuration to fetch memos from daily notes, 'Daily' by default.",
   "Memos use the plugin's default configuration to fetch memos from daily, 'Daily' by default.":
-    "Memos use the plugin's default configuration to fetch memos from daily, 'Daily' by default.",
+    "Lethe uses the plugin's default configuration to fetch memos from daily notes, 'Daily' by default.",
   Daily: 'Daily',
   'Always Show Leaf Sidebar on PC': 'Always Show Leaf Sidebar on PC',
   'Show left sidebar on PC even when the leaf width is less than 875px. False by default.':
     'Show left sidebar on PC even when the leaf width is less than 875px. False by default.',
+  'Show Lethe in Sidebar': 'Show Lethe in Sidebar',
+  'Open Lethe in the sidebar instead of a tab. Requires restart of Lethe to take effect.':
+    'Open Lethe in the sidebar instead of a tab. Requires restart of Lethe to take effect.',
+  'Sidebar Location': 'Sidebar Location',
+  'Choose which sidebar to open Lethe in.': 'Choose which sidebar to open Lethe in.',
+  Left: 'Left',
+  Right: 'Right',
   "You didn't set format for daily notes in both periodic-notes and daily-notes plugins.":
     "You didn't set format for daily notes in both periodic-notes and daily-notes plugins.",
   'Storage Options': 'Storage Options',
@@ -231,4 +253,7 @@ export default {
   'Individual memo folder not found: ': 'Individual memo folder not found: ',
   'Comma-separated tags to add to individual memo files (e.g., "memo, note").':
     'Comma-separated tags to add to individual memo files (e.g., "memo, note").',
+  'Pre-create daily notes': 'Pre-create daily notes',
+  "Automatically create today and tomorrow's daily notes in the background for faster memo saves.":
+    "Automatically create today and tomorrow's daily notes in the background for faster memo saves.",
 };

@@ -1,7 +1,7 @@
 import { showDialog } from './Dialog';
 import '../less/about-site-dialog.less';
 import React from 'react';
-import Close from '../icons/close.svg?component';
+import Close from '../icons/close.svg?react';
 
 interface Props extends DialogProps {}
 

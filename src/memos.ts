@@ -19,7 +19,7 @@ export class Memos extends ItemView {
 
   getDisplayText(): string {
     // TODO: Make this interactive: Either the active workspace or the local graph
-    return 'Memos';
+    return 'Lethe';
   }
 
   getIcon(): string {
@@ -164,11 +164,18 @@ export class Memos extends ItemView {
     IndividualMemoFolder = this.plugin.settings.IndividualMemoFolder;
     IndividualMemoFileNameLength = this.plugin.settings.IndividualMemoFileNameLength;
     IndividualMemoTags = this.plugin.settings.IndividualMemoTags;
+    ShowInSidebar = this.plugin.settings.ShowInSidebar;
+    SidebarLocation = this.plugin.settings.SidebarLocation;
 
     this.memosComponent = React.createElement(App);
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     ReactDOM.render(this.memosComponent, (this as any).contentEl);
+
+    // Fetch memos after rendering to populate the list
+    memoService.fetchAllMemos().catch((err) => {
+      console.error('[Lethe] Failed to fetch memos during initialization:', err);
+    });
   }
 
   async onClose() {
@@ -214,3 +221,5 @@ export let MemoStorageMode: 'daily-notes' | 'individual-files';
 export let IndividualMemoFolder: string;
 export let IndividualMemoFileNameLength: number;
 export let IndividualMemoTags: string;
+export let ShowInSidebar: boolean;
+export let SidebarLocation: 'left' | 'right';

@@ -443,8 +443,9 @@ export async function getMemos(): Promise<allKindsofMemos> {
   const folder = getDailyNotePath();
 
   if (folder === '' || folder === undefined) {
+    console.error('[Lethe] Daily notes folder path is empty or undefined');
     new Notice(t('Please check your daily note plugin OR periodic notes plugin settings'));
-    return;
+    return { memos: [], commentMemos: [] };
   }
   const dailyNotesFolder = vault.getAbstractFileByPath(normalizePath(folder)) as TFolder;
 

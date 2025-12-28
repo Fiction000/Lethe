@@ -9,7 +9,7 @@ import Only from '../components/common/OnlyWhen';
 import DeletedMemo from '../components/DeletedMemo';
 import MemoFilter from '../components/MemoFilter';
 import '../less/memo-trash.less';
-import MenuSvg from '../icons/menu.svg?component';
+import MenuSvg from '../icons/menu.svg?react';
 import { Notice } from 'obsidian';
 import { t } from '../translations/helper';
 

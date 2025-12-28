@@ -6,7 +6,7 @@ import { showDialog } from './Dialog';
 import Selector from './common/Selector';
 import '../less/create-query-dialog.less';
 import { Notice } from 'obsidian';
-import Close from '../icons/close.svg?component';
+import Close from '../icons/close.svg?react';
 import { t } from '../translations/helper';
 
 interface Props extends DialogProps {

@@ -4,9 +4,9 @@ import { globalStateService, memoService } from '../services';
 import PreferencesSection from '../components/PreferencesSection';
 import Only from '../components/common/OnlyWhen';
 import '../less/setting.less';
-import MenuSvg from '../icons/menu.svg?component';
+import MenuSvg from '../icons/menu.svg?react';
 
-// import MenuSvg from "*.svg?component";
+// import MenuSvg from "*.svg?react";
 
 interface Props {}
 

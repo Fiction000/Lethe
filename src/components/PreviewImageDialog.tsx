@@ -3,7 +3,7 @@ import utils from '../helpers/utils';
 import { showDialog } from './Dialog';
 import '../less/preview-image-dialog.less';
 import appStore from '../stores/appStore';
-import Close from '../icons/close.svg?component';
+import Close from '../icons/close.svg?react';
 import { Notice } from 'obsidian';
 import { t } from '../translations/helper';
 

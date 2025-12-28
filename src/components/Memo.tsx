@@ -19,10 +19,10 @@ import showShareMemoImageDialog from './ShareMemoImageDialog';
 import '../less/memo.less';
 import { moment, Notice, Platform } from 'obsidian';
 import { showMemoInDailyNotes } from '../obComponents/obShowMemo';
-import More from '../icons/more.svg?component';
-import Comment from '../icons/comment.svg?component';
-import TaskBlank from '../icons/task-blank.svg?component';
-import Task from '../icons/task.svg?component';
+import More from '../icons/more.svg?react';
+import Comment from '../icons/comment.svg?react';
+import TaskBlank from '../icons/task-blank.svg?react';
+import Task from '../icons/task.svg?react';
 import {
   CommentOnMemos,
   CommentsInOriginalNotes,

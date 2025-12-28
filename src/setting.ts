@@ -5,7 +5,6 @@ import { t } from './translations/helper';
 import { getDailyNotePath } from './helpers/utils';
 
 export interface MemosSettings {
-  StartDate: string;
   InsertAfter: string;
   UserName: string;
   ProcessEntriesBelow: string;
@@ -46,10 +45,11 @@ export interface MemosSettings {
   IndividualMemoFileNameLength: number;
   IndividualMemoTags: string;
   PreCreateDailyNotes: boolean;
+  ShowInSidebar: boolean;
+  SidebarLocation: 'left' | 'right';
 }
 
 export const DEFAULT_SETTINGS: MemosSettings = {
-  StartDate: 'Sunday',
   InsertAfter: '# Journal',
   UserName: 'MEMO 😉',
   ProcessEntriesBelow: '',
@@ -90,6 +90,8 @@ export const DEFAULT_SETTINGS: MemosSettings = {
   IndividualMemoFileNameLength: 30,
   IndividualMemoTags: '',
   PreCreateDailyNotes: false,
+  ShowInSidebar: false,
+  SidebarLocation: 'right',
 };
 
 export class MemosSettingTab extends PluginSettingTab {
@@ -135,8 +137,8 @@ export class MemosSettingTab extends PluginSettingTab {
     // });
 
     new Setting(containerEl)
-      .setName(t('User name in Memos'))
-      .setDesc(t("Set your user name here. 'Memos 😏' By default"))
+      .setName(t('User name in Lethe'))
+      .setDesc(t("Set your user name here. 'MEMO 😉' By default"))
       .addText((text) =>
         text
           .setPlaceholder(DEFAULT_SETTINGS.UserName)
@@ -206,8 +208,8 @@ export class MemosSettingTab extends PluginSettingTab {
       );
 
     new Setting(containerEl)
-      .setName(t('Focus on editor when open memos'))
-      .setDesc(t('Focus on editor when open memos. Focus by default.'))
+      .setName(t('Focus on editor when open Lethe'))
+      .setDesc(t('Focus on editor when opening Lethe. Focus by default.'))
       .addToggle((toggle) =>
         toggle.setValue(this.plugin.settings.FocusOnEditor).onChange(async (value) => {
           this.plugin.settings.FocusOnEditor = value;
@@ -216,8 +218,8 @@ export class MemosSettingTab extends PluginSettingTab {
       );
 
     new Setting(containerEl)
-      .setName(t('Open daily memos with open memos'))
-      .setDesc(t('Open daily memos with open memos. Open by default.'))
+      .setName(t('Open daily memos with Lethe'))
+      .setDesc(t('Open daily memos when opening Lethe. Open by default.'))
       .addToggle((toggle) =>
         toggle.setValue(this.plugin.settings.OpenDailyMemosWithMemos).onChange(async (value) => {
           this.plugin.settings.OpenDailyMemosWithMemos = value;
@@ -226,8 +228,8 @@ export class MemosSettingTab extends PluginSettingTab {
       );
 
     new Setting(containerEl)
-      .setName(t('Open Memos when obsidian opens'))
-      .setDesc(t('When enable this, Memos will open when Obsidian opens. False by default.'))
+      .setName(t('Open Lethe when obsidian opens'))
+      .setDesc(t('When enabled, Lethe will open when Obsidian opens. False by default.'))
       .addToggle((toggle) =>
         toggle.setValue(this.plugin.settings.OpenMemosAutomatically).onChange(async (value) => {
           this.plugin.settings.OpenMemosAutomatically = value;
@@ -274,6 +276,29 @@ export class MemosSettingTab extends PluginSettingTab {
           this.applySettingsUpdate();
         }),
       );
+
+    new Setting(containerEl)
+      .setName(t('Show Lethe in Sidebar'))
+      .setDesc(t('Open Lethe in the sidebar instead of a tab. Requires restart of Lethe to take effect.'))
+      .addToggle((toggle) =>
+        toggle.setValue(this.plugin.settings.ShowInSidebar).onChange(async (value) => {
+          this.plugin.settings.ShowInSidebar = value;
+          this.applySettingsUpdate();
+        }),
+      );
+
+    new Setting(containerEl)
+      .setName(t('Sidebar Location'))
+      .setDesc(t('Choose which sidebar to open Lethe in.'))
+      .addDropdown(async (d: DropdownComponent) => {
+        dropdown = d;
+        dropdown.addOption('left', t('Left'));
+        dropdown.addOption('right', t('Right'));
+        dropdown.setValue(this.plugin.settings.SidebarLocation).onChange(async (value) => {
+          this.plugin.settings.SidebarLocation = value as 'left' | 'right';
+          this.applySettingsUpdate();
+        });
+      });
 
     this.containerEl.createEl('h1', { text: t('Advanced Options') });
 
@@ -488,7 +513,7 @@ export class MemosSettingTab extends PluginSettingTab {
 
     new Setting(containerEl)
       .setName(t("Use Which Plugin's Default Configuration"))
-      .setDesc(t("Memos use the plugin's default configuration to fetch memos from daily, 'Daily' by default."))
+      .setDesc(t("Lethe uses the plugin's default configuration to fetch memos from daily notes, 'Daily' by default."))
       .addDropdown(async (d: DropdownComponent) => {
         dropdown = d;
         dropdown.addOption('Daily', t('Daily'));
@@ -547,8 +572,8 @@ export class MemosSettingTab extends PluginSettingTab {
       );
 
     new Setting(containerEl)
-      .setName(t('Allow Memos to Fetch Memo from Notes'))
-      .setDesc(t('Use Memos to manage all memos in your notes, not only in daily notes. False by default'))
+      .setName(t('Allow Lethe to Fetch Memos from All Notes'))
+      .setDesc(t('Use Lethe to manage all memos in your notes, not only in daily notes. False by default'))
       .addToggle((toggle) =>
         toggle.setValue(this.plugin.settings.FetchMemosFromNote).onChange(async (value) => {
           this.plugin.settings.FetchMemosFromNote = value;

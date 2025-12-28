@@ -4,7 +4,7 @@ import SearchBar from './SearchBar';
 import { globalStateService, memoService, queryService } from '../services';
 import Only from './common/OnlyWhen';
 import '../less/memos-header.less';
-import MenuSvg from '../icons/menu.svg?component';
+import MenuSvg from '../icons/menu.svg?react';
 
 interface Props {}
 

@@ -7,8 +7,8 @@ import utils from '../helpers/utils';
 import { locationService, queryService } from '../services';
 import showCreateQueryDialog from './CreateQueryDialog';
 import '../less/query-list.less';
-import More from '../icons/more.svg?component';
-import MoreWhite from '../icons/more-white.svg?component';
+import More from '../icons/more.svg?react';
+import MoreWhite from '../icons/more-white.svg?react';
 import { Notice } from 'obsidian';
 import { t } from '../translations/helper';
 

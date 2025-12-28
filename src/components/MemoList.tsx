@@ -137,12 +137,14 @@ const MemoList: React.FC<Props> = () => {
       .then(() => {
         setFetchStatus(false);
       })
-      .catch(() => {
+      .catch((err) => {
+        console.error('[Lethe] Failed to fetch memos:', err);
         new Notice(t('Fetch Error'));
       });
 
     // Also ensure daily notes are loaded
-    dailyNotesService.getMyAllDailyNotes().catch(() => {
+    dailyNotesService.getMyAllDailyNotes().catch((err) => {
+      console.error('[Lethe] Failed to fetch daily notes:', err);
       new Notice('😭 Fetch DailyNotes Error');
     });
   }, []);

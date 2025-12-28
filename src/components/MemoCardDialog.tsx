@@ -7,12 +7,12 @@ import { formatMemoContent } from './Memo';
 import { showDialog } from './Dialog';
 import '../less/memo-card-dialog.less';
 import { Notice } from 'obsidian';
-import Close from '../icons/close.svg?component';
-import Edit from '../icons/edit.svg?component';
+import Close from '../icons/close.svg?react';
+import Edit from '../icons/edit.svg?react';
 import { t } from '../translations/helper';
 import MemoImage from './MemoImage';
 
-// import Share from "*.svg?component";
+// import Share from "*.svg?react";
 
 interface LinkedMemo extends FormattedMemo {
   dateStr: string;

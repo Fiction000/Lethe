@@ -32,7 +32,7 @@ export default class MemosPlugin extends Plugin {
 
   onunload() {
     this.app.workspace.detachLeavesOfType(MEMOS_VIEW_TYPE);
-    new Notice(t('Close Memos Successfully'));
+    new Notice(t('Close Lethe Successfully'));
   }
 
   registerMobileEvent() {
@@ -118,7 +118,7 @@ export default class MemosPlugin extends Plugin {
 
     this.addCommand({
       id: 'focus-on-memos-editor',
-      name: 'Focus On Memos Editor',
+      name: 'Focus On Lethe Editor',
       callback: () => this.focusOnEditor(),
       hotkeys: [],
     });
@@ -153,7 +153,7 @@ export default class MemosPlugin extends Plugin {
 
     this.addCommand({
       id: 'show-memos-in-popover',
-      name: 'Show Memos in Popover',
+      name: 'Show Lethe in Popover',
       callback: () => this.showInPopover(),
       hotkeys: [],
     });
@@ -200,10 +200,20 @@ export default class MemosPlugin extends Plugin {
   async openMemos() {
     const workspace = this.app.workspace;
     workspace.detachLeavesOfType(MEMOS_VIEW_TYPE);
-    // const leaf = workspace.getLeaf(
-    //   !Platform.isMobile && workspace.activeLeaf && workspace.activeLeaf.view instanceof FileView,
-    // );
-    const leaf = workspace.getLeaf(false);
+
+    let leaf;
+    if (this.settings.ShowInSidebar) {
+      // Open in sidebar
+      const sidebarLeaf =
+        this.settings.SidebarLocation === 'left'
+          ? workspace.getLeftLeaf(false)
+          : workspace.getRightLeaf(false);
+      leaf = sidebarLeaf ?? workspace.getLeaf(false);
+    } else {
+      // Open in tab (default behavior)
+      leaf = workspace.getLeaf(false);
+    }
+
     await leaf.setViewState({ type: MEMOS_VIEW_TYPE });
     workspace.revealLeaf(leaf);
 
@@ -248,7 +258,7 @@ export default class MemosPlugin extends Plugin {
     const workspace = this.app.workspace;
     const leaves = workspace.getLeavesOfType(MEMOS_VIEW_TYPE);
     if (!(leaves.length > 0)) {
-      new Notice(t('Please Open Memos First'));
+      new Notice(t('Please Open Lethe First'));
       return;
       // this.openMemos();
     }
@@ -262,7 +272,7 @@ export default class MemosPlugin extends Plugin {
     const workspace = this.app.workspace;
     const leaves = workspace.getLeavesOfType(MEMOS_VIEW_TYPE);
     if (!(leaves.length > 0)) {
-      new Notice(t('Please Open Memos First'));
+      new Notice(t('Please Open Lethe First'));
       return;
       // this.openMemos();
     }

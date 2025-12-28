@@ -4,7 +4,7 @@ import appContext from '../stores/appContext';
 import { locationService } from '../services';
 import { memoSpecialTypes } from '../helpers/filter';
 import '../less/search-bar.less';
-import Search from '../icons/search.svg?component';
+import Search from '../icons/search.svg?react';
 import { t } from '../translations/helper';
 import useToggle from '../hooks/useToggle';
 

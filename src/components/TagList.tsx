@@ -5,7 +5,7 @@ import useToggle from '../hooks/useToggle';
 import Only from './common/OnlyWhen';
 import utils from '../helpers/utils';
 import '../less/tag-list.less';
-import ArrowRight from '../icons/arrow-right.svg?component';
+import ArrowRight from '../icons/arrow-right.svg?react';
 import { t } from '../translations/helper';
 
 interface Tag {
