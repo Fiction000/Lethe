@@ -45,6 +45,7 @@ export interface MemosSettings {
   IndividualMemoFolder: string;
   IndividualMemoFileNameLength: number;
   IndividualMemoTags: string;
+  PreCreateDailyNotes: boolean;
 }
 
 export const DEFAULT_SETTINGS: MemosSettings = {
@@ -88,6 +89,7 @@ export const DEFAULT_SETTINGS: MemosSettings = {
   IndividualMemoFolder: 'Thino/Memos',
   IndividualMemoFileNameLength: 30,
   IndividualMemoTags: '',
+  PreCreateDailyNotes: false,
 };
 
 export class MemosSettingTab extends PluginSettingTab {
@@ -627,6 +629,26 @@ export class MemosSettingTab extends PluginSettingTab {
             this.plugin.settings.IndividualMemoTags = value;
             this.applySettingsUpdate();
           }),
+      );
+
+    new Setting(containerEl)
+      .setName(t('Pre-create daily notes'))
+      .setDesc(
+        t('Automatically create today and tomorrow\'s daily notes in the background for faster memo saves.'),
+      )
+      .addToggle((toggle) =>
+        toggle.setValue(this.plugin.settings.PreCreateDailyNotes).onChange(async (value) => {
+          this.plugin.settings.PreCreateDailyNotes = value;
+          await this.plugin.saveSettings();
+
+          // If enabled, trigger immediate pre-creation
+          if (value) {
+            const { dailyNotePreCreationService } = await import('./services/dailyNotePreCreationService');
+            dailyNotePreCreationService.initialize().catch((err) => {
+              console.error('[Lethe] Failed to initialize daily note pre-creation:', err);
+            });
+          }
+        }),
       );
 
   }
