@@ -31,6 +31,47 @@ export class Memos extends ItemView {
   }
 
   private onMemosSettingsUpdate(): void {
+    // Update all exported settings
+    InsertAfter = this.plugin.settings.InsertAfter;
+    UserName = this.plugin.settings.UserName;
+    ProcessEntriesBelow = this.plugin.settings.ProcessEntriesBelow;
+    SaveMemoButtonLabel = this.plugin.settings.SaveMemoButtonLabel;
+    SaveMemoButtonIcon = this.plugin.settings.SaveMemoButtonIcon;
+    DefaultPrefix = this.plugin.settings.DefaultPrefix;
+    InsertDateFormat = this.plugin.settings.InsertDateFormat;
+    DefaultEditorLocation = this.plugin.settings.DefaultEditorLocation;
+    UseButtonToShowEditor = this.plugin.settings.UseButtonToShowEditor;
+    FocusOnEditor = this.plugin.settings.FocusOnEditor;
+    OpenDailyMemosWithMemos = this.plugin.settings.OpenDailyMemosWithMemos;
+    HideDoneTasks = this.plugin.settings.HideDoneTasks;
+    ShareFooterStart = this.plugin.settings.ShareFooterStart;
+    ShareFooterEnd = this.plugin.settings.ShareFooterEnd;
+    OpenMemosAutomatically = this.plugin.settings.OpenMemosAutomatically;
+    ShowTime = this.plugin.settings.ShowTime;
+    ShowDate = this.plugin.settings.ShowDate;
+    AddBlankLineWhenDate = this.plugin.settings.AddBlankLineWhenDate;
+    AutoSaveWhenOnMobile = this.plugin.settings.AutoSaveWhenOnMobile;
+    QueryFileName = this.plugin.settings.QueryFileName;
+    DeleteFileName = this.plugin.settings.DeleteFileName;
+    UseVaultTags = this.plugin.settings.UseVaultTags;
+    DefaultDarkBackgroundImage = this.plugin.settings.DefaultDarkBackgroundImage;
+    DefaultLightBackgroundImage = this.plugin.settings.DefaultLightBackgroundImage;
+    DefaultMemoComposition = this.plugin.settings.DefaultMemoComposition;
+    ShowTaskLabel = this.plugin.settings.ShowTaskLabel;
+    CommentOnMemos = this.plugin.settings.CommentOnMemos;
+    CommentsInOriginalNotes = this.plugin.settings.CommentsInOriginalNotes;
+    FetchMemosMark = this.plugin.settings.FetchMemosMark;
+    FetchMemosFromNote = this.plugin.settings.FetchMemosFromNote;
+    ShowCommentOnMemos = this.plugin.settings.ShowCommentOnMemos;
+    UseDailyOrPeriodic = this.plugin.settings.UseDailyOrPeriodic;
+    ShowLeftSideBar = this.plugin.settings.ShowLeftSideBar;
+    MemoStorageMode = this.plugin.settings.MemoStorageMode;
+    IndividualMemoFolder = this.plugin.settings.IndividualMemoFolder;
+    IndividualMemoFileNameLength = this.plugin.settings.IndividualMemoFileNameLength;
+    IndividualMemoTags = this.plugin.settings.IndividualMemoTags;
+    ShowInSidebar = this.plugin.settings.ShowInSidebar;
+    SidebarLocation = this.plugin.settings.SidebarLocation;
+
     memoService.clearMemos();
     memoService.fetchAllMemos(true); // Force refetch on settings change
   }

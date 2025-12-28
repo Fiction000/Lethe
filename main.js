@@ -41094,6 +41094,45 @@ class Memos extends require$$0.ItemView {
     return MEMOS_VIEW_TYPE;
   }
   onMemosSettingsUpdate() {
+    InsertAfter = this.plugin.settings.InsertAfter;
+    UserName = this.plugin.settings.UserName;
+    ProcessEntriesBelow = this.plugin.settings.ProcessEntriesBelow;
+    SaveMemoButtonLabel = this.plugin.settings.SaveMemoButtonLabel;
+    SaveMemoButtonIcon = this.plugin.settings.SaveMemoButtonIcon;
+    DefaultPrefix = this.plugin.settings.DefaultPrefix;
+    InsertDateFormat = this.plugin.settings.InsertDateFormat;
+    DefaultEditorLocation = this.plugin.settings.DefaultEditorLocation;
+    UseButtonToShowEditor = this.plugin.settings.UseButtonToShowEditor;
+    FocusOnEditor = this.plugin.settings.FocusOnEditor;
+    OpenDailyMemosWithMemos = this.plugin.settings.OpenDailyMemosWithMemos;
+    HideDoneTasks = this.plugin.settings.HideDoneTasks;
+    ShareFooterStart = this.plugin.settings.ShareFooterStart;
+    ShareFooterEnd = this.plugin.settings.ShareFooterEnd;
+    this.plugin.settings.OpenMemosAutomatically;
+    ShowTime = this.plugin.settings.ShowTime;
+    ShowDate = this.plugin.settings.ShowDate;
+    AddBlankLineWhenDate = this.plugin.settings.AddBlankLineWhenDate;
+    AutoSaveWhenOnMobile = this.plugin.settings.AutoSaveWhenOnMobile;
+    QueryFileName = this.plugin.settings.QueryFileName;
+    DeleteFileName = this.plugin.settings.DeleteFileName;
+    UseVaultTags = this.plugin.settings.UseVaultTags;
+    DefaultDarkBackgroundImage = this.plugin.settings.DefaultDarkBackgroundImage;
+    DefaultLightBackgroundImage = this.plugin.settings.DefaultLightBackgroundImage;
+    DefaultMemoComposition = this.plugin.settings.DefaultMemoComposition;
+    ShowTaskLabel = this.plugin.settings.ShowTaskLabel;
+    CommentOnMemos = this.plugin.settings.CommentOnMemos;
+    CommentsInOriginalNotes = this.plugin.settings.CommentsInOriginalNotes;
+    FetchMemosMark = this.plugin.settings.FetchMemosMark;
+    FetchMemosFromNote = this.plugin.settings.FetchMemosFromNote;
+    ShowCommentOnMemos = this.plugin.settings.ShowCommentOnMemos;
+    UseDailyOrPeriodic = this.plugin.settings.UseDailyOrPeriodic;
+    ShowLeftSideBar = this.plugin.settings.ShowLeftSideBar;
+    MemoStorageMode = this.plugin.settings.MemoStorageMode;
+    IndividualMemoFolder = this.plugin.settings.IndividualMemoFolder;
+    IndividualMemoFileNameLength = this.plugin.settings.IndividualMemoFileNameLength;
+    IndividualMemoTags = this.plugin.settings.IndividualMemoTags;
+    this.plugin.settings.ShowInSidebar;
+    this.plugin.settings.SidebarLocation;
     memoService.clearMemos();
     memoService.fetchAllMemos(true);
   }
@@ -41325,6 +41364,7 @@ class MemosSettingTab extends require$$0.PluginSettingTab {
     await this.plugin.loadSettings();
     const { containerEl } = this;
     this.containerEl.empty();
+    let dropdown;
     this.containerEl.createEl("h1", { text: t$1("Basic Options") });
     new require$$0.Setting(containerEl).setName(t$1("User name in Lethe")).setDesc(t$1("Set your user name here. 'MEMO \u{1F609}' By default")).addText(
       (text) => text.setPlaceholder(DEFAULT_SETTINGS.UserName).setValue(this.plugin.settings.UserName).onChange(async (value) => {
@@ -41420,7 +41460,6 @@ class MemosSettingTab extends require$$0.PluginSettingTab {
       });
     });
     this.containerEl.createEl("h1", { text: t$1("Advanced Options") });
-    let dropdown;
     new require$$0.Setting(containerEl).setName(t$1("Default prefix")).setDesc(t$1("Set the default prefix when create memo, 'List' by default.")).addDropdown(async (d) => {
       dropdown = d;
       dropdown.addOption("List", t$1("List"));

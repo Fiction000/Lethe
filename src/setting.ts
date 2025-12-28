@@ -131,6 +131,8 @@ export class MemosSettingTab extends PluginSettingTab {
     const { containerEl } = this;
     this.containerEl.empty();
 
+    let dropdown: DropdownComponent;
+
     this.containerEl.createEl('h1', { text: t('Basic Options') });
     // containerEl.createDiv("", (el) => {
     //   el.innerHTML = "Basic Options";
@@ -314,8 +316,6 @@ export class MemosSettingTab extends PluginSettingTab {
     //         this.applySettingsUpdate();
     //       }),
     //   );
-
-    let dropdown: DropdownComponent;
 
     // new Setting(containerEl)
     //   .setName(t('UI language for date'))
