@@ -1,7 +1,7 @@
 import React, { useCallback, useContext, useEffect, useState } from 'react';
 import appContext from '../stores/appContext';
 import useLoading from '../hooks/useLoading';
-import { globalStateService, locationService, memoService, queryService } from '../services';
+import { globalStateService, locationService, memoService } from '../services';
 import { IMAGE_URL_REG, LINK_REG, MEMO_LINK_REG, NOP_FIRST_TAG_REG, TAG_REG } from '../helpers/consts';
 import utils from '../helpers/utils';
 import { checkShouldShowMemoWithFilters } from '../helpers/filter';
@@ -23,23 +23,15 @@ const MemoTrash: React.FC<Props> = () => {
   const loadingState = useLoading();
   const [deletedMemos, setDeletedMemos] = useState<Model.Memo[]>([]);
 
-  const { tag: tagQuery, duration, type: memoType, text: textQuery, filter: queryId } = query;
-  const queryFilter = queryService.getQueryById(queryId);
+  const { tag: tagQuery, duration, type: memoType, text: textQuery } = query;
   const showMemoFilter = Boolean(
-    tagQuery || (duration && duration.from < duration.to) || memoType || textQuery || queryFilter,
+    tagQuery || (duration && duration.from < duration.to) || memoType || textQuery,
   );
 
   const shownMemos =
-    showMemoFilter || queryFilter
+    showMemoFilter
       ? deletedMemos.filter((memo) => {
           let shouldShow = true;
-
-          if (queryFilter) {
-            const filters = JSON.parse(queryFilter.querystring) as Filter[];
-            if (Array.isArray(filters)) {
-              shouldShow = checkShouldShowMemoWithFilters(memo, filters);
-            }
-          }
 
           if (tagQuery) {
             const tagsSet = new Set<string>();
