@@ -143,8 +143,8 @@ namespace api {
   // }
 
   //eslint-disable-next-line
-  export function hideMemo(memoId: string) {
-    return obHideMemo(memoId);
+  export function hideMemo(memo: Model.Memo) {
+    return obHideMemo(memo);
     // return request({
     //   method: "PATCH",
     //   url: `/api/memo/${memoId}`,
