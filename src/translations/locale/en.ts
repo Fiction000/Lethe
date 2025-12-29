@@ -256,4 +256,36 @@ export default {
   'Pre-create daily notes': 'Pre-create daily notes',
   "Automatically create today and tomorrow's daily notes in the background for faster memo saves.":
     "Automatically create today and tomorrow's daily notes in the background for faster memo saves.",
+  // Phase 3 (v1.3) Settings - New simplified translation keys
+  'Storage & Content': 'Storage & Content',
+  'Configure where and how your memos are stored': 'Configure where and how your memos are stored',
+  'User Interface': 'User Interface',
+  'Configure how Lethe looks and behaves': 'Configure how Lethe looks and behaves',
+  'Performance': 'Performance',
+  'Optional optimizations for faster memo capture': 'Optional optimizations for faster memo capture',
+  'Memo storage mode': 'Memo storage mode',
+  'Choose where to store memos: in daily notes (one file per day) or as individual files (one file per memo).':
+    'Choose where to store memos: in daily notes (one file per day) or as individual files (one file per memo).',
+  'Heading in daily notes where memos will be inserted (e.g., "# Journal"). Only used in daily notes mode.':
+    'Heading in daily notes where memos will be inserted (e.g., "# Journal"). Only used in daily notes mode.',
+  'Individual memo folder': 'Individual memo folder',
+  'Folder path for individual memo files. Only used in individual files mode.':
+    'Folder path for individual memo files. Only used in individual files mode.',
+  'Default memo type': 'Default memo type',
+  'Choose whether new memos are list items or tasks (with checkbox).':
+    'Choose whether new memos are list items or tasks (with checkbox).',
+  'Memo format template': 'Memo format template',
+  'Template for how memos are formatted. Use {TIME} for timestamp and {CONTENT} for memo text. Example: "{TIME} {CONTENT}"':
+    'Template for how memos are formatted. Use {TIME} for timestamp and {CONTENT} for memo text. Example: "{TIME} {CONTENT}"',
+  'User name': 'User name',
+  'Your display name in memos. Default: "MEMO 😉"': 'Your display name in memos. Default: "MEMO 😉"',
+  'Show in sidebar': 'Show in sidebar',
+  'Open Lethe in the sidebar instead of as a tab.': 'Open Lethe in the sidebar instead of as a tab.',
+  'Sidebar location': 'Sidebar location',
+  'Which sidebar to use when "Show in sidebar" is enabled.': 'Which sidebar to use when "Show in sidebar" is enabled.',
+  'Focus on editor when opening': 'Focus on editor when opening',
+  'Automatically focus the editor when Lethe opens for quick memo capture.':
+    'Automatically focus the editor when Lethe opens for quick memo capture.',
+  "Automatically create today and tomorrow's daily notes in the background. Eliminates 200-500ms delay on first memo save of the day. Only affects daily notes mode.":
+    "Automatically create today and tomorrow's daily notes in the background. Eliminates 200-500ms delay on first memo save of the day. Only affects daily notes mode.",
 };
