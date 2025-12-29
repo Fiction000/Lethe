@@ -19,17 +19,7 @@ import '../less/memo.less';
 import { moment, Notice, Platform } from 'obsidian';
 import { showMemoInDailyNotes } from '../obComponents/obShowMemo';
 import More from '../icons/more.svg?react';
-import Comment from '../icons/comment.svg?react';
-import TaskBlank from '../icons/task-blank.svg?react';
-import Task from '../icons/task.svg?react';
-import {
-  CommentOnMemos,
-  CommentsInOriginalNotes,
-  DefaultEditorLocation,
-  ShowCommentOnMemos,
-  ShowTaskLabel,
-  UseButtonToShowEditor,
-} from '../memos';
+// Removed comment system and task label settings (Phase 3)
 import { t } from '../translations/helper';
 import Editor, { EditorRefActions } from './Editor/Editor';
 import MemoImage from './MemoImage';

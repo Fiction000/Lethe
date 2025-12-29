@@ -10,12 +10,11 @@ import Tag from '../icons/tag.svg?react';
 import ImageSvg from '../icons/image.svg?react';
 import JournalSvg from '../icons/journal.svg?react';
 import TaskSvg from '../icons/checkbox-active.svg?react';
-import showEditorSvg from '../icons/show-editor.svg';
 import { usePopper } from 'react-popper';
 import useState from 'react-usestateref';
 import DatePicker from './common/DatePicker';
 import { moment, Notice, Platform } from 'obsidian';
-import { DefaultEditorLocation, DefaultPrefix, FocusOnEditor, InsertDateFormat, UseButtonToShowEditor } from '../memos';
+import { DefaultPrefix, FocusOnEditor } from '../memos';
 import useToggle from '../hooks/useToggle';
 import { MEMOS_VIEW_TYPE } from '../constants';
 import { t } from '../translations/helper';
@@ -109,158 +108,8 @@ const MemoEditor: React.FC<Props> = () => {
       return;
     }
 
-    const leaves = app.workspace.getLeavesOfType(MEMOS_VIEW_TYPE);
-    let memosWidth;
-    // let leafView;
-
-    if (leaves.length > 0) {
-      const leaf = leaves[0];
-      // leafView = leaf.view.containerEl;
-      memosWidth = leaf.width > 0 ? leaf.width : window.outerWidth;
-    } else {
-      // leafView = document;
-      memosWidth = window.outerWidth;
-    }
-
-    if ((Platform.isMobile === true || memosWidth < 875) && UseButtonToShowEditor) {
-      // if (isEditorGo === false) {
-      toggleEditor(true);
-      // }
-    }
-
     if (FocusOnEditor) {
       editorRef.current?.focus();
-    }
-  }, []);
-
-  useEffect(() => {
-    if (!editorRef.current) {
-      return;
-    }
-
-    if (
-      UseButtonToShowEditor === true &&
-      DefaultEditorLocation === 'Bottom' &&
-      Platform.isMobile === true &&
-      window.innerWidth < 875
-    ) {
-      const leaves = app.workspace.getLeavesOfType(MEMOS_VIEW_TYPE);
-      let memosHeight;
-      let leafView;
-      if (leaves.length > 0) {
-        const leaf = leaves[0];
-        leafView = leaf.view.containerEl;
-        memosHeight = leafView.offsetHeight;
-      } else {
-        leafView = document;
-        memosHeight = window.innerHeight;
-      }
-
-      const divThis = document.createElement('img');
-      const memoEditorDiv = leafView.querySelector(
-        "div[data-type='memos_view'] .view-content .memo-editor-wrapper",
-      ) as HTMLElement;
-      divThis.src = `${showEditorSvg}`;
-      if (isEditorShown) {
-        divThis.className = 'memo-show-editor-button hidden';
-      } else {
-        divThis.className = 'memo-show-editor-button';
-      }
-      const buttonTop = memosHeight - 200;
-      const buttonLeft = window.innerWidth / 2 - 25;
-      divThis.style.top = buttonTop + 'px';
-      divThis.style.left = buttonLeft + 'px';
-
-      divThis.onclick = function () {
-        const scaleElementAni = divThis.animate(
-          [
-            // keyframes
-            { transform: 'rotate(0deg) scale(1)' },
-            { transform: 'rotate(60deg) scale(1.5)' },
-          ],
-          {
-            // timing options
-            duration: 300,
-            iterations: Infinity,
-          },
-        );
-
-        setTimeout(() => {
-          divThis.className = 'memo-show-editor-button hidden';
-          if (isEditor) {
-            handleShowEditor(false);
-            editorRef.current?.focus();
-            scaleElementAni.reverse();
-            // return;
-          } else {
-            handleShowEditor();
-            editorRef.current?.focus();
-            scaleElementAni.reverse();
-          }
-
-          // rotateElementAni.pause();
-        }, 300);
-      };
-      leafView.querySelector('.content-wrapper').prepend(divThis);
-
-      const memolistScroll = leafView.querySelector('.memolist-wrapper') as HTMLElement;
-      memolistScroll.onscroll = function () {
-        if (isEditor && !isEditorGo) {
-          isEditorGo = true;
-          const scaleEditorElementAni = memoEditorDiv.animate(
-            [
-              // keyframes
-              { transform: 'scale(1)', opacity: 1 },
-              { transform: 'scale(0.4)', opacity: 0 },
-            ],
-            {
-              // timing options
-              duration: 300,
-              iterations: 1,
-            },
-          );
-          let scaleOneElementAni: Animation;
-          setTimeout(() => {
-            scaleOneElementAni = divThis.animate(
-              [
-                // keyframes
-                { transform: 'rotate(20deg) scale(1.5)' },
-                { transform: 'rotate(0deg) scale(1)' },
-              ],
-              {
-                // timing options
-                duration: 100,
-                iterations: 1,
-              },
-            );
-          }, 300);
-          setTimeout(() => {
-            handleShowEditor(true);
-            divThis.className = 'memo-show-editor-button';
-          }, 300);
-          setTimeout(() => {
-            scaleOneElementAni.cancel();
-            scaleEditorElementAni.reverse();
-          }, 700);
-        }
-      };
-    } else if (
-      UseButtonToShowEditor === false &&
-      DefaultEditorLocation === 'Bottom' &&
-      Platform.isMobile === true &&
-      window.innerWidth < 875
-    ) {
-      handleShowEditor(false);
-      if (FocusOnEditor) {
-        editorRef.current?.focus();
-      }
-    } else {
-      if (!isEditor) {
-        handleShowEditor(false);
-      }
-      if (FocusOnEditor) {
-        editorRef.current?.focus();
-      }
     }
   }, []);
 
@@ -281,7 +130,7 @@ const MemoEditor: React.FC<Props> = () => {
           },
         ],
       });
-    } else if (Platform.isMobile && DefaultEditorLocation !== 'Bottom') {
+    } else if (Platform.isMobile) {
       const seletorPopupWidth = 280;
       if (window.innerWidth - positionX > seletorPopupWidth * 1.2) {
         popperTemp = usePopper(popperRef.current, popperElement, {
@@ -329,66 +178,6 @@ const MemoEditor: React.FC<Props> = () => {
               name: 'flip',
               options: {
                 allowedAutoPlacements: ['bottom'],
-                rootBoundary: 'document', // by default, all the placements are allowed
-              },
-            },
-            {
-              name: 'preventOverflow',
-              options: {
-                rootBoundary: 'document',
-              },
-            },
-          ],
-        });
-      }
-    } else if (Platform.isMobile && DefaultEditorLocation === 'Bottom') {
-      const seletorPopupWidth = 280;
-      if (window.innerWidth - positionX > seletorPopupWidth * 1.2) {
-        popperTemp = usePopper(popperRef.current, popperElement, {
-          placement: 'top-end',
-          modifiers: [
-            {
-              name: 'flip',
-              options: {
-                allowedAutoPlacements: ['top-start'],
-                rootBoundary: 'document', // by default, all the placements are allowed
-              },
-            },
-            {
-              name: 'preventOverflow',
-              options: {
-                rootBoundary: 'document',
-              },
-            },
-          ],
-        });
-      } else if (window.innerWidth - positionX < seletorPopupWidth && positionX > seletorPopupWidth) {
-        popperTemp = usePopper(popperRef.current, popperElement, {
-          placement: 'top-start',
-          modifiers: [
-            {
-              name: 'flip',
-              options: {
-                allowedAutoPlacements: ['top-end'],
-                rootBoundary: 'document', // by default, all the placements are allowed
-              },
-            },
-            {
-              name: 'preventOverflow',
-              options: {
-                rootBoundary: 'document',
-              },
-            },
-          ],
-        });
-      } else {
-        popperTemp = usePopper(popperRef.current, popperElement, {
-          placement: 'top',
-          modifiers: [
-            {
-              name: 'flip',
-              options: {
-                allowedAutoPlacements: ['top'],
                 rootBoundary: 'document', // by default, all the placements are allowed
               },
             },
@@ -603,30 +392,16 @@ const MemoEditor: React.FC<Props> = () => {
       handleContentChange(editorRef.current.element.value);
       return;
     } else {
-      switch (InsertDateFormat) {
-        case 'Dataview':
-          editorRef.current.element.value =
-            //eslint-disable-next-line
-            currentValue.slice(0, editorRef.current.element.selectionStart - 1) +
-            '[due::' +
-            todayMoment.format('YYYY-MM-DD') +
-            ']' +
-            nextString;
-          editorRef.current.element.setSelectionRange(selectionStart + 17, selectionStart + 17);
-          editorRef.current.focus();
-          handleContentChange(editorRef.current.element.value);
-          break;
-        case 'Tasks':
-          editorRef.current.element.value =
-            //eslint-disable-next-line
-            currentValue.slice(0, editorRef.current.element.selectionStart - 1) +
-            '📆' +
-            todayMoment.format('YYYY-MM-DD') +
-            nextString;
-          editorRef.current.element.setSelectionRange(selectionStart + 11, selectionStart + 11);
-          editorRef.current.focus();
-          handleContentChange(editorRef.current.element.value);
-      }
+      // Hardcoded to 'Tasks' format (📆 emoji)
+      editorRef.current.element.value =
+        //eslint-disable-next-line
+        currentValue.slice(0, editorRef.current.element.selectionStart - 1) +
+        '📆' +
+        todayMoment.format('YYYY-MM-DD') +
+        nextString;
+      editorRef.current.element.setSelectionRange(selectionStart + 11, selectionStart + 11);
+      editorRef.current.focus();
+      handleContentChange(editorRef.current.element.value);
     }
   };
 
@@ -715,12 +490,11 @@ const MemoEditor: React.FC<Props> = () => {
       } else {
         left = editorRef.current.element.clientWidth / 2;
       }
-      if (DefaultEditorLocation === 'Bottom' && window.innerWidth > 875) {
-        top = y + 4;
-      } else if (DefaultEditorLocation === 'Bottom' && window.innerWidth <= 875) {
-        top = y + 19;
-      } else if (DefaultEditorLocation === 'Top' && window.innerWidth <= 875) {
+      // Editor location is hardcoded to 'Top'
+      if (window.innerWidth <= 875) {
         top = y + 36;
+      } else {
+        top = y + 34;
       }
     }
 

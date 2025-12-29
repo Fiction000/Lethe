@@ -28444,7 +28444,7 @@ function createStore(preloadedState, reducer2) {
     subscribe
   };
 }
-function reducer$5(state, action) {
+function reducer$4(state, action) {
   switch (action.type) {
     case "SET_MARK_MEMO_ID": {
       if (action.payload.markMemoId === state.markMemoId) {
@@ -28511,7 +28511,7 @@ function reducer$5(state, action) {
     }
   }
 }
-const defaultState$5 = {
+const defaultState$4 = {
   markMemoId: "",
   editMemoId: "",
   commentMemoId: "",
@@ -28523,7 +28523,7 @@ const defaultState$5 = {
   showSiderbarInMobileView: false,
   changedByMemos: false
 };
-function reducer$4(state, action) {
+function reducer$3(state, action) {
   switch (action.type) {
     case "SET_LOCATION": {
       return action.payload;
@@ -28622,7 +28622,7 @@ function reducer$4(state, action) {
     }
   }
 }
-const defaultState$4 = {
+const defaultState$3 = {
   pathname: "/",
   hash: "",
   query: {
@@ -30503,7 +30503,7 @@ function getDailyNotePath() {
   return dailyNotePath;
 }
 const utils$1 = utils;
-function reducer$3(state, action) {
+function reducer$2(state, action) {
   switch (action.type) {
     case "SET_MEMOS": {
       const memos = utils$1.dedupeObjectWithId(
@@ -30599,13 +30599,13 @@ function reducer$3(state, action) {
     }
   }
 }
-const defaultState$3 = {
+const defaultState$2 = {
   memos: [],
   commentMemos: [],
   tags: [],
   tagsNum: {}
 };
-function reducer$2(state, action) {
+function reducer$1(state, action) {
   switch (action.type) {
     case "SIGN_IN": {
       return {
@@ -30622,62 +30622,7 @@ function reducer$2(state, action) {
     }
   }
 }
-const defaultState$2 = { user: null };
-function reducer$1(state, action) {
-  switch (action.type) {
-    case "SET_QUERIES": {
-      const queries = utils$1.dedupeObjectWithId(
-        action.payload.queries.sort((a, b) => utils$1.getTimeStampByDate(b.createdAt) - utils$1.getTimeStampByDate(a.createdAt)).sort((a, b) => {
-          var _a, _b;
-          return utils$1.getTimeStampByDate((_a = b.pinnedAt) != null ? _a : 0) - utils$1.getTimeStampByDate((_b = a.pinnedAt) != null ? _b : 0);
-        })
-      );
-      return {
-        ...state,
-        queries
-      };
-    }
-    case "INSERT_QUERY": {
-      const queries = utils$1.dedupeObjectWithId(
-        [action.payload.query, ...state.queries].sort(
-          (a, b) => utils$1.getTimeStampByDate(b.createdAt) - utils$1.getTimeStampByDate(a.createdAt)
-        )
-      );
-      return {
-        ...state,
-        queries
-      };
-    }
-    case "DELETE_QUERY_BY_ID": {
-      return {
-        ...state,
-        queries: [...state.queries].filter((query) => query.id !== action.payload.id)
-      };
-    }
-    case "UPDATE_QUERY": {
-      const queries = state.queries.map((m) => {
-        if (m.id === action.payload.id) {
-          return {
-            ...m,
-            ...action.payload
-          };
-        } else {
-          return m;
-        }
-      });
-      return {
-        ...state,
-        queries
-      };
-    }
-    default: {
-      return state;
-    }
-  }
-}
-const defaultState$1 = {
-  queries: []
-};
+const defaultState$1 = { user: null };
 function reducer(state, action) {
   switch (action.type) {
     case "SET_DAILYNOTES": {
@@ -30704,19 +30649,17 @@ const defaultState = {
 };
 const appStore = createStore(
   {
-    globalState: defaultState$5,
-    locationState: defaultState$4,
-    memoState: defaultState$3,
-    userState: defaultState$2,
-    queryState: defaultState$1,
+    globalState: defaultState$4,
+    locationState: defaultState$3,
+    memoState: defaultState$2,
+    userState: defaultState$1,
     dailyNotesState: defaultState
   },
   combineReducers({
-    globalState: reducer$5,
-    locationState: reducer$4,
-    memoState: reducer$3,
-    userState: reducer$2,
-    queryState: reducer$1,
+    globalState: reducer$4,
+    locationState: reducer$3,
+    memoState: reducer$2,
+    userState: reducer$1,
     dailyNotesState: reducer
   })
 );
@@ -31052,7 +30995,7 @@ class LocationService {
 const locationService = new LocationService();
 const findQuery = async () => {
   const { metadataCache, vault } = appStore.getState().dailyNotesState.app;
-  const queryList2 = [];
+  const queryList = [];
   const filePath = getDailyNotePath();
   const absolutePath = filePath + "/" + QueryFileName + ".md";
   const queryFile = metadataCache.getFirstLinkpathDest("", absolutePath);
@@ -31072,7 +31015,7 @@ const findQuery = async () => {
         let pinnedDate;
         if (/^(.+)pinnedAt(.+)$/.test(fileLines[i])) {
           pinnedDate = require$$0.moment(getPinnedDateFromLine$1(fileLines[i]), "YYYYMMDDHHmmss");
-          queryList2.push({
+          queryList.push({
             createdAt: createdDate,
             id: id2,
             pinnedAt: pinnedDate.format("YYYY/MM/DD HH:mm:ss"),
@@ -31082,7 +31025,7 @@ const findQuery = async () => {
             userId: ""
           });
         } else if (/^(.+)\[\](.+)?$/.test(fileLines[i])) {
-          queryList2.push({
+          queryList.push({
             createdAt: createdDate,
             id: id2,
             pinnedAt: "",
@@ -31092,7 +31035,7 @@ const findQuery = async () => {
             userId: ""
           });
         } else {
-          queryList2.push({
+          queryList.push({
             createdAt: createdDate,
             id: id2,
             pinnedAt: "",
@@ -31105,7 +31048,7 @@ const findQuery = async () => {
       }
     }
   }
-  return queryList2;
+  return queryList;
 };
 const getAllLinesFromFile$9 = (cache) => cache.split(/\r?\n/);
 const getCreatedDateFromLine = (line) => {
@@ -32114,8 +32057,14 @@ const createdeleteFile = async (path) => {
     const createdFile = await vault.create(path, "");
     return createdFile;
   } catch (err) {
+    const existingFile = vault.getAbstractFileByPath(path);
+    if (existingFile instanceof require$$0.TFile) {
+      console.log(`Delete file already exists: '${path}', using existing file`);
+      return existingFile;
+    }
     console.error(`Failed to create file: '${path}'`, err);
     new require$$0.Notice("Unable to create new file.");
+    throw err;
   }
 };
 const getAllLinesFromFile$4 = (cache) => cache.split(/\r?\n/);
@@ -32131,24 +32080,60 @@ const extractDeleteDatefromText = (line) => {
   var _a;
   return (_a = /^- (\d+)\s(.+)\s(deletedAt: )(.+)$/.exec(line)) == null ? void 0 : _a[4];
 };
-async function obHideMemo(memoid) {
-  const { dailyNotes } = dailyNotesService.getState();
-  if (/\d{14,}/.test(memoid)) {
-    const { vault } = appStore.getState().dailyNotesState.app;
-    const timeString = memoid.slice(0, 13);
-    const idString = parseInt(memoid.slice(14));
-    const changeDate = require$$0.moment(timeString, "YYYYMMDDHHmmSS");
-    const dailyNote = getDailyNote_1(changeDate, dailyNotes);
-    const fileContent = await vault.read(dailyNote);
-    const fileLines = getAllLinesFromFile$3(fileContent);
-    const content = extractContentfromText(fileLines[idString]);
-    const originalLine = "- " + memoid + " " + content;
-    const newLine = fileLines[idString];
-    const newFileContent = fileContent.replace(newLine, "");
-    await vault.modify(dailyNote, newFileContent);
-    const deleteDate = await sendMemoToDelete(originalLine);
-    return deleteDate;
+async function obHideMemo(memo2) {
+  if (memo2.path) {
+    return await deleteIndividualFileMemo(memo2);
+  } else {
+    return await deleteDailyNoteMemo(memo2);
   }
+}
+async function deleteIndividualFileMemo(memo2) {
+  const { vault } = appStore.getState().dailyNotesState.app;
+  const file = vault.getAbstractFileByPath(memo2.path);
+  if (!(file instanceof require$$0.TFile)) {
+    throw new Error(`File not found: ${memo2.path}`);
+  }
+  const originalLine = `- ${memo2.id} ${memo2.content}`;
+  await vault.delete(file);
+  const deleteDate = await sendMemoToDelete(originalLine);
+  return deleteDate;
+}
+async function deleteDailyNoteMemo(memo2) {
+  const memoid = memo2.id;
+  const { dailyNotes } = dailyNotesService.getState();
+  if (!/\d{14,}/.test(memoid)) {
+    throw new Error("Invalid memo ID format");
+  }
+  const { vault } = appStore.getState().dailyNotesState.app;
+  const timeString = memoid.slice(0, 13);
+  const idString = parseInt(memoid.slice(14));
+  const changeDate = require$$0.moment(timeString, "YYYYMMDDHHmmSS");
+  const dailyNote = getDailyNote_1(changeDate, dailyNotes);
+  if (!dailyNote) {
+    throw new Error(`Daily note not found for date: ${changeDate.format("YYYY-MM-DD")}`);
+  }
+  const fileContent = await vault.read(dailyNote);
+  const fileLines = getAllLinesFromFile$3(fileContent);
+  const content = extractContentfromText(fileLines[idString]);
+  const originalLine = "- " + memoid + " " + content;
+  const lineToRemove = fileLines[idString];
+  const lineWithNewline = new RegExp(
+    lineToRemove.replace(/[.*+?^${}()|[\]\\]/g, "\\$&") + "\\r?\\n?",
+    ""
+  );
+  let newFileContent = fileContent.replace(lineWithNewline, "");
+  if (newFileContent === fileContent) {
+    newFileContent = fileContent.replace(lineToRemove + "\n", "");
+    if (newFileContent === fileContent) {
+      newFileContent = fileContent.replace(lineToRemove + "\r\n", "");
+    }
+    if (newFileContent === fileContent) {
+      newFileContent = fileContent.replace(lineToRemove, "");
+    }
+  }
+  await vault.modify(dailyNote, newFileContent);
+  const deleteDate = await sendMemoToDelete(originalLine);
+  return deleteDate;
 }
 const getAllLinesFromFile$3 = (cache) => cache.split(/\r?\n/);
 const extractContentfromText = (line) => {
@@ -32262,8 +32247,8 @@ var api;
     return getDeletedMemos();
   }
   api2.getMyDeletedMemos = getMyDeletedMemos;
-  function hideMemo(memoId) {
-    return obHideMemo(memoId);
+  function hideMemo(memo2) {
+    return obHideMemo(memo2);
   }
   api2.hideMemo = hideMemo;
   function restoreMemo(memoId) {
@@ -32511,7 +32496,11 @@ class MemoService {
     return null;
   }
   async hideMemoById(id2) {
-    await api$1.hideMemo(id2);
+    const memo2 = this.getMemoById(id2);
+    if (!memo2) {
+      throw new Error("Memo not found");
+    }
+    await api$1.hideMemo(memo2);
     appStore.dispatch({
       type: "DELETE_MEMO_BY_ID",
       payload: {
@@ -32607,68 +32596,6 @@ class MemoService {
   }
 }
 const memoService = new MemoService();
-class QueryService {
-  getState() {
-    return appStore.getState().queryState;
-  }
-  async getMyAllQueries() {
-    const data = await api$1.getMyQueries();
-    appStore.dispatch({
-      type: "SET_QUERIES",
-      payload: {
-        queries: data
-      }
-    });
-    return data;
-  }
-  getQueryById(id2) {
-    for (const q of this.getState().queries) {
-      if (q.id === id2) {
-        return q;
-      }
-    }
-  }
-  pushQuery(query) {
-    appStore.dispatch({
-      type: "INSERT_QUERY",
-      payload: {
-        query: {
-          ...query
-        }
-      }
-    });
-  }
-  editQuery(query) {
-    appStore.dispatch({
-      type: "UPDATE_QUERY",
-      payload: query
-    });
-  }
-  async deleteQuery(queryId) {
-    await api$1.deleteQueryById(queryId);
-    appStore.dispatch({
-      type: "DELETE_QUERY_BY_ID",
-      payload: {
-        id: queryId
-      }
-    });
-  }
-  async createQuery(title, querystring) {
-    const data = await api$1.createQuery(title, querystring);
-    return data;
-  }
-  async updateQuery(queryId, title, querystring) {
-    const data = await api$1.updateQuery(queryId, title, querystring);
-    return data;
-  }
-  async pinQuery(queryId) {
-    await api$1.pinQuery(queryId);
-  }
-  async unpinQuery(queryId) {
-    await api$1.unpinQuery(queryId);
-  }
-}
-const queryService = new QueryService();
 class ResourceService {
   async upload(file) {
     const { vault, fileManager } = appStore.getState().dailyNotesState.app;
@@ -32940,189 +32867,86 @@ const MenuBtnsPopup = (props) => {
     })]
   });
 };
-const cachedResourceMap = /* @__PURE__ */ new Map();
-const convertResourceToDataURL = async (url, useCache = true) => {
-  const { vault } = dailyNotesService.getState().app;
-  if (useCache && cachedResourceMap.has(url)) {
-    return Promise.resolve(cachedResourceMap.get(url));
+const userBanner = "";
+const SvgMore = (props) => /* @__PURE__ */ react.exports.createElement("svg", { xmlns: "http://www.w3.org/2000/svg", width: 24, height: 24, fill: "#37352f", viewBox: "0 0 24 24", ...props }, /* @__PURE__ */ react.exports.createElement("path", { fill: "none", d: "M0 0h24v24H0V0z" }), /* @__PURE__ */ react.exports.createElement("path", { d: "M6 10c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm12 0c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm-6 0c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z" }));
+const UserBanner = () => {
+  const {
+    memoState: {
+      memos,
+      tags
+    },
+    userState: {
+      user
+    }
+  } = react.exports.useContext(appContext);
+  const username = user ? user.username : UserName;
+  let memosLength;
+  let createdDays;
+  if (memos.length) {
+    memosLength = memos.length - 1;
+    createdDays = memos ? Math.ceil((Date.now() - utils$1.getTimeStampByDate(memos[memosLength].createdAt)) / 1e3 / 3600 / 24) + 1 : 0;
   }
-  if (!/(http|https)/g.test(url)) {
-    if (await vault.adapter.exists(url)) {
-      const buffer = await vault.adapter.readBinary(url);
-      const arr = new Uint8Array(buffer);
-      const blob = new Blob([arr], { type: "image/png" });
-      return new Promise((resolve) => {
-        const reader = new FileReader();
-        reader.onloadend = () => {
-          const base64Url = reader.result;
-          cachedResourceMap.set(url, base64Url);
-          resolve(base64Url);
-        };
-        reader.readAsDataURL(blob);
-      });
-    }
-  } else {
-    try {
-      const buffer = (await downloadFile(url)).buffer;
-      const blob = new Blob([buffer], { type: "image/png" });
-      return new Promise((resolve) => {
-        const reader = new FileReader();
-        reader.onloadend = () => {
-          const base64Url = reader.result;
-          cachedResourceMap.set(url, base64Url);
-          resolve(base64Url);
-        };
-        reader.readAsDataURL(blob);
-      });
-    } catch (error) {
-      console.log("error in grabReleaseFileFromRepository", URL, error);
-    }
-  }
-};
-const downloadFile = async (url) => {
-  const response = await fetch(url, {
-    mode: "no-cors"
-  });
-  if (response.status !== 200) {
-    return {
-      ok: false,
-      msg: response.statusText
-    };
-  }
-  const buffer = await response.arrayBuffer();
-  try {
-    return {
-      ok: true,
-      msg: "ok",
-      buffer
-    };
-  } catch (err) {
-    return {
-      ok: false,
-      msg: err
-    };
-  }
-};
-const getCloneStyledElement = async (element) => {
-  const clonedElementContainer = document.createElement(element.tagName);
-  clonedElementContainer.innerHTML = element.innerHTML;
-  const applyStyles2 = async (sourceElement, clonedElement) => {
-    var _a;
-    if (!sourceElement || !clonedElement) {
-      return;
-    }
-    const sourceStyles = window.getComputedStyle(sourceElement);
-    if (sourceElement.tagName === "IMG") {
-      try {
-        const url = await convertResourceToDataURL(
-          (_a = sourceElement.getAttribute("path")) != null ? _a : sourceElement.getAttribute("src")
-        );
-        clonedElement.src = url;
-      } catch (error) {
-      }
-    } else if (sourceElement.className === "property-image") {
-      try {
-        const imageUrl = sourceElement.style.backgroundImage;
-        const url = await convertResourceToDataURL(imageUrl);
-        clonedElement.style.backgroundImage = url;
-      } catch (error) {
-      }
-    }
-    for (const item of sourceStyles) {
-      clonedElement.style.setProperty(
-        item,
-        sourceStyles.getPropertyValue(item),
-        sourceStyles.getPropertyPriority(item)
-      );
-    }
-    for (let i = 0; i < clonedElement.childElementCount; i++) {
-      await applyStyles2(sourceElement.children[i], clonedElement.children[i]);
-    }
+  const [shouldShowPopupBtns, setShouldShowPopupBtns] = react.exports.useState(false);
+  const handleUsernameClick = react.exports.useCallback(() => {
+    locationService.pushHistory("/");
+    locationService.clearQuery();
+  }, []);
+  const handlePopupBtnClick = () => {
+    const sidebarEl = document.querySelector(".memos-sidebar-wrapper");
+    const popupEl = document.querySelector(".menu-btns-popup");
+    popupEl.style.top = 70 - sidebarEl.scrollTop + "px";
+    setShouldShowPopupBtns(true);
   };
-  await applyStyles2(element, clonedElementContainer);
-  return clonedElementContainer;
-};
-const getFontsStyleElement = async (element) => {
-  const styleSheets = element.ownerDocument.styleSheets;
-  const fontFamilyStyles = [];
-  for (const sheet of styleSheets) {
-    for (const rule of sheet.cssRules) {
-      if (rule.constructor.name === "CSSFontFaceRule") {
-        fontFamilyStyles.push(rule.style);
-      }
-    }
-  }
-  const styleElement = document.createElement("style");
-  return styleElement;
-};
-const getElementSize = (element) => {
-  const { width, height } = window.getComputedStyle(element);
-  return {
-    width: parseInt(width.replace("px", "")),
-    height: parseInt(height.replace("px", ""))
-  };
-};
-const convertSVGToDataURL = (svg) => {
-  const xml = new XMLSerializer().serializeToString(svg);
-  const url = encodeURIComponent(xml);
-  return `data:image/svg+xml;charset=utf-8,${url}`;
-};
-const generateSVGElement = (width, height, element) => {
-  const xmlNS = "http://www.w3.org/2000/svg";
-  const svgElement = document.createElementNS(xmlNS, "svg");
-  svgElement.setAttribute("width", `${width}`);
-  svgElement.setAttribute("height", `${height}`);
-  svgElement.setAttribute("viewBox", `0 0 ${width} ${height}`);
-  const foreignObject = document.createElementNS(xmlNS, "foreignObject");
-  foreignObject.setAttribute("width", "100%");
-  foreignObject.setAttribute("height", "100%");
-  foreignObject.setAttribute("x", "0");
-  foreignObject.setAttribute("y", "0");
-  foreignObject.setAttribute("externalResourcesRequired", "true");
-  foreignObject.appendChild(element);
-  svgElement.appendChild(foreignObject);
-  return svgElement;
-};
-const toSVG = async (element, options) => {
-  const { width, height } = getElementSize(element);
-  const clonedElement = await getCloneStyledElement(element);
-  if (options == null ? void 0 : options.backgroundColor) {
-    clonedElement.style.backgroundColor = options.backgroundColor;
-  }
-  const svg = generateSVGElement(width, height, clonedElement);
-  svg.prepend(await getFontsStyleElement(element));
-  const url = convertSVGToDataURL(svg);
-  return url;
-};
-const toCanvas = async (element, options) => {
-  const url = await toSVG(element, options);
-  const imageEl = new Image();
-  imageEl.src = url;
-  const ratio = (options == null ? void 0 : options.pixelRatio) || 1;
-  const { width, height } = getElementSize(element);
-  const canvas = document.createElement("canvas");
-  const context = canvas.getContext("2d");
-  if (!context) {
-    return Promise.reject("Canvas error");
-  }
-  canvas.width = width * ratio;
-  canvas.height = height * ratio;
-  canvas.style.width = `${width}`;
-  canvas.style.height = `${height}`;
-  if ((options == null ? void 0 : options.backgroundColor) || document.body.className.contains("theme-dark")) {
-    context.fillStyle = options.backgroundColor || "#1f1f1f";
-    context.fillRect(0, 0, canvas.width, canvas.height);
-  }
-  return new Promise((resolve) => {
-    imageEl.onload = () => {
-      context.drawImage(imageEl, 0, 0, canvas.width, canvas.height);
-      resolve(canvas);
-    };
+  return /* @__PURE__ */ jsxs("div", {
+    className: "user-banner-container",
+    children: [/* @__PURE__ */ jsxs("div", {
+      className: "userinfo-header-container",
+      children: [/* @__PURE__ */ jsx("p", {
+        className: "username-text",
+        onClick: handleUsernameClick,
+        children: username
+      }), /* @__PURE__ */ jsx("span", {
+        className: "action-btn menu-popup-btn",
+        onClick: handlePopupBtnClick,
+        children: /* @__PURE__ */ jsx(SvgMore, {
+          className: "icon-img"
+        })
+      }), /* @__PURE__ */ jsx(MenuBtnsPopup, {
+        shownStatus: shouldShowPopupBtns,
+        setShownStatus: setShouldShowPopupBtns
+      })]
+    }), /* @__PURE__ */ jsxs("div", {
+      className: "status-text-container",
+      children: [/* @__PURE__ */ jsxs("div", {
+        className: "status-text memos-text",
+        children: [/* @__PURE__ */ jsx("span", {
+          className: "amount-text",
+          children: memos.length
+        }), /* @__PURE__ */ jsx("span", {
+          className: "type-text",
+          children: "MEMO"
+        })]
+      }), /* @__PURE__ */ jsxs("div", {
+        className: "status-text tags-text",
+        children: [/* @__PURE__ */ jsx("span", {
+          className: "amount-text",
+          children: tags.length
+        }), /* @__PURE__ */ jsx("span", {
+          className: "type-text",
+          children: t$1("TAG")
+        })]
+      }), /* @__PURE__ */ jsxs("div", {
+        className: "status-text duration-text",
+        children: [/* @__PURE__ */ jsx("span", {
+          className: "amount-text",
+          children: createdDays != null ? createdDays : 0
+        }), /* @__PURE__ */ jsx("span", {
+          className: "type-text",
+          children: t$1("DAY")
+        })]
+      })]
+    })]
   });
-};
-const toImage = async (element, options) => {
-  const canvas = await toCanvas(element, options);
-  return canvas.toDataURL();
 };
 function useToggle(initialState = false) {
   const [state, setState] = react.exports.useState(initialState);
@@ -33135,6 +32959,209 @@ function useToggle(initialState = false) {
   }, []);
   return [state, toggle];
 }
+const OnlyWhen = (props) => {
+  const {
+    children,
+    when
+  } = props;
+  return when ? /* @__PURE__ */ jsx(Fragment, {
+    children
+  }) : null;
+};
+const Only = OnlyWhen;
+const tagList = "";
+const SvgArrowRight = (props) => /* @__PURE__ */ react.exports.createElement("svg", { xmlns: "http://www.w3.org/2000/svg", height: "24px", viewBox: "0 0 24 24", width: "24px", fill: "#37352f", ...props }, /* @__PURE__ */ react.exports.createElement("path", { d: "M0 0h24v24H0V0z", fill: "none" }), /* @__PURE__ */ react.exports.createElement("path", { d: "M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6-6-6z" }));
+const TagList = () => {
+  const {
+    locationState: {
+      query: {
+        tag: tagQuery
+      }
+    },
+    memoState: {
+      tags: tagsText,
+      tagsNum: tagsCount,
+      memos
+    }
+  } = react.exports.useContext(appContext);
+  const [tags, setTags] = react.exports.useState([]);
+  react.exports.useEffect(() => {
+    memoService.updateTagsState();
+  }, [memos]);
+  react.exports.useEffect(() => {
+    const sortedTags = Array.from(tagsText).sort();
+    const root = {
+      subTags: []
+    };
+    for (const tag of sortedTags) {
+      const subtags = tag.split("/");
+      let tempObj = root;
+      let tagText = "";
+      for (let i = 0; i < subtags.length; i++) {
+        const key = subtags[i];
+        if (i === 0) {
+          tagText += key;
+        } else {
+          tagText += "/" + key;
+        }
+        let obj = null;
+        for (const t2 of tempObj.subTags) {
+          if (t2.text === tagText) {
+            obj = t2;
+            break;
+          }
+        }
+        if (!obj) {
+          obj = {
+            key,
+            text: tagText,
+            count: tagsCount[tagText],
+            subTags: []
+          };
+          tempObj.subTags.push(obj);
+        }
+        tempObj = obj;
+      }
+    }
+    setTags(root.subTags);
+  }, [tagsText]);
+  return /* @__PURE__ */ jsxs("div", {
+    className: "tags-wrapper",
+    children: [/* @__PURE__ */ jsx("p", {
+      className: "title-text",
+      children: t$1("Frequently Used Tags")
+    }), /* @__PURE__ */ jsxs("div", {
+      className: "tags-container",
+      children: [tags.map((t2, idx) => /* @__PURE__ */ jsx(TagItemContainer, {
+        tag: t2,
+        tagQuery
+      }, t2.text + "-" + idx)), /* @__PURE__ */ jsx(Only, {
+        when: tags.length < 5 && memoService.initialized,
+        children: /* @__PURE__ */ jsxs("p", {
+          className: "tag-tip-container",
+          children: ["Input", /* @__PURE__ */ jsx("span", {
+            className: "code-text",
+            children: "#Tag "
+          }), "to create tag..."]
+        })
+      })]
+    })]
+  });
+};
+const TagItemContainer = (props) => {
+  const {
+    tag,
+    tagQuery
+  } = props;
+  const isActive = tagQuery === tag.text;
+  const hasSubTags = tag.subTags.length > 0;
+  const [showSubTags, toggleSubTags] = useToggle(false);
+  const handleTagClick = () => {
+    if (isActive) {
+      locationService.setTagQuery("");
+    } else {
+      utils$1.copyTextToClipboard(`#${tag.text} `);
+      if (!["/", "/recycle"].includes(locationService.getState().pathname)) {
+        locationService.setPathname("/");
+      }
+      locationService.setTagQuery(tag.text);
+    }
+  };
+  const handleToggleBtnClick = (event) => {
+    event.stopPropagation();
+    toggleSubTags();
+  };
+  return /* @__PURE__ */ jsxs(Fragment, {
+    children: [/* @__PURE__ */ jsxs("div", {
+      className: `tag-item-container ${isActive ? "active" : ""}`,
+      onClick: handleTagClick,
+      children: [/* @__PURE__ */ jsxs("div", {
+        className: "tag-text-container",
+        children: [/* @__PURE__ */ jsx("span", {
+          className: "icon-text",
+          children: "#"
+        }), /* @__PURE__ */ jsx("span", {
+          className: "tag-text",
+          children: tag.key
+        })]
+      }), /* @__PURE__ */ jsxs("div", {
+        className: "btns-container",
+        children: [/* @__PURE__ */ jsx("span", {
+          className: "tag-count",
+          children: tag.count
+        }), hasSubTags ? /* @__PURE__ */ jsx("span", {
+          className: `action-btn toggle-btn ${showSubTags ? "shown" : ""}`,
+          onClick: handleToggleBtnClick,
+          children: /* @__PURE__ */ jsx(SvgArrowRight, {
+            className: "icon-img"
+          })
+        }) : null]
+      })]
+    }), hasSubTags ? /* @__PURE__ */ jsx("div", {
+      className: `subtags-container ${showSubTags ? "" : "hidden"}`,
+      children: tag.subTags.map((st, idx) => /* @__PURE__ */ jsx(TagItemContainer, {
+        tag: st,
+        tagQuery
+      }, st.text + "-" + idx))
+    }) : null]
+  });
+};
+const siderbar = "";
+const Sidebar = () => {
+  const {
+    locationState,
+    globalState: {
+      isMobileView,
+      showSiderbarInMobileView
+    }
+  } = react.exports.useContext(appContext);
+  const wrapperElRef = react.exports.useRef(null);
+  const handleClickOutsideOfWrapper = react.exports.useMemo(() => {
+    return (event) => {
+      var _a, _b, _c;
+      const siderbarShown = globalStateService.getState().showSiderbarInMobileView;
+      if (!siderbarShown) {
+        window.removeEventListener("click", handleClickOutsideOfWrapper, {
+          capture: true
+        });
+        return;
+      }
+      if (!((_a = wrapperElRef.current) == null ? void 0 : _a.contains(event.target))) {
+        if ((_c = (_b = wrapperElRef.current) == null ? void 0 : _b.parentNode) == null ? void 0 : _c.contains(event.target)) {
+          if (siderbarShown) {
+            event.stopPropagation();
+          }
+          globalStateService.setShowSiderbarInMobileView(false);
+          window.removeEventListener("click", handleClickOutsideOfWrapper, {
+            capture: true
+          });
+        }
+      }
+    };
+  }, []);
+  react.exports.useEffect(() => {
+    globalStateService.setShowSiderbarInMobileView(false);
+  }, [locationState]);
+  react.exports.useEffect(() => {
+    if (showSiderbarInMobileView) {
+      document.body.classList.add(SHOW_SIDERBAR_MOBILE_CLASSNAME);
+    } else {
+      document.body.classList.remove(SHOW_SIDERBAR_MOBILE_CLASSNAME);
+    }
+  }, [showSiderbarInMobileView]);
+  react.exports.useEffect(() => {
+    if (isMobileView && showSiderbarInMobileView) {
+      window.addEventListener("click", handleClickOutsideOfWrapper, {
+        capture: true
+      });
+    }
+  }, [isMobileView, showSiderbarInMobileView]);
+  return /* @__PURE__ */ jsxs("aside", {
+    className: "memos-sidebar-wrapper",
+    ref: wrapperElRef,
+    children: [/* @__PURE__ */ jsx(UserBanner, {}), /* @__PURE__ */ jsx(TagList, {})]
+  });
+};
 function useLoading(initialState = true) {
   const [state, setState] = react.exports.useState({ isLoading: initialState, isFailed: false, isSucceed: false });
   return {
@@ -33165,962 +33192,39 @@ function useLoading(initialState = true) {
     }
   };
 }
-const previewImageDialog = "";
-const PreviewImageDialog = ({
-  destroy,
-  imgUrl,
-  filepath
-}) => {
-  const imgRef = react.exports.useRef(null);
-  const [imgWidth, setImgWidth] = react.exports.useState(-1);
+const home = "";
+function Home$1() {
   const {
-    vault
-  } = appStore.getState().dailyNotesState.app;
+    locationState: {
+      pathname
+    }
+  } = react.exports.useContext(appContext);
+  const loadingState = useLoading();
   react.exports.useEffect(() => {
-    utils$1.getImageSize(imgUrl).then(({
-      width
-    }) => {
-      if (width !== 0) {
-        setImgWidth(80);
-      } else {
-        setImgWidth(0);
-      }
-    });
+    loadingState.setFinish();
   }, []);
-  const handleCloseBtnClick = () => {
-    destroy();
-  };
-  const handleDecreaseImageSize = () => {
-    if (imgWidth > 30) {
-      setImgWidth(imgWidth - 10);
-    }
-  };
-  const handleIncreaseImageSize = () => {
-    setImgWidth(imgWidth + 10);
-  };
-  const convertBase64ToBlob = (base64, type) => {
-    var bytes = window.atob(base64);
-    var ab = new ArrayBuffer(bytes.length);
-    var ia = new Uint8Array(ab);
-    for (var i = 0; i < bytes.length; i++) {
-      ia[i] = bytes.charCodeAt(i);
-    }
-    return new Blob([ab], {
-      type
-    });
-  };
-  const copyImageToClipboard = async () => {
-    if ((filepath === null || filepath === void 0) && imgUrl !== null) {
-      const myBase64 = imgUrl.split("base64,")[1];
-      const blobInput = convertBase64ToBlob(myBase64, "image/png");
-      const clipboardItemInput = new ClipboardItem({
-        "image/png": blobInput
-      });
-      window.navigator["clipboard"].write([clipboardItemInput]);
-      new require$$0.Notice("Send to clipboard successfully");
-    } else {
-      const buffer = await vault.adapter.readBinary(filepath);
-      const arr = new Uint8Array(buffer);
-      const blob = new Blob([arr], {
-        type: "image/png"
-      });
-      const item = new ClipboardItem({
-        "image/png": blob
-      });
-      window.navigator["clipboard"].write([item]);
-    }
-  };
-  return /* @__PURE__ */ jsxs(Fragment, {
-    children: [/* @__PURE__ */ jsx("button", {
-      className: "btn close-btn",
-      onClick: handleCloseBtnClick,
-      children: /* @__PURE__ */ jsx(SvgClose, {
-        className: "icon-img"
-      })
-    }), /* @__PURE__ */ jsxs("div", {
-      className: "img-container internal-embed image-embed is-loaded",
-      children: [/* @__PURE__ */ jsx("img", {
-        className: imgWidth <= 0 ? "hidden" : "",
-        ref: imgRef,
-        width: imgWidth + "%",
-        src: imgUrl
-      }), /* @__PURE__ */ jsx("span", {
-        className: "loading-text " + (imgWidth === -1 ? "" : "hidden"),
-        children: t$1("Image is loading...")
-      }), /* @__PURE__ */ jsx("span", {
-        className: "loading-text " + (imgWidth === 0 ? "" : "hidden"),
-        children: t$1("\u{1F61F} Cannot load image, image link maybe broken")
+  return /* @__PURE__ */ jsx(Fragment, {
+    children: /* @__PURE__ */ jsxs("section", {
+      id: "page-wrapper",
+      children: [/* @__PURE__ */ jsx(Sidebar, {}), /* @__PURE__ */ jsx("main", {
+        className: "content-wrapper",
+        children: homeRouterSwitch(pathname)
       })]
-    }), /* @__PURE__ */ jsxs("div", {
-      className: "action-btns-container",
-      children: [/* @__PURE__ */ jsx("button", {
-        className: "btn",
-        onClick: handleDecreaseImageSize,
-        children: "\u2796"
-      }), /* @__PURE__ */ jsx("button", {
-        className: "btn",
-        onClick: handleIncreaseImageSize,
-        children: "\u2795"
-      }), /* @__PURE__ */ jsx("button", {
-        className: "btn",
-        onClick: () => setImgWidth(80),
-        children: "\u2B55"
-      }), /* @__PURE__ */ jsx("button", {
-        className: "btn",
-        onClick: copyImageToClipboard,
-        children: "\u{1F4C4}"
-      })]
-    })]
-  });
-};
-function showPreviewImageDialog(imgUrl, filepath) {
-  if (filepath) {
-    showDialog({
-      className: "preview-image-dialog"
-    }, PreviewImageDialog, {
-      imgUrl,
-      filepath
-    });
-  } else {
-    showDialog({
-      className: "preview-image-dialog"
-    }, PreviewImageDialog, {
-      imgUrl
-    });
-  }
-}
-var react_1 = react.exports;
-var isFunction = function(setStateAction) {
-  return typeof setStateAction === "function";
-};
-var useStateRef = function(initialState) {
-  var _a = react_1.useState(initialState), state = _a[0], setState = _a[1];
-  var ref = react_1.useRef(state);
-  var dispatch = react_1.useCallback(function(setStateAction) {
-    ref.current = isFunction(setStateAction) ? setStateAction(ref.current) : setStateAction;
-    setState(ref.current);
-  }, []);
-  return [state, dispatch, ref];
-};
-var dist = useStateRef;
-const CODE_BLOCK_REG = /```([\s\S]*?)```/g;
-const BOLD_TEXT_REG = /\*\*(.+?)\*\*/g;
-const EM_TEXT_REG = /\*(.+?)\*/g;
-const TODO_BLOCK_REG = /\[ \] /g;
-const DONE_BLOCK_REG = /\[.{1}\] /g;
-const DOT_LI_REG = /^[*-]/g;
-const NUM_LI_REG = /(\d+)\. /g;
-const INTERNAL_MD_REG = /\[\[([^\]]+)\]\]/g;
-const EXRERNAL_MD_REG = /\[([^\]]+)\]\((([^\]]+).md)\)/g;
-const parseMarkedToHtml = (markedStr, memoid) => {
-  const htmlText = markedStr.replace(CODE_BLOCK_REG, "<pre lang=''>$1</pre>").replace(DOT_LI_REG, "<span class='counter-block'>\u2022</span>").replace(NUM_LI_REG, "<span class='counter-block'>$1.</span>").replace(TODO_BLOCK_REG, "<span class='todo-block' data-type='todo'>\u2B1C</span>").replace(DONE_BLOCK_REG, "<span class='todo-block' data-type='done'>\u2705</span>").replace(BOLD_TEXT_REG, "<strong>$1</strong>").replace(EM_TEXT_REG, "<em>$1</em>").replace(/&lt;br&gt;/g, "</p><p>").replace(/&amp;/g, "&");
-  let newHtmlText = htmlText;
-  if (memoid) {
-    if (INTERNAL_MD_REG.test(htmlText)) {
-      const internalMD = htmlText.match(INTERNAL_MD_REG);
-      for (let i = 0; i < internalMD.length; i++) {
-        if (!/(jpeg|jpg|gif|png|svg|bmp|wepg)/g.test(internalMD[i])) {
-          const internalContent = getContentFromInternalLink(internalMD[i]);
-          if (/\|/g.test(internalContent)) {
-            const [link, label] = internalContent.split("|");
-            const replaceMent = replaceMd(link, label);
-            newHtmlText = htmlText.replace(internalMD[i], replaceMent);
-          } else {
-            const link = internalContent;
-            const label = "";
-            const replaceMent = replaceMd(link, label);
-            newHtmlText = newHtmlText.replace(internalMD[i], replaceMent);
-          }
-        }
-      }
-    }
-    if (EXRERNAL_MD_REG.test(htmlText)) {
-      const externalMD = htmlText.match(EXRERNAL_MD_REG);
-      for (let i = 0; i < externalMD.length; i++) {
-        if (!/(jpeg|jpg|gif|png|svg|bmp|wepg)/g.test(externalMD[i])) {
-          const link = getContentFromExternalLink(externalMD[i]);
-          const label = getLabelFromExternalLink(externalMD[i]);
-          const replaceMent = replaceMd(link, label);
-          newHtmlText = htmlText.replace(externalMD[i], replaceMent);
-        }
-      }
-    }
-  }
-  return newHtmlText;
-};
-const replaceMd = (internalLink, label) => {
-  const { metadataCache } = appStore.getState().dailyNotesState.app;
-  const file = metadataCache.getFirstLinkpathDest(decodeURIComponent(internalLink), "");
-  if (file instanceof require$$0.TFile) {
-    if (label) {
-      return `<a data-href="${internalLink}" data-type="link" data-filepath="${internalLink}" class="internal-link">${label}</a>`;
-    } else {
-      return `<a data-href="${internalLink}" data-type="link" data-filepath="${internalLink}" class="internal-link">${internalLink}</a>`;
-    }
-  } else if (label) {
-    return `<a data-href="${internalLink}" data-type="link" data-filepath="${internalLink}" class="internal-link is-unresolved">${label}</a>`;
-  } else {
-    return `<a data-href="${internalLink}" data-type="link" data-filepath="${internalLink}" class="internal-link is-unresolved">${internalLink}</a>`;
-  }
-};
-const getContentFromInternalLink = (line) => {
-  var _a;
-  return (_a = /\[\[([^\]]+)\]\]/g.exec(line)) == null ? void 0 : _a[1];
-};
-const getLabelFromExternalLink = (line) => {
-  var _a;
-  return (_a = EXRERNAL_MD_REG.exec(line)) == null ? void 0 : _a[1];
-};
-const getContentFromExternalLink = (line) => {
-  var _a;
-  return (_a = /\[([^\]]+)\]\((([^\]]+).md)\)/g.exec(line)) == null ? void 0 : _a[3];
-};
-const parseHtmlToRawText = (htmlStr) => {
-  const tempEl = document.createElement("div");
-  tempEl.className = "memo-content-text";
-  tempEl.innerHTML = htmlStr;
-  const text = tempEl.innerText;
-  return text;
-};
-const parseRawTextToHtml = (rawTextStr) => {
-  const htmlText = rawTextStr.replace(/\n/g, "<br>");
-  return htmlText;
-};
-const encodeHtml = (htmlStr) => {
-  const t2 = document.createElement("div");
-  t2.textContent = htmlStr;
-  return t2.innerHTML;
-};
-const memoCardDialog = "";
-const SvgEdit = (props) => /* @__PURE__ */ react.exports.createElement("svg", { xmlns: "http://www.w3.org/2000/svg", height: "20px", viewBox: "0 0 24 24", width: "20px", fill: "#37352f", ...props }, /* @__PURE__ */ react.exports.createElement("path", { d: "M0 0h24v24H0V0z", fill: "none" }), /* @__PURE__ */ react.exports.createElement("path", { d: "M14.06 9.02l.92.92L5.92 19H5v-.92l9.06-9.06M17.66 3c-.25 0-.51.1-.7.29l-1.83 1.83 3.75 3.75 1.83-1.83c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.2-.2-.45-.29-.71-.29zm-3.6 3.19L3 17.25V21h3.75L17.81 9.94l-3.75-3.75z" }));
-const OnlyWhen = (props) => {
-  const {
-    children,
-    when
-  } = props;
-  return when ? /* @__PURE__ */ jsx(Fragment, {
-    children
-  }) : null;
-};
-const Only = OnlyWhen;
-const image = "";
-const Image$1 = (props) => {
-  const {
-    className,
-    imgUrl,
-    alt,
-    referrerPolicy,
-    filepath
-  } = props;
-  const handleImageClick = () => {
-    if (filepath) {
-      showPreviewImageDialog(imgUrl, filepath);
-    } else {
-      showPreviewImageDialog(imgUrl);
-    }
-  };
-  return /* @__PURE__ */ jsx("div", {
-    className: "image-container " + className,
-    onClick: handleImageClick,
-    referrerPolicy,
-    children: /* @__PURE__ */ jsx("img", {
-      src: imgUrl,
-      alt,
-      decoding: "async",
-      loading: "lazy"
     })
   });
-};
-const MemoImage = (props) => {
-  var _a;
-  const {
-    memo: memo2
-  } = props;
-  const getPathOfImage2 = (vault, image2) => {
-    return vault.getResourcePath(image2);
-  };
-  const detectWikiInternalLink2 = (lineText) => {
-    var _a2, _b;
-    const {
-      metadataCache,
-      vault
-    } = appStore.getState().dailyNotesState.app;
-    const internalFileName = (_a2 = WIKI_IMAGE_URL_REG.exec(lineText)) == null ? void 0 : _a2[1];
-    const internalAltName = (_b = WIKI_IMAGE_URL_REG.exec(lineText)) == null ? void 0 : _b[5];
-    const file = metadataCache.getFirstLinkpathDest(decodeURIComponent(internalFileName), "");
-    if (file === null) {
-      return {
-        linkText: internalFileName,
-        altText: internalAltName,
-        path: "",
-        filepath: ""
-      };
-    } else {
-      const imagePath = getPathOfImage2(vault, file);
-      const filePath = file.path;
-      if (internalAltName) {
-        return {
-          linkText: internalFileName,
-          altText: internalAltName,
-          path: imagePath,
-          filepath: filePath
-        };
-      } else {
-        return {
-          linkText: internalFileName,
-          altText: "",
-          path: imagePath,
-          filepath: filePath
-        };
-      }
-    }
-  };
-  const detectMDInternalLink2 = (lineText) => {
-    var _a2, _b;
-    const {
-      metadataCache,
-      vault
-    } = appStore.getState().dailyNotesState.app;
-    const internalFileName = (_a2 = MARKDOWN_URL_REG.exec(lineText)) == null ? void 0 : _a2[5];
-    const internalAltName = (_b = MARKDOWN_URL_REG.exec(lineText)) == null ? void 0 : _b[2];
-    const file = metadataCache.getFirstLinkpathDest(decodeURIComponent(internalFileName), "");
-    if (file === null) {
-      return {
-        linkText: internalFileName,
-        altText: internalAltName,
-        path: "",
-        filepath: ""
-      };
-    } else {
-      const imagePath = getPathOfImage2(vault, file);
-      const filePath = file.path;
-      if (internalAltName) {
-        return {
-          linkText: internalFileName,
-          altText: internalAltName,
-          path: imagePath,
-          filepath: filePath
-        };
-      } else {
-        return {
-          linkText: internalFileName,
-          altText: "",
-          path: imagePath,
-          filepath: filePath
-        };
-      }
-    }
-  };
-  let externalImageUrls = [];
-  const internalImageUrls = [];
-  let allMarkdownLink = [];
-  let allInternalLink = [];
-  if (IMAGE_URL_REG.test(memo2)) {
-    let allExternalImageUrls = [];
-    const anotherExternalImageUrls = [];
-    if (MARKDOWN_URL_REG.test(memo2)) {
-      allMarkdownLink = Array.from(memo2.match(MARKDOWN_URL_REG));
-    }
-    if (WIKI_IMAGE_URL_REG.test(memo2)) {
-      allInternalLink = Array.from(memo2.match(WIKI_IMAGE_URL_REG));
-    }
-    if (MARKDOWN_WEB_URL_REG.test(memo2)) {
-      allExternalImageUrls = Array.from(memo2.match(MARKDOWN_WEB_URL_REG));
-    }
-    if (allInternalLink.length) {
-      for (let i = 0; i < allInternalLink.length; i++) {
-        const allInternalLinkElement = allInternalLink[i];
-        internalImageUrls.push(detectWikiInternalLink2(allInternalLinkElement));
-      }
-    }
-    if (allMarkdownLink.length) {
-      for (let i = 0; i < allMarkdownLink.length; i++) {
-        const allMarkdownLinkElement = allMarkdownLink[i];
-        if (/(.*)http[s]?(.*)/.test(allMarkdownLinkElement)) {
-          anotherExternalImageUrls.push((_a = MARKDOWN_URL_REG.exec(allMarkdownLinkElement)) == null ? void 0 : _a[5]);
-        } else {
-          internalImageUrls.push(detectMDInternalLink2(allMarkdownLinkElement));
-        }
-      }
-    }
-    externalImageUrls = allExternalImageUrls.concat(anotherExternalImageUrls);
-  }
-  return /* @__PURE__ */ jsxs(Fragment, {
-    children: [/* @__PURE__ */ jsx(Only, {
-      when: externalImageUrls.length > 0,
-      children: /* @__PURE__ */ jsx("div", {
-        className: "images-wrapper",
-        children: externalImageUrls.map((imgUrl, idx) => /* @__PURE__ */ jsx(Image$1, {
-          alt: "",
-          className: "memo-img",
-          imgUrl,
-          referrerPolicy: "no-referrer"
-        }, idx))
-      })
-    }), /* @__PURE__ */ jsx(Only, {
-      when: internalImageUrls.length > 0,
-      children: /* @__PURE__ */ jsx("div", {
-        className: "images-wrapper internal-embed image-embed is-loaded",
-        children: internalImageUrls.map((imgUrl, idx) => /* @__PURE__ */ jsx(Image$1, {
-          className: "memo-img",
-          imgUrl: imgUrl.path,
-          alt: imgUrl.altText,
-          filepath: imgUrl.filepath
-        }, idx))
-      })
-    })]
-  });
-};
-const MemoCardDialog = (props) => {
-  const [memo2, setMemo] = react.exports.useState({
-    ...props.memo,
-    createdAtStr: utils$1.getDateTimeString(props.memo.createdAt)
-  });
-  const [linkMemos, setLinkMemos] = react.exports.useState([]);
-  const [linkedMemos, setLinkedMemos] = react.exports.useState([]);
-  react.exports.useEffect(() => {
-    const fetchLinkedMemos = async () => {
-      try {
-        const linkMemos2 = [];
-        const matchedArr = [...memo2.content.matchAll(MEMO_LINK_REG)];
-        for (const matchRes of matchedArr) {
-          if (matchRes && matchRes.length === 3) {
-            const id2 = matchRes[2];
-            const memoTemp = memoService.getMemoById(id2);
-            if (memoTemp) {
-              linkMemos2.push({
-                ...memoTemp,
-                createdAtStr: utils$1.getDateTimeString(memoTemp.createdAt),
-                dateStr: utils$1.getDateString(memoTemp.createdAt)
-              });
-            }
-          }
-        }
-        setLinkMemos([...linkMemos2]);
-        const linkedMemos2 = await memoService.getLinkedMemos(memo2.id);
-        setLinkedMemos(linkedMemos2.sort((a, b) => utils$1.getTimeStampByDate(b.createdAt) - utils$1.getTimeStampByDate(a.createdAt)).map((m) => ({
-          ...m,
-          createdAtStr: utils$1.getDateTimeString(m.createdAt),
-          dateStr: utils$1.getDateString(m.createdAt)
-        })));
-      } catch (error) {
-      }
-    };
-    fetchLinkedMemos();
-  }, [memo2.id]);
-  const handleMemoContentClick = react.exports.useCallback(async (e) => {
-    var _a;
-    const targetEl = e.target;
-    if (targetEl.className === "memo-link-text") {
-      const nextMemoId = (_a = targetEl.dataset) == null ? void 0 : _a.value;
-      const memoTemp = memoService.getMemoById(nextMemoId != null ? nextMemoId : "");
-      if (memoTemp) {
-        const nextMemo = {
-          ...memoTemp,
-          createdAtStr: utils$1.getDateTimeString(memoTemp.createdAt)
-        };
-        setLinkMemos([]);
-        setLinkedMemos([]);
-        setMemo(nextMemo);
-      } else {
-        new require$$0.Notice("MEMO Not Found");
-        targetEl.classList.remove("memo-link-text");
-      }
-    }
-  }, []);
-  const handleLinkedMemoClick = react.exports.useCallback((memo22) => {
-    setLinkMemos([]);
-    setLinkedMemos([]);
-    setMemo(memo22);
-  }, []);
-  const handleEditMemoBtnClick = react.exports.useCallback(() => {
-    props.destroy();
-    globalStateService.setEditMemoId(memo2.id);
-  }, [memo2.id]);
-  return /* @__PURE__ */ jsxs(Fragment, {
-    children: [/* @__PURE__ */ jsxs("div", {
-      className: "memo-card-container",
-      children: [/* @__PURE__ */ jsxs("div", {
-        className: "header-container",
-        children: [/* @__PURE__ */ jsx("p", {
-          className: "time-text",
-          children: memo2.createdAtStr
-        }), /* @__PURE__ */ jsxs("div", {
-          className: "btns-container",
-          children: [/* @__PURE__ */ jsx("button", {
-            className: "btn edit-btn",
-            onClick: handleEditMemoBtnClick,
-            children: /* @__PURE__ */ jsx(SvgEdit, {
-              className: "icon-img"
-            })
-          }), /* @__PURE__ */ jsx("button", {
-            className: "btn close-btn",
-            onClick: props.destroy,
-            children: /* @__PURE__ */ jsx(SvgClose, {
-              className: "icon-img"
-            })
-          })]
-        })]
-      }), /* @__PURE__ */ jsxs("div", {
-        className: "memo-container",
-        children: [/* @__PURE__ */ jsx("div", {
-          className: "memo-content-text",
-          onClick: handleMemoContentClick,
-          dangerouslySetInnerHTML: {
-            __html: formatMemoContent(memo2.content)
-          }
-        }), /* @__PURE__ */ jsx(MemoImage, {
-          memo: memo2.content
-        })]
-      }), /* @__PURE__ */ jsx("div", {
-        className: "layer-container"
-      }), linkMemos.map((_, idx) => {
-        if (idx < 4) {
-          return /* @__PURE__ */ jsx("div", {
-            className: "background-layer-container",
-            style: {
-              bottom: (idx + 1) * -3 + "px",
-              left: (idx + 1) * 5 + "px",
-              width: `calc(100% - ${(idx + 1) * 10}px)`,
-              zIndex: -idx - 1
-            }
-          }, idx);
-        } else {
-          return null;
-        }
-      })]
-    }), linkMemos.length > 0 ? /* @__PURE__ */ jsxs("div", {
-      className: "linked-memos-wrapper",
-      children: [/* @__PURE__ */ jsxs("p", {
-        className: "normal-text",
-        children: [t$1("LINKED"), " ", linkMemos.length, " MEMO", " "]
-      }), linkMemos.map((m) => {
-        const rawtext = parseHtmlToRawText(formatMemoContent(m.content)).replaceAll("\n", " ");
-        return /* @__PURE__ */ jsxs("div", {
-          className: "linked-memo-container",
-          onClick: () => handleLinkedMemoClick(m),
-          children: [/* @__PURE__ */ jsxs("span", {
-            className: "time-text",
-            children: [m.dateStr, " "]
-          }), rawtext]
-        }, m.id);
-      })]
-    }) : null, linkedMemos.length > 0 ? /* @__PURE__ */ jsxs("div", {
-      className: "linked-memos-wrapper",
-      children: [/* @__PURE__ */ jsxs("p", {
-        className: "normal-text",
-        children: [linkedMemos.length, " MEMO ", t$1("LINK TO THE"), " MEMO"]
-      }), linkedMemos.map((m) => {
-        const rawtext = parseHtmlToRawText(formatMemoContent(m.content)).replaceAll("\n", " ");
-        return /* @__PURE__ */ jsxs("div", {
-          className: "linked-memo-container",
-          onClick: () => handleLinkedMemoClick(m),
-          children: [/* @__PURE__ */ jsxs("span", {
-            className: "time-text",
-            children: [m.dateStr, " "]
-          }), rawtext]
-        }, m.id);
-      })]
-    }) : null]
-  });
-};
-function showMemoCardDialog(memo2) {
-  showDialog({
-    className: "memo-card-dialog"
-  }, MemoCardDialog, {
-    memo: memo2
-  });
 }
-const shareMemoImageDialog = "";
-const lightBackground = "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIGRhdGEtbmFtZT0iTGF5ZXIgMSIgd2lkdGg9IjExNDYuMzE4MjgiIGhlaWdodD0iODAxLjAwMzYxIiB2aWV3Qm94PSIwIDAgMTE0Ni4zMTgyOCA4MDEuMDAzNjEiIHhtbG5zOnhsaW5rPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hsaW5rIj48cGF0aCBkPSJNMTA1MC42OTkxOCw1MTQuNTA4MmE0NTYuMjQ5MTMsNDU2LjI0OTEzLDAsMCwxLTM3LjM4MDEzLTI2MS44N2MzLjYwMDEtMjMuMSw5LjQ0MDA2LTQ2Ljg1LDI0LjQzMDE4LTY0Ljc5LDE0LjM4OTg5LTE3LjIzLDM5LjM0OTg1LTI3LjM3LDYwLjAyOTktMTkuMjktMTMuNTY5OTQtMjkuNjEtNDcuNzYtNDYuNS04MC41OS00Ny4zMy0zNC4wOS0uODYtNjYuOTIsMTIuNS05Ny4yNSwyOC4xLTMwLjMzLDE1LjYtNTkuNjUsMzMuODEwMDYtOTIuMjEsNDMuOTktNTMuNSwxNi43Mi0xMTEuOTEsMTAuMzQtMTY1LjUtNi4wOS01My41OC0xNi40NC0xMDMuNjItNDIuNDctMTU0LjYyLTY1LjcxLTUxLjAxLTIzLjI0LTEwNC4xNy00NC4wMy0xNjAuMDEtNDguOTEtNTUuODQtNC44Ny0xMTUuMjUsNy44OS0xNTcuMjQsNDUuMDFzLTYxLjg3LDEwMS4yOC0zOC4yNywxNTIuMTFjMTQuMjUsMzAuNyw0Mi4yMiw1NC4zMiw1Mi4wNCw4Ni43LDEyLjMyLDQwLjY1LTcuMDgsODMuOTYtMzAuNDEsMTE5LjQ1LTIzLjM0LDM1LjQ5LTUxLjgsNjkuNTgtNjAuNDcsMTExLjE2LTguMDEsMzguMzgsMi43Miw3OC4wMiwyNC4wNSwxMTEuMzhhMTk3LjM0NDY4LDE5Ny4zNDQ2OCwwLDAsMCwzNS43NCw0MS42MWM0My4wOSwzNy45MSw5OC43Nyw1OC4xNSwxNTQuMTcsNzMuMTMsMjAwLjI3LDU0LjE3LDQxNi4xMyw0OS4yOSw2MTMuNzUtMTMuODgsMzQuOTktMTEuMTgsNjkuOTUtMjQuNDMsOTkuMzItNDYuNDgsMTkuMTYtMTQuMzgsMzUuODMtMzMuMDIsNDYuMzktNTQuMzVhMTE0LjEwNTc0LDExNC4xMDU3NCwwLDAsMCwxMS4xMy0zNi4xODAwNUMxMTA0LjQzOTE3LDYxMC4xNzgxOSwxMDcyLjk2OTIsNTYyLjA1ODE5LDEwNTAuNjk5MTgsNTE0LjUwODJaIiB0cmFuc2Zvcm09InRyYW5zbGF0ZSgtMjYuODQwODYgLTQ5LjQ5ODE5KSIgZmlsbD0iIzZjNjNmZiIvPjxnIG9wYWNpdHk9IjAuMTciPjxwYXRoIGQ9Ik04OTAuNzUwMzIsMjQ2LjQ1MTQ1YzkuNjQxNzEtNC4yMDM5NC05LjkxMTYzLTYuNjUxMTktMzIuMDk1ODUtNy40NTU4MnMtNDkuMDIwNjEtLjc2MDExLTYzLjE5NzU2LTMuMDQ4NzVjLTEzLjcxMTE0LTIuMjEzNDMtMTIuNzAwOS02LjE0OTA3LTEzLjg1NDI3LTkuNzE0ODlzLTYuNDI0NDYtNy4yMjItMjcuODE5MjgtOC4wMTQ3Yy0yNi42NjA3LS45ODc3NC03MC42MjU4MSwyLjgxNDM0LTkwLjc1MTcxLjUzMTczLTE4Ljc4MTIxLTIuMTMwMTEtNy42MTcyMy04LjgxMTgyLTM1LjAwMzQ0LTkuMDY3NTUtMTUuNjM4MzctLjE0Ni0zNS43ODQ5LDIuMDU2ODItNTMuMTg1NzcsMi41ODg0NC0xNi4zMzY0Ny40OTkwOS0yOC40MjIxNi0uNTM0NDEtMzYuOTAzNTctMS45MjRzLTE0LjM4ODc1LTMuMTUxMjYtMjMuOTM0MTMtNC4zNzg2NGMtMjUuMDYwNjgtMy4yMjI0LTc0LjA5MTMzLTIuMTM5MjUtMTE3Ljg1MywxLjk5MDcxcy04MS4yNzM0NCwxMC44OTgxNi0xMDIuNDI4ODksMTcuNjAxNzUtMjcuMDAwMjksMTMuMzAzNzYtMjIuMDcyMzksMTguOTAwNzFjMy4xNDY3NCwzLjU3NCwxMS4xOTkxNSw2LjkxNTg1LDMwLjczMjM1LDguMzUyLDM2LjUzNTU1LDIuNjg2MjEsMTAxLjU4Mzg3LTEuOTM3NSwxMzkuMzM3MTMuNTA2NDUsMjEuMDQxNSwxLjM2MjEzLDMwLjM3NjQsNC43MzkyNCw0OC44MzgxMiw2LjU4NzE2LDE5LjgzNDA3LDEuOTg1MjgsNDguODY5MzUsMi4wOTA1MSw3Ny4zOTY1NiwyLjA0MzQxLDU5LjM5NzIxLS4wOTgwNywxMjAuMzEzNy0uNzA4MjksMTgyLjQyOTk0LTEuODI3NDcsMjUuOTQ0ODYtLjQ2NzQ1LDUzLjEzLTEuMDc1Miw4MC43Mzc2MS0zLjMwMjg5czU1Ljc2NjIzLTYuNTI1OTEsNjEuNTkwNzYtMTAuNTU1MyIgdHJhbnNmb3JtPSJ0cmFuc2xhdGUoLTI2Ljg0MDg2IC00OS40OTgxOSkiIGZpbGw9IiNmZmYiLz48L2c+PHBhdGggZD0iTTEwOTkuMjU5MTEsMTcyLjA0ODE4Yy0uNDYtMS4xOC0uOTYtMi4zNS0xLjQ4LTMuNDkuODQuMzMsMS42ODAwNi42OSwyLjUxLDEuMDhaIiB0cmFuc2Zvcm09InRyYW5zbGF0ZSgtMjYuODQwODYgLTQ5LjQ5ODE5KSIgZmlsbD0iIzZjNjNmZiIvPjxwYXRoIGQ9Ik02NDguNzQ0ODIsMzE0LjU4NDNjLTcuNjY5MzUtMTIuNjg0NDUtMTYuNzU3MjEtMjYuMjI3NjctMzAuOTg5NTUtMzAuMzY5NTMtMTYuNDgyLTQuNzk2NS0zMy40MTMxOSw0LjczMTkzLTQ3Ljc3NDczLDE0LjEzNDUzYTEzOTIuMTU2OTIsMTM5Mi4xNTY5MiwwLDAsMC0xMjMuODkzMzgsOTEuMjgzMTFsLjA0MzMxLjQ5MjM5cTQ2LjIyNTU2LTMuMTg3ODEsOTIuNDUxLTYuMzc1NTVjMjIuMjY1MzItMS41MzU0Niw0NS4yOTU1Ny0zLjI4MjcsNjQuOTcxOTUtMTMuODE1Niw3LjQ2NjUyLTMuOTk2ODMsMTQuNzQ0NzUtOS4zMzU3OSwyMy4yMDU1NS05LjcwNzgyLDEwLjUxMTc1LS40NjIxNywxOS42NzczMyw2Ljg3OTIzLDI2Ljg4MDIsMTQuNTQ5MzEsNDIuNjA3MzIsNDUuMzcxLDU0LjkzNywxMTQuNzU0MSwxMDIuNzM4MTcsMTU0LjYxNTkyQTE1MTYuOTk0NTgsMTUxNi45OTQ1OCwwLDAsMCw2NDguNzQ0ODIsMzE0LjU4NDNaIiB0cmFuc2Zvcm09InRyYW5zbGF0ZSgtMjYuODQwODYgLTQ5LjQ5ODE5KSIgZmlsbD0iI2YyZjJmMiIvPjxwYXRoIGQ9Ik05MTAuNjQ1NzYsNjk5LjQxMjdjLTQuNzExNjgtNS45NDk1OC02LjYzNjkxLTcuMzQzLTExLjI4NDU3LTEzLjM0NzYxUTg0Mi41OTY4LDYxMi42NDg3Miw3OTIuNjUzMjcsNTM0LjI3MjcycS0zMy45MjM1My01My4yMzAwNS02NC40ODI3NS0xMDguNTA0MzktMTQuNTQ4NjMtMjYuMjc4MDgtMjguMjk5NjEtNTIuOTY4NzItMTAuNjcwNDMtMjAuNjk1Mi0yMC44NjQ2LTQxLjYzNzkzYy0xLjk0MzU3LTMuOTg3ODEtMy44MzIwOS03Ljk5MzkzLTUuNzExMjItMTIuMDA5MjItNC40Mjc4OC05LjQ0MjMyLTguNzczNC0xOC45MzA0Ny0xMy40Mzk0Mi0yOC4yNDQ0OS01LjMxNjg3LTEwLjYxNTcxLTExLjc4OTA1LTIxLjc0NDg1LTIxLjU1MjU5LTI4Ljg3N2EyOS40MDQ5LDI5LjQwNDksMCwwLDAtMTUuMzE4NTUtNS44OTQ1N2MtNy45NDgtLjUxMzM3LTE1LjI4MTg1LDIuNzY4NTQtMjIuMTc1NjksNi4zNTI5NC01MC40Mzg1OCwyNi4zMDEtOTcuNjU5MjEsNTkuMjc1ODktMTQwLjM2OTU5LDk2Ljc5NzcxQTczMC43Nzc4MSw3MzAuNzc3ODEsMCwwLDAsMzQ2LjM5NzQ4LDQ4NS44Nzg0M2MtMS4wMDgsMS40MzkyNy0zLjM5MTYzLjA2NDE4LTIuMzc0MTktMS4zODQyMnE2LjAwOTM1LTguNDk4MTgsMTIuMjU2ODEtMTYuODEyODhBNzM0LjgxNzQyLDczNC44MTc0MiwwLDAsMSw1NDMuODc5NzIsMjkyLjY5NTZxMTguMjQ4MjUtMTEuODI1NzksMzcuMTgyNjktMjIuNTQyNDVjNi4zNjIwNi0zLjYwMjc1LDEyLjc1MTg4LTcuMTU5NjcsMTkuMjUxMzYtMTAuNDk2NTMsNi4zNzE0Ny0zLjI3Mjc0LDEzLjEzNjg0LTYuMjE1NDcsMjAuNDE1NjMtNi4zMjU0NywyNC43NzAxMS0uMzg1LDM3LjU5NTQsMjcuNjY3LDQ2LjQwNTA2LDQ2LjU0MjQ4cTQuMTUyODMsOC45MTA2LDguNDA2MzYsMTcuNzY2MjYsMTYuMDc0ODEsMzMuNjIxMDYsMzMuMzg3MjksNjYuNjI4LDEwLjY4NDUzLDIwLjM3OSwyMS44MzY4Myw0MC41MTk1NSwzNC43MDcxLDYyLjcxODE2LDczLjc3ODU0LDEyMi44OTdjMzQuNTA1OSw1My4xNDI5LDY4LjczNjUxLDEwMC4wODg3NCwxMDguMDQ1ODYsMTQ5Ljc4NDczQzkxMy42NzEyNCw2OTguODQ0MzMsOTExLjczNzA2LDcwMC44MDYxNSw5MTAuNjQ1NzYsNjk5LjQxMjdaIiB0cmFuc2Zvcm09InRyYW5zbGF0ZSgtMjYuODQwODYgLTQ5LjQ5ODE5KSIgZmlsbD0iI2U0ZTRlNCIvPjxwYXRoIGQ9Ik00NTcuOTkxMiwzNDUuNDM1MmMtMS40MzkxMS0xLjYwNDI4LTIuODY5MjYtMy4yMDg1Ni00LjMxNzc3LTQuODEyODQtMTEuNDIyNDQtMTIuNjMyNTktMjMuNjc4OC0yNS4xMTg0Ny0zOS4zNjQ0LTMyLjM2MDY3YTU3LjExMDIxLDU3LjExMDIxLDAsMCwwLTIzLjkyNjc4LTUuNTQ2MjJjLTguNTYyMTMuMDI3NTMtMTYuOTMxNzgsMi4yNzM0OC0yNC44NDMwNyw1LjQxNzkyLTMuNzQwMzQsMS40OTQyOC03LjM5ODMxLDMuMTkwMjEtMTEuMDAwNzgsNC45OTYxNC00LjExNjM0LDIuMDcxODItOC4xNTkyNyw0LjI4MTE4LTEyLjE4MzQsNi41MDg4M3EtMTEuMzMxMTIsNi4yNzA0NC0yMi4zNjgxNiwxMy4wOTA5LTIxLjk2MDYsMTMuNTcyMi00Mi41NDU2NSwyOS4yMTYyMy0xMC42NzExMSw4LjExMzExLTIwLjkwMTc1LDE2Ljc1Nzg4LTkuNTE1NTcsOC4wMzA1Mi0xOC42NDYxOCwxNi40OTJjLTEuMzAxNjgsMS4yMDA5MS0zLjI0NTI2LS43NDI1NS0xLjk0MzU4LTEuOTQzNDcsMS42MDQyOC0xLjQ5NDI4LDMuMjI2OTItMi45NzkzOCw0Ljg0OTU1LTQuNDQ2MTJxNi44NzU0OS02LjIxNTQ3LDEzLjk3MTItMTIuMTkyNTgsMTIuOTM5MjEtMTAuOTE4MjcsMjYuNTQ4NTEtMjAuOTkzMTIsMjEuMTYyOTUtMTUuNjc2MTQsNDMuNzgyODktMjkuMjI1NCwxMS4zMDM2LTYuNzY1NDcsMjIuOTE4MjktMTIuOTYyNmMyLjMzNzkzLTEuMjQ2NzQsNC43MDMxNy0yLjQ2Niw3LjA5NTcxLTMuNjIxMWExMTMuMTE0MzUsMTEzLjExNDM1LDAsMCwxLDE2Ljg2Nzc4LTYuODY2MzEsNjAuMDA2MjYsNjAuMDA2MjYsMCwwLDEsMjUuNDc2LTIuNTAyNjYsNjYuMzI3MjUsNjYuMzI3MjUsMCwwLDEsMjMuNTA1MTIsOC4xMzE0YzE1LjQwMDkxLDguNjA4MTIsMjcuMzQ1NzMsMjEuOTE5LDM4Ljk3MDA1LDM0LjkwOTE2QzQ2MS4xMDg0NCwzNDQuODAyNjUsNDU5LjE3MzgyLDM0Ni43NTUyOSw0NTcuOTkxMiwzNDUuNDM1MloiIHRyYW5zZm9ybT0idHJhbnNsYXRlKC0yNi44NDA4NiAtNDkuNDk4MTkpIiBmaWxsPSIjZTRlNGU0Ii8+PHBhdGggZD0iTTc3My41NTE2Niw0NzYuMzQyMTZsMzYuOTA0NjItMTMuNDk4LDE4LjMyMzI3LTYuNzAxODJjNS45Njc1OC0yLjE4MjY3LDExLjkyMDgyLTQuNjY3NDcsMTguMDg5ODktNi4yMzAzN2EyOC41Mzg2OCwyOC41Mzg2OCwwLDAsMSwxNi4zNzM1NS4yMDg2MiwzNy43MzczMSwzNy43MzczMSwwLDAsMSwxMi43NzEsNy45MTY2NywxMDMuNjM4NzEsMTAzLjYzODcxLDAsMCwxLDEwLjQ3NDg4LDExLjE4NjQyYzMuOTg5MzIsNC43OTQyNiw3LjkxOTcsOS42Mzg3OCwxMS44Njc3MiwxNC40NjcwNnEyNC40NDEzNSwyOS44OTA5Myw0OC41NjMwNiw2MC4wNDEzNCwyNC4xMjExOCwzMC4xNDk5MSw0Ny45MTk4MSw2MC41NTYsMjMuODU2ODEsMzAuNDgwNDIsNDcuMzg1NDgsNjEuMjE1NzMsMi44ODIzLDMuNzY1MTksNS43NTk2Nyw3LjUzNDE1YzEuMDU5OCwxLjM4ODA5LDMuNDQ5NDguMDE5NjIsMi4zNzQ3MS0xLjM4ODA3cS0yMy43MDIyNS0zMS4wNDQ0MS00Ny43MzQ5MS02MS44MzQ2NC0yNC4wOTE3Ny0zMC44NjM4My00OC41MTY0Ni02MS40NjU4Ni0yNC40MjQyMy0zMC42MDE0Mi00OS4xNzg1NC02MC45Mzc0NC02LjE2Ny03LjU1NzYtMTIuMzU0NDQtMTUuMDk4NThjLTMuNDc5NTQtNC4yNDA3Mi02LjkxOTg0LTguNTI3MTgtMTAuNzM2MjktMTIuNDc0MjYtNy4wMDUzOC03LjI0NTE2LTE1Ljc1NzcyLTEzLjY0Nzk0LTI2LjIzNDM3LTEzLjgyMTY3LTYuMTU5NzItLjEwMjE0LTEyLjEyMSwxLjg1MjQ4LTE3Ljg0NCwzLjkyMjg4LTYuMTY5NjcsMi4yMzItMTIuMzI0NTUsNC41MDU3MS0xOC40ODYzMiw2Ljc1OTRMNzgyLjExMTIzLDQ3MC4yOTIxbC05LjI5MDY4LDMuMzk4MTFjLTEuNjQ4NzQuNjAzLS45MzY1LDMuMjYxODkuNzMxMTEsMi42NTE5NVoiIHRyYW5zZm9ybT0idHJhbnNsYXRlKC0yNi44NDA4NiAtNDkuNDk4MTkpIiBmaWxsPSIjZTRlNGU0Ii8+PHBhdGggZD0iTTQwOS40NTI0OCwzMjQuMTU3MzNjLTE4Ljc1NDExLTkuNjM4NjYtNDIuNzcxMzctNy43NTA4Ny02MC4wMDUwNyw0LjI5MTE5QTg1NS44NDUzMiw4NTUuODQ1MzIsMCwwLDEsNDQ2LjgxOCwzNTEuMTc0MzRDNDMzLjUzNTM3LDM0My4zOTA0LDQyMy4xNDUyMSwzMzEuMTk0NzUsNDA5LjQ1MjQ4LDMyNC4xNTczM1oiIHRyYW5zZm9ybT0idHJhbnNsYXRlKC0yNi44NDA4NiAtNDkuNDk4MTkpIiBmaWxsPSIjZjJmMmYyIi8+PHBhdGggZD0iTTM0OS4yNjI4MiwzMjguNDE1MzQsMzQ1LjY1MjQsMzMxLjM1YzEuMjIxMjMtMS4wMjcxMywyLjQ5MDgtMS45OTAxMywzLjc5NS0yLjkwMTQ0QzM0OS4zODU4LDMyOC40Mzc4OSwzNDkuMzI0NDIsMzI4LjQyNiwzNDkuMjYyODIsMzI4LjQxNTM0WiIgdHJhbnNmb3JtPSJ0cmFuc2xhdGUoLTI2Ljg0MDg2IC00OS40OTgxOSkiIGZpbGw9IiNmMmYyZjIiLz48cGF0aCBkPSJNODc0LjYyNDM2LDQ3Ni40NzdjLTMuNjMyNzktNC40MjIwNi03LjU2MDQ2LTkuMDUyMjItMTIuOTk0MjEtMTAuODQ4MzZsLTUuMDczMDguMjAwMDlhNTc1LjQzNjI5LDU3NS40MzYyOSwwLDAsMCwxNTMuMjY3MjksMTc1LjIyMDU2UTk0Mi4yMjQzNyw1NTguNzYzMTcsODc0LjYyNDM2LDQ3Ni40NzdaIiB0cmFuc2Zvcm09InRyYW5zbGF0ZSgtMjYuODQwODYgLTQ5LjQ5ODE5KSIgZmlsbD0iI2YyZjJmMiIvPjxwYXRoIGQ9Ik0xMDg2LjY2OTE1LDY5OC40NDgyYy0xMC41NjAwNiwyMS4zMy0yNy4yMywzOS45Ny00Ni4zOSw1NC4zNS0yOS4zNywyMi4wNS02NC4zMywzNS4zLTk5LjMyLDQ2LjQ4LTE5Ny42Miw2My4xNy00MTMuNDgsNjguMDUtNjEzLjc1LDEzLjg4LTU1LjQtMTQuOTgtMTExLjA4LTM1LjIyLTE1NC4xNy03My4xM2ExOTcuMzQ0NjgsMTk3LjM0NDY4LDAsMCwxLTM1Ljc0LTQxLjYxYzU3LjM1LTMxLjUyLDEyNi44Ni00My40LDE5My4xOS00MS45NSw5NS4wOSwyLjA4LDE4Ny45NiwyNy40NiwyODIuMTYsNDAuNTlhMTEwMi42NjksMTEwMi42NjksMCwwLDAsMzM0LjA0LTQuNmMzOC4zMTk5NC02LjQzLDc3Ljk4LTE0Ljg0LDExNS40OS00LjY2QTk1LjE0OTU0LDk1LjE0OTU0LDAsMCwxLDEwODYuNjY5MTUsNjk4LjQ0ODJaIiB0cmFuc2Zvcm09InRyYW5zbGF0ZSgtMjYuODQwODYgLTQ5LjQ5ODE5KSIgZmlsbD0iIzNmM2Q1NiIvPjxjaXJjbGUgY3g9IjE3OS4zMTgyOCIgY3k9IjUxIiByPSI1MSIgZmlsbD0iI2NjYyIvPjxwYXRoIGQ9Ik0zNjIuMzA4OTIsOTcuODQwNDJDMzQ4LjgxMTg1LDgzLjY4MTYsMzMzLjEzNjQzLDcwLjc2NSwzMTQuNTc5NjEsNjMuOTM5NDhhNzYuNzE1MjEsNzYuNzE1MjEsMCwwLDAtMTUuOTg2MzMtNC4wMTczNGMtLjA0Mzg4LS4wMDYtLjA4NTQ1LjAwMjg3LS4xMjkwOS0uMDAwNjdhMi4zNTU3NiwyLjM1NTc2LDAsMCwwLS4yNjk2NS0uMDUyOTIsNjEuNTM4OCw2MS41Mzg4LDAsMCwwLTIyLjg0MTMxLDEuMzc5LDYzLjEwNzM1LDYzLjEwNzM1LDAsMCwwLTEwLjYzNTE5LDMuNzA0OSw5My4wMDQ2Nyw5My4wMDQ2NywwLDAsMC05Ljk3OTQzLDUuNjU1NTdBNjQuOTA4MzIsNjQuOTA4MzIsMCwwLDEsMjMyLjY4NjMsNzguODM0OGE3NC4xODc3LDc0LjE4NzcsMCwwLDEtMTEuODQ0MDYsMS4xNjI0OGMtMy40NDcxNC4wNjkxNS02LjY5OC4xODg5LTkuOTY0LDEuNDM0MjZhMjMuOTE1NzMsMjMuOTE1NzMsMCwwLDAtMTQuNTY0OTQsMTUuNzcwNTEsMS41NTA3OCwxLjU1MDc4LDAsMCwwLC42ODkzMywxLjY5NGMuODgzNDkuNjMyNzUsMS43NDQ3NiwxLjM1MDY1LDIuNjczLDEuOTE0MzdhOC4zMzkyMiw4LjMzOTIyLDAsMCwwLDIuNjExLjcxMjA5cTIuMjEzNjYuNDY3MTEsNC40MzI5Mi45MDY5Myw4LjE3NTg0LDEuNjE5OTIsMTYuNDE5NjIsMi44Njc5MiwxNi42ODEsMi41MjUyLDMzLjU0MjE3LDMuNTU3NTVhMzczLjQ4MTMyLDM3My40ODEzMiwwLDAsMCw2Ny41MTAyNi0yLjAyOUEzNzQuNzcxNDQsMzc0Ljc3MTQ0LDAsMCwwLDM2MS42NDcsMTAwLjM0NzUsMS41MTM5LDEuNTEzOSwwLDAsMCwzNjIuMzA4OTIsOTcuODQwNDJaIiB0cmFuc2Zvcm09InRyYW5zbGF0ZSgtMjYuODQwODYgLTQ5LjQ5ODE5KSIgZmlsbD0iI2YwZjBmMCIvPjxwYXRoIGQ9Ik0yMDguNTc5NjEsMTMxLjkzOTQ4YTc2LjcxNTIxLDc2LjcxNTIxLDAsMCwwLTE1Ljk4NjMzLTQuMDE3MzRjLS4wNDM4OC0uMDA2LS4wODU0NS4wMDI4Ny0uMTI5MDktLjAwMDY3YTIuMzU1NzYsMi4zNTU3NiwwLDAsMC0uMjY5NjUtLjA1MjkyLDYxLjUzODgsNjEuNTM4OCwwLDAsMC0yMi44NDEzMSwxLjM3OSw2My4xMDczNSw2My4xMDczNSwwLDAsMC0xMC42MzUxOSwzLjcwNDksOTMuMDA0NjcsOTMuMDA0NjcsMCwwLDAtOS45Nzk0Myw1LjY1NTU3LDY0LjkwODMyLDY0LjkwODMyLDAsMCwxLTIyLjA1MjMxLDguMjI2ODEsNzQuMTg3Nyw3NC4xODc3LDAsMCwxLTExLjg0NDA2LDEuMTYyNDhjLTMuNDQ3MTQuMDY5MTUtNi42OTguMTg4OS05Ljk2NCwxLjQzNDI2YTIzLjkxNTczLDIzLjkxNTczLDAsMCwwLTE0LjU2NDk0LDE1Ljc3MDUxLDEuNTUwNzgsMS41NTA3OCwwLDAsMCwuNjg5MzMsMS42OTRjLjg4MzQ5LjYzMjc1LDEuNzQ0NzYsMS4zNTA2NSwyLjY3MywxLjkxNDM3YTguMzM5MjIsOC4zMzkyMiwwLDAsMCwyLjYxMS43MTIwOXEyLjIxMzY2LjQ2NzEyLDQuNDMyOTIuOTA2OTMsOC4xNzU4NCwxLjYxOTkyLDE2LjQxOTYyLDIuODY3OTIsMTYuNjgxLDIuNTI1MiwzMy41NDIxNywzLjU1NzU1YTM3My40ODEzMiwzNzMuNDgxMzIsMCwwLDAsNjcuNTEwMjYtMi4wMjlBMzc0Ljc3MTQ0LDM3NC43NzE0NCwwLDAsMCwyNTUuNjQ3LDE2OC4zNDc1YTEuNTEzOSwxLjUxMzksMCwwLDAsLjY2MTkzLTIuNTA3MDhDMjQyLjgxMTg1LDE1MS42ODE2LDIyNy4xMzY0MywxMzguNzY1LDIwOC41Nzk2MSwxMzEuOTM5NDhaIiB0cmFuc2Zvcm09InRyYW5zbGF0ZSgtMjYuODQwODYgLTQ5LjQ5ODE5KSIgZmlsbD0iI2YwZjBmMCIvPjxwb2x5Z29uIHBvaW50cz0iMTA0Ny40MTEgNTg4LjE0MiAxMDc0LjU3NiA1NjcuNTE4IDEwODcuODE2IDU4MC43NTkgMTA0My41NjMgNjExLjA0MiAxMDQ3LjQxMSA1ODguMTQyIiBmaWxsPSIjMmYyZTQxIi8+PHBhdGggZD0iTTEwNDguOTE2MzUsNjk0LjQyNzgxSDk1NS45OTI2OWwzLjI1OTA3LTEwLjU1OTg3LDAsMGMyMC4xOTkzLTcuMzEyMjcsOC44NTMzMy0yMy4wMjk1NywyOC4wNjc1MS0zMi42MzY2Niw0Ni45OTY4LTIzLjQ5ODQsNjUuMTkxMTgtOTMuNjIwMDYsNTguMzA5MzItMTIxLjMzOTM1bDMwLjc5OC0xLjMwMjIxUzExMTguOTU4NzcsNjQ5LjM3NDc2LDEwNDguOTE2MzUsNjk0LjQyNzgxWiIgdHJhbnNmb3JtPSJ0cmFuc2xhdGUoLTI2Ljg0MDg2IC00OS40OTgxOSkiIGZpbGw9IiMyZjJlNDEiLz48cGF0aCBkPSJNMTEyOC4yNDY1Myw2NDQuNzg4ODhhMTUuNjE4OTMsMTUuNjE4OTMsMCwwLDEtMjAuMTgyNzIuMzc3NTlsLS4wNjA0LS4wNDk2MS0uMDAyMDctLjA3NzY3YTE0Ljk2NDgzLDE0Ljk2NDgzLDAsMCwwLS42LTMuODE5MzYsMTAuNjkwNzcsMTAuNjkwNzcsMCwwLDEtLjM4ODE4LDIuNjQzNjZsLS4wNzc4NC4yODk5MS0uMjA4NzMtLjIxNTQ5Yy0uMTgwMjctLjE4NTg5LS4zNTQ3NC0uMzc0NzItLjUxODU5LS41NjFhMTUuNzUwODgsMTUuNzUwODgsMCwwLDEtMi4zOTktMy42MzI2OSw0NS45MTYyMyw0NS45MTYyMywwLDAsMC0xMi43NC0xNS44Nzk3MiwyMi4yOTIzNywyMi4yOTIzNywwLDAsMS0yLjY3MjctMi41NzE3MiwyMi4wMzQxNSwyMi4wMzQxNSwwLDAsMSwyNy42Njk1NS0zMy41NjkxMWwuMTM3NjcuMDgwNi0uMDcxNDguMTQyNWExMS40Nzc1NiwxMS40Nzc1NiwwLDAsMS0yLjA0Nzg4LDIuOTU0LDE0Ljk2ODI5LDE0Ljk2ODI5LDAsMCwwLDMuMTUzOTUtMi4yNzg2NWwuMTAwMDYtLjA5NDM2LjExMzM3LjA3ODE4YTIyLjEyNzkzLDIyLjEyNzkzLDAsMCwxLDQuMDI5NCwzLjU4NjdsLjEyODQ0LjE0NzI2YTkuODM2NDMsOS44MzY0MywwLDAsMCw3LjI4Mzc1LDMuMzYxMjMsMTUuNjE0LDE1LjYxNCwwLDAsMSwxNS4xMTk0NywxOC4yOTI5MWwtLjAxNzY5LjEwMzE1LS4xMDAzNC4wMzA0YTEzLjM5ODY2LDEzLjM5ODY2LDAsMCwxLTUuNDU2OTQuNjgwODgsMTUuMjIyMDgsMTUuMjIyMDgsMCwwLDAsNC44NjA2MSwxLjIxNzRsLjIxNjU0LjAxNzE4LS4wNjg3NC4yMDYxOWExNS42MDM1LDE1LjYwMzUsMCwwLDEtNC41MDMzOSw2Ljc5bC0uMDU5MjguMDUxODctLjA2Mjk0LjA1NTA5YTE1LjMzMjksMTUuMzMyOSwwLDAsMC01LjI5NywxMC42NDI3MkExNS43MzM0NSwxNS43MzM0NSwwLDAsMSwxMTI4LjI0NjUzLDY0NC43ODg4OFoiIHRyYW5zZm9ybT0idHJhbnNsYXRlKC0yNi44NDA4NiAtNDkuNDk4MTkpIiBmaWxsPSIjM2YzZDU2Ii8+PHBhdGggZD0iTTExMzEuMDg5LDYzOS43NjkzNGExNS41NzQxOCwxNS41NzQxOCwwLDAsMS0uMTc1NiwxLjY3ODk0LDE1Ljc4NTIxLDE1Ljc4NTIxLDAsMCwwLDIuNTM3NzItNy44MjA0N2MuMDIwNzEtLjQyNjM3LjA2NTQ2LS44NTExLjEyNTQ5LTEuMjczOTNBMTQuODE0MSwxNC44MTQxLDAsMCwwLDExMzEuMDg5LDYzOS43NjkzNFoiIHRyYW5zZm9ybT0idHJhbnNsYXRlKC0yNi44NDA4NiAtNDkuNDk4MTkpIiBvcGFjaXR5PSIwLjE1Ii8+PHBhdGggZD0iTTExMzYuMDAzMzEsNjIwLjc4OWExNS4xOTgxNSwxNS4xOTgxNSwwLDAsMCwzLjg4NDE4LDEuMDk4MjIsMTUuNjMsMTUuNjMsMCwwLDAsMS40MjMyMi0xLjczNjQ3QTEzLjI0MzYzLDEzLjI0MzYzLDAsMCwxLDExMzYuMDAzMzEsNjIwLjc4OVoiIHRyYW5zZm9ybT0idHJhbnNsYXRlKC0yNi44NDA4NiAtNDkuNDk4MTkpIiBvcGFjaXR5PSIwLjE1Ii8+PHBhdGggZD0iTTExNDEuNzI3MzYsNjE1LjY2MDgyYTE1LjcwOTA3LDE1LjcwOTA3LDAsMCwxLS4xMTExMiw0LjA1MTk0LDE1LjUyOTA4LDE1LjUyOTA4LDAsMCwwLDEuNzU3NTgtMy42MjQ1NWwuMDY4NzQtLjIwNjItLjIxNjU1LS4wMTcxOEExNS4wOTQ3MiwxNS4wOTQ3MiwwLDAsMSwxMTQxLjcyNzM2LDYxNS42NjA4MloiIHRyYW5zZm9ybT0idHJhbnNsYXRlKC0yNi44NDA4NiAtNDkuNDk4MTkpIiBvcGFjaXR5PSIwLjE1Ii8+PHBhdGggZD0iTTExNDAuMjgyNDEsNjAwLjgzOTY3YTE1LjY1MDc5LDE1LjY1MDc5LDAsMCwwLTExLjQ2MTQ5LTUuMjk5NTgsOS44MzY0OSw5LjgzNjQ5LDAsMCwxLTcuMjgzNzgtMy4zNjEyNGwtLjEyODQzLS4xNDcyNmEyMi4xMjc4NSwyMi4xMjc4NSwwLDAsMC00LjAyOTM5LTMuNTg2NjlsLS4xMTMzOC0uMDc4MTctLjEwMDA1LjA5NDM0YTE0Ljk2NzYsMTQuOTY3NiwwLDAsMS0zLjE1NCwyLjI3ODY1LDExLjQ3ODMyLDExLjQ3ODMyLDAsMCwwLDIuMDQ3OTQtMi45NTRsLjA3MTQ2LS4xNDI1LS4xMzc2Ni0uMDgwNTlhMjIuMDE3NzcsMjIuMDE3NzcsMCwwLDAtMzIuNjIxMTMsMTQuMjU0MiwyMi4wMjE4MiwyMi4wMjE4MiwwLDAsMSwzMC4yNTktOC4xMTI2OGwuMTM3NjUuMDgwNTktLjA3MTQ1LjE0MjVhMTEuNDc4MTQsMTEuNDc4MTQsMCwwLDEtMi4wNDc5NCwyLjk1NCwxNC45Njc1NCwxNC45Njc1NCwwLDAsMCwzLjE1NC0yLjI3ODY1bC4xMDAwNi0uMDk0MzQuMTEzMzguMDc4MTdhMjIuMTI4NTcsMjIuMTI4NTcsMCwwLDEsNC4wMjkzOSwzLjU4NjdsLjEyODQzLjE0NzI1YTkuODM2NDMsOS44MzY0MywwLDAsMCw3LjI4Mzc3LDMuMzYxMjQsMTUuNjE2NzUsMTUuNjE2NzUsMCwwLDEsMTUuMTAzNDcsMTIuODM0ODgsMTguOTI3MTQsMTguOTI3MTQsMCwwLDAsMi4yNjAwNS0uNTVsLjEwMDM0LS4wMzAzOS4wMTc3Ni0uMTAzMTRBMTUuNTU0LDE1LjU1NCwwLDAsMCwxMTQwLjI4MjQxLDYwMC44Mzk2N1oiIHRyYW5zZm9ybT0idHJhbnNsYXRlKC0yNi44NDA4NiAtNDkuNDk4MTkpIiBvcGFjaXR5PSIwLjE1Ii8+PHBhdGggZD0iTTExNzMuMTU5MTMsNTM2LjU0MDY1YTUwLjI5MTQxLDUwLjI5MTQxLDAsMCwxLTQyLjAwNyw0OS41OTk2NWwtLjI0ODQuMDQwNTMtLjE5MjE5LS4xNjAxNmE0OC4xODU2NSw0OC4xODU2NSwwLDAsMC0xMC41MTAwOC02LjY3MTU5LDM0LjQyMzE2LDM0LjQyMzE2LDAsMCwxLDUuNTY2Miw2LjU2MDQ3bC41MzUzNy44MDQ2OS0uOTY0ODUuMDQ2NDFjLS44MzI4LjA0MDUzLTEuNjYwMzguMDYwOC0yLjQ1OTE5LjA2MDhhNTAuNzE1NTQsNTAuNzE1NTQsMCwwLDEtMTMuODg0NDUtMS45MjUxM2MtMjAuNTE3NDgtNS44Mzc0OC00Mi41NTAyMi02LjgzNTY3LTY1LjQ4NTcxLTIuOTY3MTFhNzEuNzc4NTYsNzEuNzc4NTYsMCwwLDEtMTEuOTAxNDcuOTkzQTcwLjk0Nzg3LDcwLjk0Nzg3LDAsMCwxLDEwMDkuMjg3LDQ0NC42MzcyM2wuNDg3NjUtLjE2MTQ2LjE5MjUxLjQ3NTg5YTM2Ljk1NjU5LDM2Ljk1NjU5LDAsMCwxLDIuNzg3LDExLjIzMzA2LDQ4LjE5NjM1LDQ4LjE5NjM1LDAsMCwwLDEuMTk3ODktMTIuNDcxMTZsLS4wMTUzNi0uNDQyNTUuNDMwMTMtLjEwNzg2YTcxLjI0OTM5LDcxLjI0OTM5LDAsMCwxLDE3LjI0MDUxLTIuMTE0N2wuNjI5MTguMDAyNjJhMzEuNjcyMjgsMzEuNjcyMjgsMCwwLDAsMjMuNjE2LTEwLjQ2MjM3LDUwLjI3NTY4LDUwLjI3NTY4LDAsMCwxLDc2LjM4MDE2LDIuMzQ2MTFsLjIxMTguMjYyMTMtLjEzOTkuMzA3MjNjLTIuOTM3NjksNi40NzQ4NC02LjEzODE4LDExLjE5MTg5LTkuOTU4MzYsMTQuNjQxNDNhNDkuMDEzNDMsNDkuMDEzNDMsMCwwLDAsMTMuMjc5NzgtOS4xNjI4MmwuNTAyLS40ODcuMzUyMzQuNjA0NjZBNTAuMjQyMTQsNTAuMjQyMTQsMCwwLDEsMTE0My4zMiw0NjQuNDI3OGwtLjAwMDY1LjI1MzYzYy0uMDAwNjUuMDg5NTYtLjAwMDY1LjE3OTc3LS4wMDA2NS4yNjkzMiwwLDEzLjYxMzE3LDUuMjY0MTksMjYuNTE1NzcsMTQuNDY2ODksMzUuNDM5MzRBNTAuNjYwMjEsNTAuNjYwMjEsMCwwLDEsMTE3My4xNTkxMyw1MzYuNTQwNjVaIiB0cmFuc2Zvcm09InRyYW5zbGF0ZSgtMjYuODQwODYgLTQ5LjQ5ODE5KSIgZmlsbD0iIzNmM2Q1NiIvPjxnIG9wYWNpdHk9IjAuMTUiPjxwYXRoIGQ9Ik0xMTExLjY4ODY4LDQxNy43MTcxM2EzNS41MTksMzUuNTE5LDAsMCwxLTYuMzM1MDksNy43NzE1OSw0OC44ODkyOSw0OC44ODkyOSwwLDAsMCw5Ljg5ODIzLTYuMTg2NVExMTEzLjUwMjI4LDQxOC40NDAzOCwxMTExLjY4ODY4LDQxNy43MTcxM1oiIHRyYW5zZm9ybT0idHJhbnNsYXRlKC0yNi44NDA4NiAtNDkuNDk4MTkpIi8+PHBhdGggZD0iTTExNDAuNzkyOTMsNDc3LjczMzIzYTUwLjQ4MTkxLDUwLjQ4MTkxLDAsMCwxLDcuMjI5ODEsOC44MDc3NSw1MS4zOTI4OCw1MS4zOTI4OCwwLDAsMS00LjcwNDA1LTIxLjU5MDIyYzAtLjA4OTU3LDAtLjE3OTc4LjAwMDY1LS4yNjkzMmwuMDAwNjQtLjI1MzY0YTUwLjI0MjQ1LDUwLjI0MjQ1LDAsMCwwLTYuODM5NTYtMjUuMzI3MzVsLS4zNTIzNS0uNjA0NjgtLjUwMjA3LjQ4N2E0OS4xMjYxNiw0OS4xMjYxNiwwLDAsMS05LjE3MDQzLDYuOTgzQTQ4Ljk3MTg1LDQ4Ljk3MTg1LDAsMCwwLDExNDAuNzkyOTMsNDc3LjczMzIzWiIgdHJhbnNmb3JtPSJ0cmFuc2xhdGUoLTI2Ljg0MDg2IC00OS40OTgxOSkiLz48cGF0aCBkPSJNMTEyNi4zMjczMyw0NDEuNzcwOTNsLS4wMDA2NS4yNTM2NGMtLjAwMDY0LjA4OTU0LS4wMDA2NC4xNzk3NS0uMDAwNjQuMjY5MzEsMCwuNDkzNTUuMDA4OTQuOTg1ODUuMDIyNzIsMS40NzczOWE1Mi4zNjQ4LDUyLjM2NDgsMCwwLDAsNS45NTU4Ny0xMC4yNjcwOWwuMTM5ODUtLjMwNzI1LS4yMTE3Ni0uMjYyMTJhNTAuNjg4MTEsNTAuNjg4MTEsMCwwLDAtOS4wOTYtOC43OTczM0E1MC4zNTYyMSw1MC4zNTYyMSwwLDAsMSwxMTI2LjMyNzMzLDQ0MS43NzA5M1oiIHRyYW5zZm9ybT0idHJhbnNsYXRlKC0yNi44NDA4NiAtNDkuNDk4MTkpIi8+PHBhdGggZD0iTTExNTcuNzg1NTksNTAwLjM5MDFhNDUuNDU5MzQsNDUuNDU5MzQsMCwwLDEtNi40MDgzOC03Ljc5NjY2LDUwLjIyOTcsNTAuMjI5NywwLDAsMS0zNy4yMTc3Miw3MC44OWwtLjI0ODQxLjA0MDU0LS4xOTIxNy0uMTYwMTZhNDguMTg4LDQ4LjE4OCwwLDAsMC0xMC41MTAxLTYuNjcxNTksMzQuNDIyNjIsMzQuNDIyNjIsMCwwLDEsNS41NjYxNyw2LjU2MDQ2bC41MzU0LjgwNDcxLS45NjQ4Mi4wNDY0Yy0uODMyODYuMDQwNTQtMS42NjA0MS4wNjA4LTIuNDU5Mi4wNjA4YTUwLjcxNTQ5LDUwLjcxNTQ5LDAsMCwxLTEzLjg4NDQ4LTEuOTI1MTRjLTIwLjUxNzQ5LTUuODM3NDctNDIuNTUwMjItNi44MzU2Ni02NS40ODU3LTIuOTY3MWE3MS43NzkzLDcxLjc3OTMsMCwwLDEtMTEuOTAxNDUuOTkzLDcwLjYyMzg5LDcwLjYyMzg5LDAsMCwxLTQ3LjEyLTE3Ljk2OSw3MS4wMTExOCw3MS4wMTExOCwwLDAsMCw2NC4xMTI3LDQwLjYyNTksNzEuNzc5NDcsNzEuNzc5NDcsMCwwLDAsMTEuOTAxNDUtLjk5Mjk0YzIyLjkzNTQ3LTMuODY4NTcsNDQuOTY4MjEtMi44NzAzNyw2NS40ODU3LDIuOTY3MDlhNTAuNzE1NDMsNTAuNzE1NDMsMCwwLDAsMTMuODg0NDgsMS45MjUxNGMuNzk4NzgsMCwxLjYyNjM0LS4wMjAyNiwyLjQ1OTE5LS4wNjA4bC45NjQ4My0uMDQ2NC0uNTM1NC0uODA0NzFhMzQuNDIyNjMsMzQuNDIyNjMsMCwwLDAtNS41NjYxOC02LjU2MDQ1LDQ4LjE4Nzc0LDQ4LjE4Nzc0LDAsMCwxLDEwLjUxMDExLDYuNjcxNTlsLjE5MjE3LjE2MDE2LjI0ODQxLS4wNDA1NWE1MC4yNTM5Miw1MC4yNTM5MiwwLDAsMCwyNi42MzM0NC04NS43NTAxOVoiIHRyYW5zZm9ybT0idHJhbnNsYXRlKC0yNi44NDA4NiAtNDkuNDk4MTkpIi8+PC9nPjxwb2x5Z29uIHBvaW50cz0iMTM0LjAzNSA1NjAuOTczIDk3LjIyMyA1MzMuMDI1IDc5LjI4IDU1MC45NjggMTM5LjI1IDU5Mi4wMDcgMTM0LjAzNSA1NjAuOTczIiBmaWxsPSIjMmYyZTQxIi8+PHBhdGggZD0iTTE5NS4yMSw2ODcuNDI3ODFoMTI1LjkyNjZMMzE2LjcyLDY3My4xMTc0N2wwLDBjLTI3LjM3MzMyLTkuOTA5My0xMS45OTc2OS0zMS4yMDg3OS0zOC4wMzYtNDQuMjI4LTYzLjY4ODI3LTMxLjg0NDE0LTg4LjM0NDYtMTI2Ljg3MDM1LTc5LjAxODU2LTE2NC40MzQ0N2wtNDEuNzM2MjUtMS43NjQ3MVMxMDAuMjkxMTMsNjI2LjM3MzY0LDE5NS4yMSw2ODcuNDI3ODFaIiB0cmFuc2Zvcm09InRyYW5zbGF0ZSgtMjYuODQwODYgLTQ5LjQ5ODE5KSIgZmlsbD0iIzJmMmU0MSIvPjxwYXRoIGQ9Ik04MC41NTM2NSw2MDUuMjUyMTlhMjAuNzc4NiwyMC43Nzg2LDAsMCwwLTcuMTc4MzMtMTQuNDIyNjFjLS4wMjgzLS4wMjQ4OS0uMDU2ODEtLjA1LS4wODUyOS0uMDc0NjVsLS4wODAzNC0uMDcwM2EyMS4xNDUzOSwyMS4xNDUzOSwwLDAsMS02LjEwMjgzLTkuMjAxNDhsLS4wOTMxNS0uMjc5NDIuMjkzNDUtLjAyMzI5YTIwLjYyODMsMjAuNjI4MywwLDAsMCw2LjU4NjkxLTEuNjQ5NzcsMTguMTU3MjYsMTguMTU3MjYsMCwwLDEtNy4zOTUtLjkyMjdsLS4xMzYtLjA0MTItLjAyNC0uMTM5NzlhMjEuMTU5NTMsMjEuMTU5NTMsMCwwLDEsMjAuNDg5MzItMjQuNzg5ODUsMTMuMzI5ODcsMTMuMzI5ODcsMCwwLDAsOS44NzA2Ni00LjU1NWwuMTc0MDYtLjE5OTU2YTI5Ljk4NjgsMjkuOTg2OCwwLDAsMSw1LjQ2MDQ5LTQuODYwNTVsLjE1MzY0LS4xMDYuMTM1NTkuMTI3ODZhMjAuMjg0NSwyMC4yODQ1LDAsMCwwLDQuMjc0MTEsMy4wODgsMTUuNTU0LDE1LjU1NCwwLDAsMS0yLjc3NTE5LTQuMDAzMTJsLS4wOTY4OC0uMTkzMTIuMTg2NTctLjEwOTIzQTI5Ljg1OTg0LDI5Ljg1OTg0LDAsMCwxLDE0MS43MDgxOCw1ODguMzE4YTMwLjIwOSwzMC4yMDksMCwwLDEtMy42MjE5NSwzLjQ4NTExLDYyLjIyNCw2Mi4yMjQsMCwwLDAtMTcuMjY0ODMsMjEuNTE5NTksMjEuMzQ0NDcsMjEuMzQ0NDcsMCwwLDEtMy4yNTEsNC45MjI4OWMtLjIyMi4yNTI0NC0uNDU4NDguNTA4MzQtLjcwMjc3Ljc2MDI2bC0uMjgyODYuMjkyLS4xMDU0OS0uMzkyODdhMTQuNDg3NDIsMTQuNDg3NDIsMCwwLDEtLjUyNi0zLjU4MjU5LDIwLjI3OTYxLDIwLjI3OTYxLDAsMCwwLS44MTMsNS4xNzU4NWwtLjAwMjgxLjEwNTI1LS4wODE4NS4wNjcyNGEyMS4xNTAzNywyMS4xNTAzNywwLDAsMS0zNC41MDE5Mi0xNS40MTg1M1oiIHRyYW5zZm9ybT0idHJhbnNsYXRlKC0yNi44NDA4NiAtNDkuNDk4MTkpIiBmaWxsPSIjM2YzZDU2Ii8+PHBhdGggZD0iTTgzLjg1MjY2LDYxMy4zNTY3M2EyMS4xMDM3NCwyMS4xMDM3NCwwLDAsMCwuMjM4LDIuMjc1MjQsMjEuMzkxNTYsMjEuMzkxNTYsMCwwLDEtMy40MzktMTAuNTk4Yy0uMDI4MDYtLjU3NzgxLS4wODg3MS0xLjE1MzM5LS4xNzAwNi0xLjcyNjM5QTIwLjA3NTYyLDIwLjA3NTYyLDAsMCwxLDgzLjg1MjY2LDYxMy4zNTY3M1oiIHRyYW5zZm9ybT0idHJhbnNsYXRlKC0yNi44NDA4NiAtNDkuNDk4MTkpIiBvcGFjaXR5PSIwLjE1Ii8+PHBhdGggZD0iTTc3LjE5Myw1ODcuNjM1MjRhMjAuNTk2ODEsMjAuNTk2ODEsMCwwLDEtNS4yNjM3LDEuNDg4MjYsMjEuMTgwMjksMjEuMTgwMjksMCwwLDEtMS45Mjg2OC0yLjM1MzJBMTcuOTQ3MzEsMTcuOTQ3MzEsMCwwLDAsNzcuMTkzLDU4Ny42MzUyNFoiIHRyYW5zZm9ybT0idHJhbnNsYXRlKC0yNi44NDA4NiAtNDkuNDk4MTkpIiBvcGFjaXR5PSIwLjE1Ii8+PHBhdGggZD0iTTY5LjQzNiw1ODAuNjg1NzlhMjEuMjg4OTMsMjEuMjg4OTMsMCwwLDAsLjE1MDYsNS40OTEsMjEuMDQzODksMjEuMDQzODksMCwwLDEtMi4zODE4LTQuOTExODZsLS4wOTMxNi0uMjc5NDMuMjkzNDYtLjAyMzI5QTIwLjQ1MTcsMjAuNDUxNywwLDAsMCw2OS40MzYsNTgwLjY4NTc5WiIgdHJhbnNmb3JtPSJ0cmFuc2xhdGUoLTI2Ljg0MDg2IC00OS40OTgxOSkiIG9wYWNpdHk9IjAuMTUiLz48cGF0aCBkPSJNNzEuMzk0MTUsNTYwLjYwMDczYTIxLjIwOTMxLDIxLjIwOTMxLDAsMCwxLDE1LjUzMjE4LTcuMTgxNzksMTMuMzMsMTMuMzMsMCwwLDAsOS44NzA2OS00LjU1NWwuMTc0LS4xOTk1NWEyOS45ODcxNywyOS45ODcxNywwLDAsMSw1LjQ2MDQ4LTQuODYwNTZsLjE1MzY0LS4xMDU5My4xMzU1OS4xMjc4NWEyMC4yODM3NywyMC4yODM3NywwLDAsMCw0LjI3NDE1LDMuMDg3OTQsMTUuNTU0NzQsMTUuNTU0NzQsMCwwLDEtMi43NzUyOS00LjAwMzEybC0uMDk2ODMtLjE5MzEyLjE4NjU1LS4xMDkyMUEyOS44Mzc2NCwyOS44Mzc2NCwwLDAsMSwxNDguNTE2MjcsNTYxLjkyNWEyOS44NDMxNSwyOS44NDMxNSwwLDAsMC00MS4wMDU4NS0xMC45OTRsLS4xODY1NS4xMDkyMS4wOTY4My4xOTMxMWExNS41NTQ4LDE1LjU1NDgsMCwwLDAsMi43NzUyOSw0LjAwMzEzLDIwLjI4NDEyLDIwLjI4NDEyLDAsMCwxLTQuMjc0MTUtMy4wODc5NGwtLjEzNTU5LS4xMjc4Ni0uMTUzNjQuMTA1OTRhMjkuOTg3MTEsMjkuOTg3MTEsMCwwLDAtNS40NjA0OCw0Ljg2MDU1bC0uMTc0LjE5OTU2YTEzLjMzLDEzLjMzLDAsMCwxLTkuODcwNjksNC41NTVBMjEuMTYzMTYsMjEuMTYzMTYsMCwwLDAsNjkuNjU5NzUsNTc5LjEzNWEyNS42NDg0NSwyNS42NDg0NSwwLDAsMS0zLjA2MjczLS43NDUyOWwtLjEzNi0uMDQxMTgtLjAyNDA3LS4xMzk3OEEyMS4wNzgyNCwyMS4wNzgyNCwwLDAsMSw3MS4zOTQxNSw1NjAuNjAwNzNaIiB0cmFuc2Zvcm09InRyYW5zbGF0ZSgtMjYuODQwODYgLTQ5LjQ5ODE5KSIgb3BhY2l0eT0iMC4xNSIvPjxwYXRoIGQ9Ik00Ny42NzQ1NCw0MjQuNDc1MjljMTIuNDcxMTQtMTIuMDkyODksMTkuNjA1LTI5LjU3OCwxOS42MDUtNDguMDI2LDAtLjEyMTM2LDAtLjI0MzYxLS4wMDA4OS0uMzY1bC0uMDAwODgtLjM0MzcyYTY4LjA4NjExLDY4LjA4NjExLDAsMCwxLDkuMjY4NzYtMzQuMzIyNjZsLjQ3NzQ4LS44MTk0Mi42ODAzNC42NmE2Ni40MjEyMiw2Ni40MjEyMiwwLDAsMCwxNy45OTYyNSwxMi40MTcxMWMtNS4xNzctNC42NzQ2OS05LjUxNDE0LTExLjA2NzA2LTEzLjQ5NTItMTkuODQxNWwtLjE4OTU3LS40MTYzNi4yODctLjM1NTIzYTY4LjEzMTY4LDY4LjEzMTY4LDAsMCwxLDEwMy41MDc0OS0zLjE3OTM1LDQyLjkyMTEsNDIuOTIxMSwwLDAsMCwzMi4wMDM0OCwxNC4xNzgybC44NTI2NC0uMDAzNTVhOTYuNTU0NjcsOTYuNTU0NjcsMCwwLDEsMjMuMzYzNjksMi44NjU3NmwuNTgyODkuMTQ2MTctLjAyMDgxLjU5OTczYTY1LjMxMzA3LDY1LjMxMzA3LDAsMCwwLDEuNjIzMzQsMTYuOTAwNDQsNTAuMDgyMjcsNTAuMDgyMjcsMCwwLDEsMy43NzY4Ni0xNS4yMjI2MmwuMjYwODktLjY0NDkxLjY2MDg1LjIxODgxYTk2LjE0NTg1LDk2LjE0NTg1LDAsMCwxLTMwLjI0NzcxLDE4Ny4zOTg0OEE5Ny4yNzE5Miw5Ny4yNzE5MiwwLDAsMSwyMDIuNTM4LDUzNC45NzRjLTMxLjA4MTMtNS4yNDI1My02MC45MzkyMy0zLjg4OTgyLTg4Ljc0Mzc0LDQuMDIwOTJhNjguNzI3ODcsNjguNzI3ODcsMCwwLDEtMTguODE1NjcsMi42MDg4NmMtMS4wODI1MiwwLTIuMjA0LS4wMjc0Ny0zLjMzMjYxLS4wODIzOWwtMS4zMDc1My0uMDYyOUw5MS4wNjQsNTQwLjM2OGE0Ni42NDk2OCw0Ni42NDk2OCwwLDAsMSw3LjU0MzEtOC44OTA1LDY1LjI5OTgxLDY1LjI5OTgxLDAsMCwwLTE0LjI0Mjg2LDkuMDQxMWwtLjI2MDQ1LjIxNy0uMzM2NjItLjA1NDkyQTY4LjEwMjE5LDY4LjEwMjE5LDAsMCwxLDQ3LjY3NDU0LDQyNC40NzUyOVoiIHRyYW5zZm9ybT0idHJhbnNsYXRlKC0yNi44NDA4NiAtNDkuNDk4MTkpIiBmaWxsPSIjM2YzZDU2Ii8+PGcgb3BhY2l0eT0iMC4xNSI+PHBhdGggZD0iTTExMC4xNDMyOCwzMTIuNDRhNDguMTM0MzgsNDguMTM0MzgsMCwwLDAsOC41ODUwOCwxMC41MzE3Niw2Ni4yNTI4Myw2Ni4yNTI4MywwLDAsMS0xMy40MTM3LTguMzgzNzFRMTA3LjY4NTU2LDMxMy40MjAxNiwxMTAuMTQzMjgsMzEyLjQ0WiIgdHJhbnNmb3JtPSJ0cmFuc2xhdGUoLTI2Ljg0MDg2IC00OS40OTgxOSkiLz48cGF0aCBkPSJNNzAuNzAyMzEsMzkzLjc3MTU3YTY4LjQxMSw2OC40MTEsMCwwLDAtOS43OTc1NiwxMS45MzU5Miw2OS42NDU3Nyw2OS42NDU3NywwLDAsMCw2LjM3NDc1LTI5LjI1ODI1YzAtLjEyMTM3LDAtLjI0MzYyLS4wMDA4OC0uMzY1bC0uMDAwODctLjM0MzcyYTY4LjA4NjYxLDY4LjA4NjYxLDAsMCwxLDkuMjY4NzEtMzQuMzIyNjZsLjQ3NzUtLjgxOTQ0LjY4MDM5LjY2YTY2LjU3MzgsNjYuNTczOCwwLDAsMCwxMi40Mjc0MSw5LjQ2MzA1Qzg4Ljk3MTk0LDM2Ny4zMTA0OSw4Mi4wNDYsMzgyLjc3MTg5LDcwLjcwMjMxLDM5My43NzE1N1oiIHRyYW5zZm9ybT0idHJhbnNsYXRlKC0yNi44NDA4NiAtNDkuNDk4MTkpIi8+PHBhdGggZD0iTTkwLjMwNTU1LDM0NS4wMzY4M2wuMDAwODcuMzQzNzJjLjAwMDg4LjEyMTM0LjAwMDg4LjI0MzU5LjAwMDg4LjM2NSwwLC42Njg4NC0uMDEyMTIsMS4zMzYtLjAzMDgsMi4wMDIxQTcwLjk2MjQsNzAuOTYyNCwwLDAsMSw4Mi4yMDUzNCwzMzMuODM0bC0uMTg5NTMtLjQxNjM3LjI4Ny0uMzU1MjJhNjguNjkwNDQsNjguNjkwNDQsMCwwLDEsMTIuMzI2NTktMTEuOTIxODFBNjguMjQwODYsNjguMjQwODYsMCwwLDAsOTAuMzA1NTUsMzQ1LjAzNjgzWiIgdHJhbnNmb3JtPSJ0cmFuc2xhdGUoLTI2Ljg0MDg2IC00OS40OTgxOSkiLz48cGF0aCBkPSJNNDcuNjc0NTEsNDI0LjQ3NTNhNjEuNjA1MjUsNjEuNjA1MjUsMCwwLDAsOC42ODQ0LTEwLjU2NTc1LDY4LjA2OTM4LDY4LjA2OTM4LDAsMCwwLDUwLjQzNiw5Ni4wNjc0MWwuMzM2NjQuMDU0OTQuMjYwNDItLjIxN2E2NS4zMDI1Myw2NS4zMDI1MywwLDAsMSwxNC4yNDI4OS05LjA0MTA4LDQ2LjY0NzY3LDQ2LjY0NzY3LDAsMCwwLTcuNTQzMDYsOC44OTA0N2wtLjcyNTU2LDEuMDkwNTIsMS4zMDc1LjA2Mjg3YzEuMTI4NjUuMDU0OTQsMi4yNTAxMi4wODIzOSwzLjMzMjYxLjA4MjM5YTY4LjcyNzYyLDY4LjcyNzYyLDAsMCwwLDE4LjgxNTcyLTIuNjA4ODZjMjcuODA0NTEtNy45MTA3Miw1Ny42NjI0NC05LjI2MzQ0LDg4Ljc0MzcyLTQuMDIwOWE5Ny4yNzI2Miw5Ny4yNzI2MiwwLDAsMCwxNi4xMjgzOSwxLjM0NTYsOTUuNzA2OSw5NS43MDY5LDAsMCwwLDYzLjg1NTMtMjQuMzUwOTQsOTYuMjMxNjUsOTYuMjMxNjUsMCwwLDEtODYuODgzMDksNTUuMDU0NjdBOTcuMjcyNDUsOTcuMjcyNDUsMCwwLDEsMjAyLjUzOCw1MzQuOTc0Yy0zMS4wODEyOS01LjI0MjU0LTYwLjkzOTIyLTMuODg5ODItODguNzQzNzMsNC4wMjA5YTY4LjcyNzYzLDY4LjcyNzYzLDAsMCwxLTE4LjgxNTcyLDIuNjA4ODdjLTEuMDgyNDksMC0yLjIwNC0uMDI3NDYtMy4zMzI2MS0uMDgyNGwtMS4zMDc0OS0uMDYyODdMOTEuMDY0LDU0MC4zNjhhNDYuNjQ4MzQsNDYuNjQ4MzQsMCwwLDEsNy41NDMwNi04Ljg5MDQ3LDY1LjMwMjUzLDY1LjMwMjUzLDAsMCwwLTE0LjI0Mjg5LDkuMDQxMDhsLS4yNjA0Mi4yMTctLjMzNjYzLS4wNTQ5NEE2OC4xMDIxOSw2OC4xMDIxOSwwLDAsMSw0Ny42NzQ1MSw0MjQuNDc1M1oiIHRyYW5zZm9ybT0idHJhbnNsYXRlKC0yNi44NDA4NiAtNDkuNDk4MTkpIi8+PC9nPjxjaXJjbGUgY3g9IjQ2MC4zMTgyOCIgY3k9IjE4NSIgcj0iNSIgZmlsbD0iI2ZmZiIvPjxjaXJjbGUgY3g9IjgzNC4zMTgyOCIgY3k9IjMwNSIgcj0iMyIgZmlsbD0iI2ZmZiIvPjxjaXJjbGUgY3g9Ijg5Mi4zMTgyOCIgY3k9IjE3MCIgcj0iMyIgZmlsbD0iI2ZmZiIvPjxjaXJjbGUgY3g9IjM1NS4zMTgyOCIgY3k9IjgwIiByPSIzIiBmaWxsPSIjZmZmIi8+PGNpcmNsZSBjeD0iMzI1LjMxODI4IiBjeT0iMjAxIiByPSIzIiBmaWxsPSIjZmZmIi8+PGNpcmNsZSBjeD0iMTc5LjMxODI4IiBjeT0iMTcwIiByPSIzIiBmaWxsPSIjZmZmIi8+PGNpcmNsZSBjeD0iNjk2LjMxODI4IiBjeT0iMTk1IiByPSIzIiBmaWxsPSIjZmZmIi8+PGNpcmNsZSBjeD0iMTAwMy4zMTgyOCIgY3k9Ijk4IiByPSIzIiBmaWxsPSIjZmZmIi8+PHBhdGggZD0iTTMyOC45NTkyOSw0MTMuNTYzMjdjLTMuNzk5NTgtNy4wMzUtNC4zMy0xNi4yNTUzNy4zMzUzMS0yMi43NDg1OWEzNi44Mzg0MywzNi44Mzg0MywwLDAsMCwxNC42NzUwNywyMC41OTkzYzIuNzcxODEsMS44ODcxOSw2LjA1MTI0LDMuNjk3NTgsNi45OTk0Nyw2LjkxNGE4LjIzNDg4LDguMjM0ODgsMCwwLDEtLjg1ODY0LDYuMDQ0NDUsMjQuNDU3MSwyNC40NTcxLDAsMCwxLTMuNzk1MDUsNC45NTQ5NGwtLjEzNDMzLjUwMzI1QzMzOS4zMDI2OCw0MjUuNzU0NDMsMzMyLjc1ODg2LDQyMC41OTgyOSwzMjguOTU5MjksNDEzLjU2MzI3WiIgdHJhbnNmb3JtPSJ0cmFuc2xhdGUoLTI2Ljg0MDg2IC00OS40OTgxOSkiIGZpbGw9IiMzZjNkNTYiLz48cGF0aCBkPSJNOTEwLjk1OTI5LDYxMi41NjMyN2MtMy43OTk1OC03LjAzNS00LjMzLTE2LjI1NTM3LjMzNTMxLTIyLjc0ODU5YTM2LjgzODQzLDM2LjgzODQzLDAsMCwwLDE0LjY3NTA3LDIwLjU5OTNjMi43NzE4MSwxLjg4NzE5LDYuMDUxMjQsMy42OTc1OCw2Ljk5OTQ3LDYuOTE0YTguMjM0ODgsOC4yMzQ4OCwwLDAsMS0uODU4NjQsNi4wNDQ0NSwyNC40NTcxLDI0LjQ1NzEsMCwwLDEtMy43OTUsNC45NTQ5NGwtLjEzNDMzLjUwMzI1QzkyMS4zMDI2OCw2MjQuNzU0NDMsOTE0Ljc1ODg2LDYxOS41OTgyOSw5MTAuOTU5MjksNjEyLjU2MzI3WiIgdHJhbnNmb3JtPSJ0cmFuc2xhdGUoLTI2Ljg0MDg2IC00OS40OTgxOSkiIGZpbGw9IiMzZjNkNTYiLz48cGF0aCBkPSJNNTkxLjk1OTI5LDQ0OS41NjMyN2MtMy43OTk1OC03LjAzNS00LjMzLTE2LjI1NTM3LjMzNTMxLTIyLjc0ODU5YTM2LjgzODQzLDM2LjgzODQzLDAsMCwwLDE0LjY3NTA3LDIwLjU5OTNjMi43NzE4MSwxLjg4NzE5LDYuMDUxMjQsMy42OTc1OCw2Ljk5OTQ3LDYuOTE0YTguMjM0ODgsOC4yMzQ4OCwwLDAsMS0uODU4NjQsNi4wNDQ0NSwyNC40NTcxLDI0LjQ1NzEsMCwwLDEtMy43OTUsNC45NTQ5NGwtLjEzNDMzLjUwMzI1QzYwMi4zMDI2OCw0NjEuNzU0NDMsNTk1Ljc1ODg2LDQ1Ni41OTgyOSw1OTEuOTU5MjksNDQ5LjU2MzI3WiIgdHJhbnNmb3JtPSJ0cmFuc2xhdGUoLTI2Ljg0MDg2IC00OS40OTgxOSkiIGZpbGw9IiMzZjNkNTYiLz48cGF0aCBkPSJNMjg3Ljk1OTI5LDU2NS41NjMyN2MtMy43OTk1OC03LjAzNS00LjMzLTE2LjI1NTM3LjMzNTMxLTIyLjc0ODU5YTM2LjgzODQzLDM2LjgzODQzLDAsMCwwLDE0LjY3NTA3LDIwLjU5OTNjMi43NzE4MSwxLjg4NzE5LDYuMDUxMjQsMy42OTc1OCw2Ljk5OTQ3LDYuOTE0YTguMjM0ODgsOC4yMzQ4OCwwLDAsMS0uODU4NjQsNi4wNDQ0NSwyNC40NTcxLDI0LjQ1NzEsMCwwLDEtMy43OTUwNSw0Ljk1NDk0bC0uMTM0MzMuNTAzMjVDMjk4LjMwMjY4LDU3Ny43NTQ0MywyOTEuNzU4ODYsNTcyLjU5ODI5LDI4Ny45NTkyOSw1NjUuNTYzMjdaIiB0cmFuc2Zvcm09InRyYW5zbGF0ZSgtMjYuODQwODYgLTQ5LjQ5ODE5KSIgZmlsbD0iIzNmM2Q1NiIvPjxwYXRoIGQ9Ik0yNDkuOTU5MjksNjUxLjU2MzI3Yy0zLjc5OTU4LTcuMDM1LTQuMzMtMTYuMjU1MzcuMzM1MzEtMjIuNzQ4NTlhMzYuODM4NDMsMzYuODM4NDMsMCwwLDAsMTQuNjc1MDcsMjAuNTk5M2MyLjc3MTgxLDEuODg3MTksNi4wNTEyNCwzLjY5NzU4LDYuOTk5NDcsNi45MTRhOC4yMzQ4OCw4LjIzNDg4LDAsMCwxLS44NTg2NCw2LjA0NDQ1LDI0LjQ1NzEsMjQuNDU3MSwwLDAsMS0zLjc5NTA1LDQuOTU0OTRsLS4xMzQzMy41MDMyNUMyNjAuMzAyNjgsNjYzLjc1NDQzLDI1My43NTg4Niw2NTguNTk4MjksMjQ5Ljk1OTI5LDY1MS41NjMyN1oiIHRyYW5zZm9ybT0idHJhbnNsYXRlKC0yNi44NDA4NiAtNDkuNDk4MTkpIiBmaWxsPSIjM2YzZDU2Ii8+PHJlY3QgeD0iODQzLjMxODI4IiB5PSI2OCIgd2lkdGg9IjExIiBoZWlnaHQ9IjU4OSIgZmlsbD0iIzNmM2Q1NiIvPjxyZWN0IHg9IjgxMy4zMTgyOCIgeT0iMjAiIHdpZHRoPSI3MiIgaGVpZ2h0PSI3MiIgcng9IjM1Ljk5OTk2IiBmaWxsPSIjZmY2NTgyIi8+PHBhdGggZD0iTTQxOC42NDI2Myw0MjQuMTM4NWMwLDExLjQ3NzcxLDEyLjUxNTcyLDIxLjY3ODIzLDIzLjk5MzQ0LDIxLjY3ODIzczE3LjU3MS0xMC4yMDA1MiwxNy41NzEtMjEuNjc4MjNhMjAuNzgyMjQsMjAuNzgyMjQsMCwwLDAtNDEuNTY0NDgsMFoiIHRyYW5zZm9ybT0idHJhbnNsYXRlKC0yNi44NDA4NiAtNDkuNDk4MTkpIiBmaWxsPSIjMmYyZTQxIi8+PHBvbHlnb24gcG9pbnRzPSIzOTguNDcxIDQ4NC40ODkgNDM3LjA2NyA0ODMuMDA1IDQzOS4yOTQgNDQyLjkyNSAzOTQuNzYgNDQyLjkyNSAzOTguNDcxIDQ4NC40ODkiIGZpbGw9IiNmZmI4YjgiLz48cGF0aCBkPSJNNDAwLjgxMzY0LDU2MS40OTI4YTYuMTgyMzEsNi4xODIzMSwwLDAsMC0uMzY0OTQtOS40NzI4bDcuMDA3MzktMjAuODIyMzUtMTEuMDM3NzUsMi45MTctNC45NjIxMywxOS4zMjYwNWE2LjIxNTgxLDYuMjE1ODEsMCwwLDAsOS4zNTc0Myw4LjA1MjE1WiIgdHJhbnNmb3JtPSJ0cmFuc2xhdGUoLTI2Ljg0MDg2IC00OS40OTgxOSkiIGZpbGw9IiNmZmI2YjYiLz48Y2lyY2xlIGN4PSI0MTUuNzU4MzUiIGN5PSIzODEuNjI0NzgiIHI9IjE0LjY5ODA0IiBmaWxsPSIjZmZiOGI4Ii8+PHBhdGggZD0iTTQ0Mi45NjA0Nyw0MjkuNjQzNzlsLTEwLjczMjUzLS4yODQyNmExLjUwNCwxLjUwNCwwLDAsMS0xLjI4MDE0LS43ODczOGwtMy41ODc4Ny02LjY1NTE0YTEuNDk3ODMsMS40OTc4MywwLDAsMSwuMzk1NjMtMS44OTEzOEw0NDEuNzk4MTgsNDA5LjA0N2ExLjQ5Njc5LDEuNDk2NzksMCwwLDEsMS4yNTYxOC0uMjgwMzdsMTEuMzQxODQsMi41ODQyMmExLjQ5OSwxLjQ5OSwwLDAsMSwxLjEwNjYsMS4wNDMxNGw0LjQ0MTMsMTUuMjk0OTJhMS40OTkzNSwxLjQ5OTM1LDAsMCwxLTEuNTEzODksMS45MTZsLTUuNTYwMi0uMjc3NzlhMS41MDcyNCwxLjUwNzI0LDAsMCwxLTEuMzQ3NDctMS4wMjc2bC0uMjMwNTItLjY5ODY3YS4xNzM0Mi4xNzM0MiwwLDAsMC0uMzM4LjA1NDM5LDEuNDk5NzQsMS40OTk3NCwwLDAsMS0xLjU3MzQ2LDEuNDk3N2wtMS44NDA4OC0uMDkxOTRhMS40OTU0LDEuNDk1NCwwLDAsMS0xLjM5Ni0xLjIwNWwtLjc5Mzg1LTMuOTkyNTZhLjE3MzIuMTczMiwwLDAsMC0uMzQxODguMDEzNTlsLS41MTg2Niw0LjQ0MmExLjQ5MiwxLjQ5MiwwLDAsMS0xLjQ4NzM0LDEuMzI1NDZaIiB0cmFuc2Zvcm09InRyYW5zbGF0ZSgtMjYuODQwODYgLTQ5LjQ5ODE5KSIgZmlsbD0iIzJmMmU0MSIvPjxwYXRoIGQ9Ik00MzIuMjUxNSw0NDkuNTgwNzlsMTkuMDAzMjMuMjUzMzEsNi4xODQ4MSw3Ljg1MzQ2LDkuOTU2ODQsMi4zNDgxLDIuNTg3OCwxNC45NTQyN2MxLjI5Mzc1LDcuNDc2MjQtLjA3OTc5LDEyLjIxMDg5LTMuODgwNzYsMTguNzc3NTFsMCwwLS40NTUyMiwxMi45MTc3MS41MDMuOTE0MjZhMi4wOTM2NCwyLjA5MzY0LDAsMCwxLS42MzExOSwyLjcyMjY3aDBhNC4yNzcyNiw0LjI3NzI2LDAsMCwxLC4xMTc1MiwyLjgxNDkxbC0uMjQ1MjguODEwNDZzLS43MDc4Myw1LjY2MjYxLTQwLjgzMjM5LS4yOTI5M2EzLjk1NjMyLDMuOTU2MzIsMCwwLDEtMy4zNDM0NS0zLjM5ODZoMGEyLjk1NDA2LDIuOTU0MDYsMCwwLDEtLjU0Ny0zLjQwMzhsLjA4MTc1LS4xNjM0OC0uNDEyLS40ODUyOWEzLjE3NywzLjE3NywwLDAsMS0uMTYwOC0zLjkwNjU5aDBsLTUuNzY2NTItNDEuMjUyMTcsMTEuOTExOTItMy43MVoiIHRyYW5zZm9ybT0idHJhbnNsYXRlKC0yNi44NDA4NiAtNDkuNDk4MTkpIiBmaWxsPSIjMmYyZTQxIi8+PHBhdGggZD0iTTQxOS4xNjg2Miw0NjQuOTkyODhsLTQuNzU2ODQtMy45NDgyOHMtNC4yMjk1MiwxLjI1MDEzLTcuMTgzMzQsOS41ODA3Ny0xMy4wODk1Nyw3MS41MjY1Ni0xMy4wODk1Nyw3MS41MjY1NmwxMS44NzU1Ny01LjkzNzc4LDE2LjgzOTItNDYuNDMwODVaIiB0cmFuc2Zvcm09InRyYW5zbGF0ZSgtMjYuODQwODYgLTQ5LjQ5ODE5KSIgZmlsbD0iIzJmMmU0MSIvPjxwYXRoIGQ9Ik01MjQuODE5NDYsNTMyLjI3NGE2LjE4MjI4LDYuMTgyMjgsMCwwLDEtNy4wOTExNi02LjI5MTQ3bC0yMC41NDE0Ny03Ljc5MjQyLDkuMjU3LTYuNjgyLDE4LjA4NzMzLDguNDI0MjRhNi4yMTU4MSw2LjIxNTgxLDAsMCwxLC4yODgzMSwxMi4zNDE2MloiIHRyYW5zZm9ybT0idHJhbnNsYXRlKC0yNi44NDA4NiAtNDkuNDk4MTkpIiBmaWxsPSIjZmZiNmI2Ii8+PHBhdGggZD0iTTQ2MS44ODA2MSw0NjQuNjMyNTNsMy4yMjQ3MS01LjI3NDI1czQuNDA2NTUtLjE4NDU2LDkuODk1MjgsNi43NDM1M2MyLjgxMzczLDMuNTUxNjEsMjEuMDQ4NzQsMzQuMDE3MTksMjEuMDQ4NzQsMzQuMDE3MTlsMTYuODYzMTEsMTQuMDU1NDYtMTMuODA2MjgsNC45MzA4MS0xNi4yNzE2OS02LjkwMzE0LTE4LjI0NC0zMC4wNzhaIiB0cmFuc2Zvcm09InRyYW5zbGF0ZSgtMjYuODQwODYgLTQ5LjQ5ODE5KSIgZmlsbD0iIzJmMmU0MSIvPjxwb2x5Z29uIHBvaW50cz0iNDM1LjU1NSA2NjYuODEgNDQ0LjczOSA2NjYuODEgNDQ5LjEwOCA2MzEuMzg1IDQzNS41NTMgNjMxLjM4NiA0MzUuNTU1IDY2Ni44MSIgZmlsbD0iI2ZmYjZiNiIvPjxwb2x5Z29uIHBvaW50cz0iMzU1LjE1NyA2NjEuMDk5IDM2NC4wNDQgNjYzLjQxNSAzNzcuMjA4IDYzMC4yMzggMzY0LjA5MSA2MjYuODE5IDM1NS4xNTcgNjYxLjA5OSIgZmlsbD0iI2ZmYjZiNiIvPjxwYXRoIGQ9Ik00NjAuMTE3ODcsNzExLjc3NzYzbDE0LjUxODI2LS44NjY1NXY2LjIyMDI2bDEzLjgwMjkzLDkuNTMyNzlhMy44ODU0MSwzLjg4NTQxLDAsMCwxLTIuMjA3ODIsNy4wODI3NEg0NjguOTQ2N2wtMi45NzkyNS02LjE1Mjc5LTEuMTYzMjUsNi4xNTI3OWgtNi41MTdaIiB0cmFuc2Zvcm09InRyYW5zbGF0ZSgtMjYuODQwODYgLTQ5LjQ5ODE5KSIgZmlsbD0iIzJmMmU0MSIvPjxwYXRoIGQ9Ik0zODAuMTMxMTEsNzA1LjQyODU4bDE0LjI2NzQsMi44MjM1LTEuNTY5LDYuMDE5MTMsMTAuOTUyMTEsMTIuNzA2MTVhMy44ODU0MSwzLjg4NTQxLDAsMCwxLTMuOTIzLDYuMjk2ODNMMzgzLjEzMyw3MjguOTE0NDFsLTEuMzMxLTYuNzA1MzEtMi42Nzc1OSw1LjY2MDQzLTYuMzA2MjQtMS42NDM4MVoiIHRyYW5zZm9ybT0idHJhbnNsYXRlKC0yNi44NDA4NiAtNDkuNDk4MTkpIiBmaWxsPSIjMmYyZTQxIi8+PHBhdGggZD0iTTM4My4xMjQ4LDY4OC4zMTkzMWwyNi45MjA4MS01NS4zMzAyMSwyLjExMzUzLTY1LjQ5MDkxQzQwNi4zMzIzMyw1NTYuNjc3LDQyMy40OTEsNTMyLjgwNSw0MjMuNDkxLDUzMi44MDV2LTkuMjQ0OTFsNDEuOTE4NTIsNy45MDgxMnYwYTIwMS4yMTQ4OSwyMDEuMjE0ODksMCwwLDEsMTIuMjYxNTEsNzMuMDYwMjZMNDc1Ljk4Miw2OTQuMDQ3MzRoLjUyOTg3YTMuMzE1MjcsMy4zMTUyNywwLDEsMSwwLDYuNjMwNTNINDU5LjkzNTVhMy4zMTUyNywzLjMxNTI3LDAsMSwxLDAtNi42MzA1M2guNDI3NEw0NDguNDYzMSw1ODAuMTYzNTFsLTEzLjgzNjU0LDU2LjE5ODgxTDQwMS4xODksNjg4LjEwNjZhMy4zMDY5LDMuMzA2OSwwLDAsMS0uMjY1MjQsNi42MDM3OUgzODQuMzQ3MzlhMy4zMTE4MiwzLjMxMTgyLDAsMCwxLTEuMjIyNTktNi4zOTEwOFoiIHRyYW5zZm9ybT0idHJhbnNsYXRlKC0yNi44NDA4NiAtNDkuNDk4MTkpIiBmaWxsPSIjMmYyZTQxIi8+PHBhdGggZD0iTTM4Mi43NTg0MSw0MjYuMjk2NDdjNi4xOTM5NS02LjA1OTM1LDEwLjA5Mjc5LTE0LjAyNzczLDE1LjIyMjU1LTIxLjAxMTA4LDUuMTI5Ni02Ljk4MzI3LDEyLjM1NDcyLTEzLjM4MjQsMjEuMDEwODMtMTMuNzcwMjZhMTMuMDM3ODYsMTMuMDM3ODYsMCwwLDEsOC4xNjU3OSwyLjEyOSw4LjMwNTQxLDguMzA1NDEsMCwwLDEsMy42MDQ1NSw3LjM2NzQxYy45MTM4LTIuNTY2NzQsNC45OTcxOC0zLjE0NTMsNi41ODgtLjkzMzMxLDEuNTkwNjIsMi4yMTE5MS0uMjU3MjIsNS44OTg5My0yLjk4MTE1LDUuOTQ4MzhsLS4yNjcxLTEuMDU2NjZhMTguMjQ4NzcsMTguMjQ4NzcsMCwwLDEtMTEuODAxNDEsNy44MzYxMywyLjk3ODMsMi45NzgzLDAsMCwxLTMuMzU1MjYtMy44NTQyNUM0MDkuNTkwODcsNDEwLjgwNjY2LDQxMi41NjA1Miw0MjguMjUyMzQsNDA3LDQzNnMtMjEuNDUyNTksNi45OTU1MS0zMC44MjkwNyw4LjczNTNjLTkuMDU0NjYsMS42OC0xNy44NTg1Ny0zLjM0NzU2LTI1LjY5OTMxLTguMTc4QTM4LjI3MTUsMzguMjcxNSwwLDAsMCwzODIuNzU4NDEsNDI2LjI5NjQ3WiIgdHJhbnNmb3JtPSJ0cmFuc2xhdGUoLTI2Ljg0MDg2IC00OS40OTgxOSkiIGZpbGw9IiMyZjJlNDEiLz48cGF0aCBkPSJNNzMyLjY4OTg5LDYzNi45MDM3Myw3MDQuNDcyNzUsNjI0LjQ1NVY2MTMuNzUyNjVsMTAuMDU2MS0uMDU2NTFhNy40NjkxOCw3LjQ2OTE4LDAsMCwwLDcuMDQ0LTUuMTA3MTRsNy4wNjQzNy0yMS4xOTMwNWE3LjQ2OTI0LDcuNDY5MjQsMCwwLDAtNy4wODYtOS44MzEyMkg3MDQuNDcyNzV2LTkuOTU5SDcyNS45MTNhNy40NjkyNSw3LjQ2OTI1LDAsMCwwLDcuMjc5MzctNS43OTU4NGw0Ljg2NS0yMS4xNjI4NmE3LjQ2OTIzLDcuNDY5MjMsMCwwLDAtNy4yNzkzNy05LjE0MjY1SDcwNC40NzI3NXYtMi40ODk3NWE0Ljk3OTQ5LDQuOTc5NDksMCwwLDAtOS45NTksMHYyLjQ4OTc1SDUxOC4xNTY2di0yLjQ4OTc1YTQuOTc5NSw0Ljk3OTUsMCwwLDAtOS45NTksMHYyLjQ4OTc1SDQ4Ny4yODY4YTcuNDY5MjMsNy40NjkyMywwLDAsMC03LjI3OTM3LDkuMTQyNjVsNC44NjUsMjEuMTYyODZhNy40NjkyNSw3LjQ2OTI1LDAsMCwwLDcuMjc5MzcsNS43OTU4NEg1MDguMTk3NnY5Ljk1OUg0OTYuNTEzMjhhNy40NjkyMyw3LjQ2OTIzLDAsMCwwLTcuMTA5MjcsOS43Nmw3LjIxMDQxLDIyLjM3NzExYTcuNDY5MjUsNy40NjkyNSwwLDAsMCw3LjE1MTIzLDUuMTc4MzdsNC40MzItLjAyNDlWNjI0LjQ1NWwtMjIuODIyNjksMTIuNDQ4NzRhNy40NjkyMiw3LjQ2OTIyLDAsMCwwLTcuNDY5MjQsNy40NjkyMnYwYTcuNDY5MjUsNy40NjkyNSwwLDAsMCw3LjQ2OTI0LDcuNDY5MjVINTA4LjE5NzZ2NTQuNzc0NDZhNC45Nzk1LDQuOTc5NSwwLDAsMCw5Ljk1OSwwVjY1MS44NDIyMkg2OTQuNTEzNzZ2NTQuNzc0NDZhNC45Nzk0OSw0Ljk3OTQ5LDAsMCwwLDkuOTU5LDBWNjUxLjg0MjIyaDI4LjIxNzE0YTcuNDY5MjUsNy40NjkyNSwwLDAsMCw3LjQ2OTI1LTcuNDY5MjV2MEE3LjQ2OTIyLDcuNDY5MjIsMCwwLDAsNzMyLjY4OTg5LDYzNi45MDM3M1ptLTIxNC41MzMyOS02OS4yOThINjk0LjUxMzc2djkuOTU5SDUxOC4xNTY2Wm0wLDU2Ljg0OTI1di05LjY1NTYzbDE3Ni4zNTcxNi0uOTkwNzZWNjI0LjQ1NVoiIHRyYW5zZm9ybT0idHJhbnNsYXRlKC0yNi44NDA4NiAtNDkuNDk4MTkpIiBmaWxsPSIjM2YzZDU2Ii8+PC9zdmc+";
-const darkBackground = "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIGRhdGEtbmFtZT0iTGF5ZXIgMSIgd2lkdGg9Ijg1NS45Mzk1OCIgaGVpZ2h0PSI2MzAuMDY2MDgiIHZpZXdCb3g9IjAgMCA4NTUuOTM5NTggNjMwLjA2NjA4IiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayI+PHBhdGggZD0iTTkzNS40MzIzNCw0NzIuNTU3NjdjLTMuNzMsNDMuMDgtMjIuNTEsODQuNzEtNDkuMywxMTkuMTRxLTEuNjgsMi4xNi0zLjQsNC4yOC0zLjg3LDQuNzctNy45NCw5LjM2LTQuOTgsNS42NTUtMTAuMjUsMTEuMDUwMDUtNC4yOSw0LjQzOTk0LTguNzgsOC42ODk5NC0zLjQ2NSwzLjMxNS03LjAxLDYuNWMtMjguNDMsMjUuNjktNjEuMDksNDYuODktOTQuNzQsNjUuNDMwMDUtNjUuNjcsMzYuMTctMTM3LjY1LDYzLjU2OTk1LTIxMi41Miw2Ny41Ni03NC44NiwzLjk4LTE1My4wMS0xNy40Ni0yMDcuOTEtNjguNTItNzMuOTktNjguODEtOTQuNjM5OTUtMTgzLjU4LTY0LjYtMjgwLjA1LDE5Ljk4LTY0LjE4LDYwLjc2LTEyMi4yNCwxMTYuMjYtMTYwLjE2LDU1LjAyLTM3LjU5LDEyNC40My01NC41MSwxOTAuMTItNDMuNDQ5OTUsNTIuNDQtMzEuODcwMDYsMTIxLjA5LTMyLjQ4LDE3OC4xLTguODksMzAuNDIsMTIuNTksNTcuNzIsMzEuMzEsODEuNjcsNTMuOTNhMzM5LjM0MzM3LDMzOS4zNDMzNywwLDAsMSwzMC43MiwzMy4yM3ExLjQ1NSwxLjc4NSwyLjg4LDMuNiw1Ljk3LDcuNTQ1LDExLjU1LDE1LjQsOC4wMSwxMS4yNjUsMTUuMjEsMjMuMDNjMS4zMiwyLjE2LDIuNjMsNC4zMywzLjkxLDYuNTIuODYsMS40NywxLjczLDIuOTUsMi41OCw0LjQ0YS4yOTc3Ni4yOTc3NiwwLDAsMSwuMDQuMWMxMy4zMSwyMy40MSwyNC4xOSw0OC4zOSwyOS44NjAwNSw3NC41LDEsNC42MiwxLjg0LDkuMjYsMi40OSwxMy45NHYuMDFxLjg1NSw1Ljk1NSwxLjI5LDExLjk3QTE3Ni45NzcxMSwxNzYuOTc3MTEsMCwwLDEsOTM1LjQzMjM0LDQ3Mi41NTc2N1oiIHRyYW5zZm9ybT0idHJhbnNsYXRlKC0xNzIuMDMwMjEgLTEzNC45NjY5NikiIGZpbGw9IiMzZjNkNTYiLz48cGF0aCBkPSJNNzQwLjA3Mzg2LDUzNy42ODQxMiw1OTEuNjEyMzMsNDE0LjAwNjI3LDczNS44NDAyNyw1NDIuNjM4YTMuNDQxNjEsMy40NDE2MSwwLDEsMCw0LjIzMzU5LTQuOTUzODZaIiB0cmFuc2Zvcm09InRyYW5zbGF0ZSgtMTcyLjAzMDIxIC0xMzQuOTY2OTYpIiBmaWxsPSIjZjBmMGYwIiBvcGFjaXR5PSIwLjMiLz48Y2lyY2xlIGN4PSIyMjcuNTgyMTIiIGN5PSIyNTAuNzgwNzEiIHI9Ijg5IiBmaWxsPSIjZjJmMmYyIi8+PHBhdGggZD0iTTQ3OC42MTIzMywzNzkuNzQ3NjdhODAuOTkzNjksODAuOTkzNjksMCwwLDEtODEsODEsODEuNTcxNjEsODEuNTcxNjEsMCwwLDEtMjcuOC00LjksODEuMDU0ODksODEuMDU0ODksMCwxLDEsMTA4LjgtNzYuMVoiIHRyYW5zZm9ybT0idHJhbnNsYXRlKC0xNzIuMDMwMjEgLTEzNC45NjY5NikiIGZpbGw9IiNmZmYiLz48Y2lyY2xlIGN4PSIyMTEuNTgyMTIiIGN5PSIyMTcuNzgwNzEiIHI9IjI1IiBmaWxsPSIjZTRlNGU0Ii8+PHBhdGggZD0iTTQ3NS40NTIzNiwzNTcuMjc3NjRhMjUuMDAxMTUsMjUuMDAxMTUsMCwwLDEtMjcuNi00MS4wOEE4MS4wNTI3OSw4MS4wNTI3OSwwLDAsMSw0NzUuNDUyMzYsMzU3LjI3NzY0WiIgdHJhbnNmb3JtPSJ0cmFuc2xhdGUoLTE3Mi4wMzAyMSAtMTM0Ljk2Njk2KSIgZmlsbD0iI2YyZjJmMiIvPjxjaXJjbGUgY3g9IjI1Mi41ODIxMiIgY3k9IjI3MS43ODA3MSIgcj0iOSIgZmlsbD0iI2U0ZTRlNCIvPjxwYXRoIGQ9Ik0zODcuNjEyMzMsNDU3Ljc0NzY3YTkuMDQ1ODEsOS4wNDU4MSwwLDAsMS0uMzEsMi4zNCw3OS41Mjc3NCw3OS41Mjc3NCwwLDAsMS0xNy40OS00LjI0LDkuMDAxNTcsOS4wMDE1NywwLDAsMSwxNy44LDEuOVoiIHRyYW5zZm9ybT0idHJhbnNsYXRlKC0xNzIuMDMwMjEgLTEzNC45NjY5NikiIGZpbGw9IiNmMmYyZjIiLz48cGF0aCBkPSJNMzM0LjYxMjMzLDM3NS43NDc2N2ExOC4wMDIsMTguMDAyLDAsMCwxLTE2LjgsMTcuOTYsODEuNTQ3NzMsODEuNTQ3NzMsMCwwLDEsMS43Ni0zNS43MUExOC4wMDAyNiwxOC4wMDAyNiwwLDAsMSwzMzQuNjEyMzMsMzc1Ljc0NzY3WiIgdHJhbnNmb3JtPSJ0cmFuc2xhdGUoLTE3Mi4wMzAyMSAtMTM0Ljk2Njk2KSIgZmlsbD0iI2YyZjJmMiIvPjxjaXJjbGUgY3g9IjYwNi40NTY1MyIgY3k9IjIwOC40ODMwNSIgcj0iMy43MDIzNCIgZmlsbD0iIzZjNjNmZiIvPjxjaXJjbGUgY3g9IjU3Mi4zMDIzMSIgY3k9IjExOS45NDg1MSIgcj0iMi4xNjMwNyIgZmlsbD0iI2YwZjBmMCIvPjxjaXJjbGUgY3g9IjIyNS4zMDIzMSIgY3k9IjU0My45NDg1MSIgcj0iMi4xNjMwNyIgZmlsbD0iI2YwZjBmMCIvPjxjaXJjbGUgY3g9IjU4NC41ODE0NCIgY3k9IjMzMS41OTQwMiIgcj0iMi4xNjMwNyIgZmlsbD0iI2YwZjBmMCIvPjxjaXJjbGUgY3g9IjMwNS40NTY1MyIgY3k9IjM1MC40ODMwNSIgcj0iMy43MDIzNCIgZmlsbD0iIzZjNjNmZiIvPjxjaXJjbGUgY3g9IjE3MS40NTY1MyIgY3k9IjQxNi40ODMwNSIgcj0iMTcuNDgzMDUiIGZpbGw9IiM2YzYzZmYiLz48Y2lyY2xlIGN4PSIyNjcuMzAyMzEiIGN5PSI0MzUuOTQ4NTEiIHI9IjIuMTYzMDciIGZpbGw9IiNmMGYwZjAiLz48Y2lyY2xlIGN4PSI0ODcuMzAyMzEiIGN5PSI5Ny45NDg1MSIgcj0iMi4xNjMwNyIgZmlsbD0iI2YwZjBmMCIvPjxjaXJjbGUgY3g9IjM1OC4zMDIzMSIgY3k9IjU1OC45NDg1MSIgcj0iMi4xNjMwNyIgZmlsbD0iI2YwZjBmMCIvPjxjaXJjbGUgY3g9IjMyNi4zMDIzMSIgY3k9IjExNy45NDg1MSIgcj0iMi4xNjMwNyIgZmlsbD0iI2YwZjBmMCIvPjxjaXJjbGUgY3g9IjM4Mi4zMDIzMSIgY3k9IjIyMi45NDg1MSIgcj0iMi4xNjMwNyIgZmlsbD0iI2YwZjBmMCIvPjxjaXJjbGUgY3g9IjI5Ni41ODE0NCIgY3k9IjQ4MC41OTQwMiIgcj0iMi4xNjMwNyIgZmlsbD0iI2YwZjBmMCIvPjxjaXJjbGUgY3g9IjU0OS41ODE0NCIgY3k9IjQ5NC41OTQwMiIgcj0iMi4xNjMwNyIgZmlsbD0iI2YwZjBmMCIvPjxjaXJjbGUgY3g9IjQzNy41ODE0NCIgY3k9IjM2OC41OTQwMiIgcj0iMi4xNjMwNyIgZmlsbD0iI2YwZjBmMCIvPjxjaXJjbGUgY3g9IjQ5NC41ODE0NCIgY3k9IjIyMi41OTQwMiIgcj0iMi4xNjMwNyIgZmlsbD0iI2YwZjBmMCIvPjxjaXJjbGUgY3g9IjU5OC4yMTIwNCIgY3k9IjI5Mi42NTQ3MyIgcj0iNC4yODg4OSIgZmlsbD0iI2ZmNjU4NCIvPjxjaXJjbGUgY3g9IjQyNC4yMTIwNCIgY3k9IjE1MC42NTQ3MyIgcj0iNC4yODg4OSIgZmlsbD0iI2ZmNjU4NCIvPjxjaXJjbGUgY3g9IjQyNC4yMTIwNCIgY3k9IjQ0NS42NTQ3MyIgcj0iNC4yODg4OSIgZmlsbD0iI2ZmNjU4NCIvPjxwYXRoIGQ9Ik04NjMuNDUyMzYsNjA1LjMzNzY0YTcuNjk0LDcuNjk0LDAsMCwwLTcuMzksNS41OCw3LjM4OTYsNy4zODk2LDAsMCwwLS4zLDIuMTJ2MTIuMDRxNC40ODUtNC4yNDQ5NCw4Ljc4LTguNjg5OTQsNS4yNjUtNS40MDAwNiwxMC4yNS0xMS4wNTAwNVoiIHRyYW5zZm9ybT0idHJhbnNsYXRlKC0xNzIuMDMwMjEgLTEzNC45NjY5NikiIGZpbGw9IiM2YzYzZmYiLz48cGF0aCBkPSJNODkwLjY4MTE4LDY2Ny44OTgwNnEtMTkuMzY4MTYsMC00Mi40NTY1NC0xLjQ2Mzg2Yy03OS42MTM3Ny01LjA1NTY3LTE4Mi43Mzc4LTIyLjYzMjgyLTI5MC4zNzYtNDkuNDkyMTktMTA3LjYzNzctMjYuODU5MzgtMjA2LjkzMDE4LTU5Ljc5Mzk1LTI3OS41ODU0NS05Mi43MzQzOC0zNS4zOTI1OC0xNi4wNDY4Ny02Mi41NTYxNS0zMS4yMzYzMi04MC43MzUzNS00NS4xNDc0Ni0xOS4yNDcwNy0xNC43MjcwNS0yNy42NjYtMjcuNTY0LTI1LjAyMzkzLTM4LjE1MjgzLDUuMTQ4LTIwLjYyODkxLDUwLjczMS0yNS4xNDIwOSw4OC4wNjQtMjUuMjk1NDFsLjAxMjY5LDNjLTUxLjI2ODA2LjIxMDQ1LTgxLjUxMzY3LDguMzg2NzItODUuMTY1NTIsMjMuMDIyLTQuNjUxODYsMTguNjQwMTQsMzMuMjg2NjIsNDcuNzQwNzMsMTA0LjA4NjkxLDc5Ljg0MTMxLDcyLjQ5NTYxLDMyLjg2ODE3LDE3MS42MDU0Nyw2NS43MzkyNiwyNzkuMDczMjQsOTIuNTU2NjQsMTA3LjQ2NzI5LDI2LjgxNjQxLDIxMC40MDEzNyw0NC4zNjMyOCwyODkuODM5ODUsNDkuNDA4MjEsNzcuNTc4NjEsNC45Mjc3MywxMjQuNzQzMTYtMi45Mzc1LDEyOS4zOTQ1My0yMS41NzgxMywzLjg2MTgxLTE1LjQ3NjU2LTIxLjU5ODE1LTM4LjI3NTM5LTcxLjY4OTQ2LTY0LjE5ODI0bDEuMzc4OTEtMi42NjQwNmMzNi4zOTcsMTguODM1OTMsNzguNjQ1NTEsNDUuODUxNTYsNzMuMjIxNjgsNjcuNTg4ODYtMi42NDI1OCwxMC41ODg4Ny0xNi4xMDU0NywxNy45NjQ4NS00MC4wMTUxNCwyMS45MjI4NUM5MjcuMDc2Miw2NjYuNzY3Miw5MTAuMzM1NDgsNjY3Ljg5ODA2LDg5MC42ODExOCw2NjcuODk4MDZaIiB0cmFuc2Zvcm09InRyYW5zbGF0ZSgtMTcyLjAzMDIxIC0xMzQuOTY2OTYpIiBmaWxsPSIjNmM2M2ZmIi8+PGNpcmNsZSBjeD0iNzE0LjU4MjEyIiBjeT0iMjA4Ljc4MDcxIiByPSIxMDAuNSIgZmlsbD0iI2ZmZiIvPjxwYXRoIGQ9Ik04ODYuNjEyMzMsMjQxLjc0NzY3YTEwMiwxMDIsMCwxLDAsMTAyLDEwMkExMDEuNjM1LDEwMS42MzUsMCwwLDAsODg2LjYxMjMzLDI0MS43NDc2N1ptMCwyMDFhOTksOTksMCwxLDEsOTktOTlBOTguNjE3NjcsOTguNjE3NjcsMCwwLDEsODg2LjYxMjMzLDQ0Mi43NDc2N1oiIHRyYW5zZm9ybT0idHJhbnNsYXRlKC0xNzIuMDMwMjEgLTEzNC45NjY5NikiIGZpbGw9IiMyZjJlNDEiLz48cGF0aCBkPSJNNzk4LjQxNywzNjcuODE4NDdhMi4wMDA3OCwyLjAwMDc4LDAsMCwxLTEuOTU3LTEuNTk3NjUsOTcuNjY5MjQsOTcuNjY5MjQsMCwwLDEsMjIuMzQwODItODMuMTM1MjYsMiwyLDAsMCwxLDIuOTg2MzMsMi42NjExNEE5My41OTY4Miw5My41OTY4MiwwLDAsMCw4MDAuMzc4LDM2NS40MTUxNWEyLjAwMjI4LDIuMDAyMjgsMCwwLDEtMS45NjA5NCwyLjQwMzMyWiIgdHJhbnNmb3JtPSJ0cmFuc2xhdGUoLTE3Mi4wMzAyMSAtMTM0Ljk2Njk2KSIgZmlsbD0iIzJmMmU0MSIvPjxjaXJjbGUgY3g9IjcxNC41MTkyNCIgY3k9IjIzOC4yNzM3MyIgcj0iNjMuODc3MDIiIGZpbGw9IiM2YzYzZmYiLz48cGF0aCBkPSJNODY2LjI0ODA1LDM5Ny4zNTY2NmMtNC4xNDA2Mi0uMTE1LTkuMjkzODUtLjI1ODY5LTEzLjI2Mzg0LTMuMTU4NzRhMTAuMTg2MTgsMTAuMTg2MTgsMCwwLDEtNC4wMDgwNi03LjYwNjA3LDYuODUyMTMsNi44NTIxMywwLDAsMSwyLjMzMDA3LTUuNjI3NjNjMi4wNzM1Mi0xLjc1MjE2LDUuMTAxMzktMi4xNjMxMyw4LjM2NDQxLTEuMjA0MmwtMy4zODA3Ni0yNC43MDYxLDIuNDgxNzQtLjM0LDMuOTc0NDQsMjkuMDQ1MTgtMi4wNzI0NS0uOTUxYy0yLjQwMjctMS4xMDIwNS01LjcwMDg4LTEuNjYyODUtNy43NTA0LjA2OTExYTQuNDAyNjMsNC40MDI2MywwLDAsMC0xLjQ0Mzc1LDMuNjI2NTksNy42OTg4Nyw3LjY5ODg3LDAsMCwwLDIuOTgyNDYsNS42NzEwN2MzLjA4OTQ5LDIuMjU2NjgsNy4xOTcwOCwyLjU0Nzc5LDExLjg1NTg1LDIuNjc4WiIgdHJhbnNmb3JtPSJ0cmFuc2xhdGUoLTE3Mi4wMzAyMSAtMTM0Ljk2Njk2KSIgZmlsbD0iIzJmMmU0MSIvPjxyZWN0IHg9IjY1OC40OTQ5MyIgeT0iMjIyLjIxNzY3IiB3aWR0aD0iMTMuNDkxMzMiIGhlaWdodD0iMi41MDQ5OCIgZmlsbD0iIzJmMmU0MSIvPjxyZWN0IHg9IjcwMS4wNzk2MSIgeT0iMjIyLjIxNzY1IiB3aWR0aD0iMTMuNDkxMzMiIGhlaWdodD0iMi41MDQ5OCIgZmlsbD0iIzJmMmU0MSIvPjxwYXRoIGQ9Ik04ODkuMjMyMzMsNDUyLjkwNzY1aC01Ny45YTguMTQ3MTYsOC4xNDcxNiwwLDAsMC04LjEzOTk1LDguMTR2MTI4LjMzYTQ3LjY2OTU1LDQ3LjY2OTU1LDAsMCwwLDI1LjU2LDQyLjE5OTk1cTMuNTU1LTMuMTgsNy4wMS02LjUsNC40ODUtNC4yNDQ5NCw4Ljc4LTguNjg5OTQsNS4yNjUtNS40MDAwNiwxMC4yNS0xMS4wNTAwNSw0LjA4MDA2LTQuNTksNy45NC05LjM2LDEuNzI1LTIuMTE1LDMuNC00LjI4YzI2Ljc5LTM0LjQzLDQ1LjU3LTc2LjA2LDQ5LjMtMTE5LjE0QTY0LjA0ODU0LDY0LjA0ODU0LDAsMCwwLDg4OS4yMzIzMyw0NTIuOTA3NjVaIiB0cmFuc2Zvcm09InRyYW5zbGF0ZSgtMTcyLjAzMDIxIC0xMzQuOTY2OTYpIiBmaWxsPSIjMmYyZTQxIi8+PHBhdGggZD0iTTg5MS4zNDIzMSw0NzkuNjg3NjdhMTQuNjExMzYsMTQuNjExMzYsMCwwLDAtMTAuNDMtNC4xNywxNC40NjUsMTQuNDY1LDAsMCwwLTkuMTYsMy4zNjAwNSwxMy4xMjI2MywxMy4xMjI2MywwLDAsMC0xLjE3LDEuMDdsLTQ3LjM4OTk1LDQ4LjYtMzQuMzcsMzUuMjVhNi44MDA2MSw2LjgwMDYxLDAsMCwwLTEuMjgsMS44LDcuMjk1NzMsNy4yOTU3MywwLDAsMC0uNzcsMy4zMiw3LjE2NzUxLDcuMTY3NTEsMCwwLDAsMi4xODAwNiw1LjA3bDEuMzUsMS4zMiw5LjgsOS41NS4wMS0uMDFhNy4yOTA3Myw3LjI5MDczLDAsMCwwLDQuNjYsMS42Myw3LjE2Nyw3LjE2NywwLDAsMCw1LjA3LTIuMThsMS41OS0xLjYyLDExLjM4LTExLjY3LjM4LS4zOSw2OC40MS03MC4xNmExNC42OTEyOCwxNC42OTEyOCwwLDAsMC0uMjYtMjAuNzdaIiB0cmFuc2Zvcm09InRyYW5zbGF0ZSgtMTcyLjAzMDIxIC0xMzQuOTY2OTYpIiBmaWxsPSIjNmM2M2ZmIi8+PHBhdGggZD0iTTg5MC44NjE1MiwzNDMuNDRjMi4xMTI0LTQuNDY2NTgtLjA1MzQ5LTkuMjM3NjEtMy43NjM3OC0xMi4wOTA3Mi00LjY3NTU3LTMuNTk1MzktMTAuNzIyMS0zLjAwMDg1LTE2LjA0MDA4LTEuMjk5MDUtNS44MjIzOCwxLjg2MzItMTEuNTEzNjYsNS4yMTYwOC0xNy44MDM4Myw1LjAyMzM3YTExLjEzMDU4LDExLjEzMDU4LDAsMCwxLTEwLjI0NDA3LTcuMjc3NjRjLTMuMzY4Ny04LjYzOS40MzU2MS0xOC4yOTQ4OCw2LjI5OTcxLTI0Ljg0NjgxYTM0LjI2NzY2LDM0LjI2NzY2LDAsMCwxLDI2LjU0NC0xMS41ODYsMzQuNjQ5ODksMzQuNjQ5ODksMCwwLDEsMjguMDY4LDE2LjkwMjYsMS41NDA3OSwxLjU0MDc5LDAsMCwwLDIuMDUyMjkuNTM4MTMsMzYuODgyMjUsMzYuODgyMjUsMCwwLDEsMjguMzkzNzctLjcxNDMyLDM2LjI4OTg0LDM2LjI4OTg0LDAsMCwxLDIyLjU4MDQyLDM0LjQ5MTg4Yy0uMDUsMS45MzEyMiwyLjk1MDA1LDEuOTMwMSwzLDBhMzkuODkxNTUsMzkuODkxNTUsMCwwLDAtMTAuNTk5MjgtMjcuODEyNDksMzguNzE4NzEsMzguNzE4NzEsMCwwLDAtMjcuNTY2ODEtMTIuMTY3NzIsMzkuMzM2NDEsMzkuMzM2NDEsMCwwLDAtMTcuMzIyMjYsMy42MTIyM2wyLjA1MjI5LjUzODEzYTM3LjY5ODg2LDM3LjY5ODg2LDAsMCwwLTI1LjA5ODgtMTcuNzI4LDM2LjQ4NTQyLDM2LjQ4NTQyLDAsMCwwLTI5LjQyMzg0LDcuMzI3NzJjLTcuNzAxNjUsNi4wMjcwNy0xMy41Mzg0OSwxNS4zODAxNi0xMy4xNzUxOSwyNS40MTA3MS4xNTcyMSw0LjM0MDQ3LDEuNDQ3MTMsOC43OTYsNC40NjA2LDEyLjAzMDUxLDMuODU5ODEsNC4xNDI4Nyw5LjYyMjI5LDQuODU5NDQsMTQuOTQ2MzEsMy43OTgsNy4wNzU1NC0xLjQxMDcxLDEzLjUzNTMzLTYuMDY0NDksMjAuOTExMzMtNS45MjExM2ExMC4yMTE2NCwxMC4yMTE2NCwwLDAsMSw3LjY0MTcsMy40NDUzYzEuNjI0NTUsMS44MzMzNSwyLjYwNDIsNC40NzA0MiwxLjQ5NzE2LDYuODExMjItLjgyMDk0LDEuNzM1ODUsMS43NjQ2MywzLjI2MDI2LDIuNTkwNDEsMS41MTQxNloiIHRyYW5zZm9ybT0idHJhbnNsYXRlKC0xNzIuMDMwMjEgLTEzNC45NjY5NikiIGZpbGw9IiMyZjJlNDEiLz48cGF0aCBkPSJNNDEyLjA5NDI2LDcwNC4zMjI4N2MtMzUuNTk5MTIuMDAxLTY4LjY5NDMzLTEuMjIwNzEtOTguMzIyMjYtMy42ODU1NS0zOC43MjY1Ni0zLjIyMjY2LTY5LjQxNDU1LTguNDAzMzItOTEuMjEwNDUtMTUuMzk2NDgtMjMuMDc2NjYtNy40MDUyOC0zNS4zMTkzNC0xNi42NjctMzYuMzg4MTgtMjcuNTI4MzItMi4wODMtMjEuMTU4MjEsMzkuMzM0LTQwLjcyNDYxLDc0LjQ0NTMxLTUzLjQxMzA5bDEuMDE5NTMsMi44MjIyN2MtNDguMjE2OCwxNy40MjM4Mi03My45NTcsMzUuMjg2MTMtNzIuNDc5NDksNTAuMjk3ODUsMS44ODE4MywxOS4xMTkxNCw0Ny4zOTIwOSwzMy43ODEyNSwxMjQuODYxODEsNDAuMjI3NTQsNzkuMzI1Miw2LjYwMDU4LDE4My43MTcyOSw0LjI2MTcyLDI5My45NDcyNy02LjU4OTg1LDExMC4yMy0xMC44NDg2MywyMTMuMDc1NjgtMjguOTA2MjUsMjg5LjU5MTMxLTUwLjg0NTcsNzQuNzI2MDctMjEuNDI1NzgsMTE2LjUwNDg4LTQ0LjY3OTY5LDExNC42MjMtNjMuNzk4ODMtMS41NjI1LTE1Ljg3NC0zMy4yMDI2NC0yOC43OTMtODkuMDkxOC0zNi4zNzg5bC40MDMzMi0yLjk3MjY2YzQwLjYwOTg2LDUuNTExNzIsODkuNDc5NDksMTYuNzYxNzIsOTEuNjczODMsMzkuMDU3NjIsMS4wNjkzMywxMC44NjEzMi05LjEzMzMsMjIuMzMyLTMwLjMyMjc2LDM0LjA5Mzc1LTIwLjAxNDY1LDExLjEwOTM3LTQ5LjEwMzUxLDIyLjE3Mjg1LTg2LjQ1ODQ5LDMyLjg4MjgxLTc2LjY4NTA2LDIxLjk4ODI4LTE3OS43MTk3Myw0MC4wODEwNS0yOTAuMTI0NTEsNTAuOTQ4MjRDNTM5LjAwMjQ3LDcwMC44Niw0NzIuMDE2NjMsNzA0LjMyMjg3LDQxMi4wOTQyNiw3MDQuMzIyODdaIiB0cmFuc2Zvcm09InRyYW5zbGF0ZSgtMTcyLjAzMDIxIC0xMzQuOTY2OTYpIiBmaWxsPSIjNmM2M2ZmIi8+PGNpcmNsZSBjeD0iODM4LjQ1NjUzIiBjeT0iNDM0LjQ4MzA1IiByPSIxNy40ODMwNSIgZmlsbD0iIzZjNjNmZiIvPjxjaXJjbGUgY3g9IjMzMS40NTY1MyIgY3k9IjE3LjQ4MzA1IiByPSIxNy40ODMwNSIgZmlsbD0iI2U2ZTZlNiIvPjxjaXJjbGUgY3g9IjE5LjQ1NjUzIiBjeT0iNDMzLjQ4MzA1IiByPSIxNy40ODMwNSIgZmlsbD0iI2U2ZTZlNiIvPjxjaXJjbGUgY3g9IjEyNy40NTY1MyIgY3k9IjEwOC40ODMwNSIgcj0iMTAuNzAyMzQiIGZpbGw9IiNmZjY1ODQiLz48Y2lyY2xlIGN4PSI3Ny40NTY1MyIgY3k9IjUxNC40ODMwNSIgcj0iMTAuNzAyMzQiIGZpbGw9IiNmZjY1ODQiLz48Y2lyY2xlIGN4PSI4MDcuNDU2NTMiIGN5PSIzMzkuNDgzMDUiIHI9IjEwLjcwMjM0IiBmaWxsPSIjZmY2NTg0Ii8+PGNpcmNsZSBjeD0iNjQ1LjQ1NjUzIiBjeT0iNTk4LjQ4MzA1IiByPSIxNy40ODMwNSIgZmlsbD0iI2U2ZTZlNiIvPjwvc3ZnPg==";
-const SvgShare = (props) => /* @__PURE__ */ react.exports.createElement("svg", { xmlns: "http://www.w3.org/2000/svg", enableBackground: "new 0 0 24 24", height: "20px", viewBox: "0 0 24 24", width: "20px", fill: "#37352f", ...props }, /* @__PURE__ */ react.exports.createElement("g", null, /* @__PURE__ */ react.exports.createElement("rect", { fill: "none", height: 24, width: 24 })), /* @__PURE__ */ react.exports.createElement("g", null, /* @__PURE__ */ react.exports.createElement("path", { d: "M16,5l-1.42,1.42l-1.59-1.59V16h-1.98V4.83L9.42,6.42L8,5l4-4L16,5z M20,10v11c0,1.1-0.9,2-2,2H6c-1.11,0-2-0.9-2-2V10 c0-1.11,0.89-2,2-2h3v2H6v11h12V10h-3V8h3C19.1,8,20,8.89,20,10z" })));
-const getPathOfImage = (vault, image2) => {
-  return vault.getResourcePath(image2);
-};
-const detectWikiInternalLink = (lineText) => {
-  var _a, _b;
-  const {
-    metadataCache,
-    vault
-  } = appStore.getState().dailyNotesState.app;
-  const internalFileName = (_a = WIKI_IMAGE_URL_REG.exec(lineText)) == null ? void 0 : _a[1];
-  const internalAltName = (_b = WIKI_IMAGE_URL_REG.exec(lineText)) == null ? void 0 : _b[5];
-  const file = metadataCache.getFirstLinkpathDest(decodeURIComponent(internalFileName), "");
-  if (file === null) {
-    return {
-      linkText: internalFileName,
-      altText: internalAltName,
-      path: "",
-      filePath: ""
-    };
-  } else {
-    const imagePath = getPathOfImage(vault, file);
-    if (internalAltName) {
-      return {
-        linkText: internalFileName,
-        altText: internalAltName,
-        path: imagePath,
-        filePath: file.path
-      };
-    } else {
-      return {
-        linkText: internalFileName,
-        altText: "",
-        path: imagePath,
-        filePath: file.path
-      };
-    }
-  }
-};
-const detectMDInternalLink = (lineText) => {
-  var _a, _b;
-  const {
-    metadataCache,
-    vault
-  } = appStore.getState().dailyNotesState.app;
-  const internalFileName = (_a = MARKDOWN_URL_REG.exec(lineText)) == null ? void 0 : _a[5];
-  const internalAltName = (_b = MARKDOWN_URL_REG.exec(lineText)) == null ? void 0 : _b[2];
-  const file = metadataCache.getFirstLinkpathDest(decodeURIComponent(internalFileName), "");
-  if (file === null) {
-    return {
-      linkText: internalFileName,
-      altText: internalAltName,
-      path: "",
-      filePath: ""
-    };
-  } else {
-    const imagePath = getPathOfImage(vault, file);
-    if (internalAltName) {
-      return {
-        linkText: internalFileName,
-        altText: internalAltName,
-        path: imagePath,
-        filePath: file.path
-      };
-    } else {
-      return {
-        linkText: internalFileName,
-        altText: "",
-        path: imagePath,
-        filePath: file.path
-      };
-    }
-  }
-};
-const ShareMemoImageDialog = (props) => {
-  var _a;
-  const {
-    memo: propsMemo,
-    destroy
-  } = props;
-  const {
-    memos
-  } = appStore.getState().memoState;
-  let memosLength;
-  let createdDays;
-  if (memos.length) {
-    memosLength = memos.length - 1;
-    createdDays = memos ? Math.ceil((Date.now() - utils$1.getTimeStampByDate(memos[memosLength].createdAt)) / 1e3 / 3600 / 24) : 0;
-  }
-  const memo2 = {
-    ...propsMemo,
-    createdAtStr: utils$1.getDateTimeString(propsMemo.createdAt)
-  };
-  const footerEnd = ShareFooterEnd.replace("{UserName}", UserName);
-  const footerStart = ShareFooterStart.replace("{MemosNum}", memos.length.toString()).replace("{UsedDay}", createdDays.toString());
-  let externalImageUrls = [];
-  const internalImageUrls = [];
-  let allMarkdownLink = [];
-  let allInternalLink = [];
-  if (new RegExp(IMAGE_URL_REG).test(memo2.content)) {
-    let allExternalImageUrls = [];
-    const anotherExternalImageUrls = [];
-    if (new RegExp(MARKDOWN_URL_REG).test(memo2.content)) {
-      allMarkdownLink = Array.from(memo2.content.match(MARKDOWN_URL_REG));
-    }
-    if (new RegExp(WIKI_IMAGE_URL_REG).test(memo2.content)) {
-      allInternalLink = Array.from(memo2.content.match(WIKI_IMAGE_URL_REG));
-    }
-    if (new RegExp(MARKDOWN_WEB_URL_REG).test(memo2.content)) {
-      allExternalImageUrls = Array.from(memo2.content.match(MARKDOWN_WEB_URL_REG));
-    }
-    if (allInternalLink.length) {
-      for (let i = 0; i < allInternalLink.length; i++) {
-        const allInternalLinkElement = allInternalLink[i];
-        internalImageUrls.push(detectWikiInternalLink(allInternalLinkElement));
-      }
-    }
-    if (allMarkdownLink.length) {
-      for (let i = 0; i < allMarkdownLink.length; i++) {
-        const allMarkdownLinkElement = allMarkdownLink[i];
-        if (/(.*)http[s]?(.*)/.test(allMarkdownLinkElement)) {
-          anotherExternalImageUrls.push((_a = MARKDOWN_URL_REG.exec(allMarkdownLinkElement)) == null ? void 0 : _a[5]);
-        } else {
-          internalImageUrls.push(detectMDInternalLink(allMarkdownLinkElement));
-        }
-      }
-    }
-    externalImageUrls = allExternalImageUrls.concat(anotherExternalImageUrls);
-  }
-  const [shortcutImgUrl, setShortcutImgUrl] = react.exports.useState("");
-  const [imgAmount, setImgAmount] = react.exports.useState(externalImageUrls.length);
-  const memoElRef = react.exports.useRef(null);
+function Home() {
+  react.exports.useContext(appContext);
+  const loadingState = useLoading();
   react.exports.useEffect(() => {
-    if (imgAmount > 0) {
-      return;
-    }
-    changeBackgroundImage();
-    setTimeout(() => {
-      if (!memoElRef.current) {
-        return;
-      }
-      let shareDialogBackgroundColor;
-      if (document.body.className.contains("theme-dark")) {
-        shareDialogBackgroundColor = "#727171";
-      } else {
-        shareDialogBackgroundColor = "#eaeaea";
-      }
-      toImage(memoElRef.current, {
-        backgroundColor: shareDialogBackgroundColor,
-        pixelRatio: window.devicePixelRatio * 2
-      }).then((url) => {
-        setShortcutImgUrl(url);
-      }).catch(() => {
-      });
-    }, ANIMATION_DURATION);
-  }, [imgAmount]);
-  const handleCloseBtnClick = () => {
-    destroy();
-  };
-  const convertBase64ToBlob = (base64, type) => {
-    const bytes = window.atob(base64);
-    const ab = new ArrayBuffer(bytes.length);
-    const ia = new Uint8Array(ab);
-    for (let i = 0; i < bytes.length; i++) {
-      ia[i] = bytes.charCodeAt(i);
-    }
-    return new Blob([ab], {
-      type
-    });
-  };
-  const convertBackgroundToBase64 = async (path) => {
-    const {
-      vault
-    } = dailyNotesService.getState().app;
-    const buffer = await vault.adapter.readBinary(path);
-    const arr = new Uint8Array(buffer);
-    const blob = new Blob([arr], {
-      type: "image/png"
-    });
-    return new Promise((resolve) => {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        const base64Url = reader.result;
-        resolve(base64Url);
-      };
-      reader.readAsDataURL(blob);
-    });
-  };
-  const changeBackgroundImage = async () => {
-    const {
-      app: app2
-    } = dailyNotesService.getState();
-    let imageUrl;
-    let imagePath;
-    const lightBackgroundImage = encodeURI(lightBackground);
-    const darkBackgroundImage = encodeURI(darkBackground);
-    if (document.body.className.contains("theme-light")) {
-      if (await app2.vault.adapter.exists(DefaultLightBackgroundImage) && /\.(png|svg|jpg|jpeg)/g.test(DefaultLightBackgroundImage)) {
-        imagePath = DefaultLightBackgroundImage;
-        imageUrl = await convertBackgroundToBase64(imagePath);
-      } else {
-        imageUrl = lightBackgroundImage;
-      }
-    } else if (document.body.className.contains("theme-dark")) {
-      if (await app2.vault.adapter.exists(DefaultDarkBackgroundImage) && /\.(png|svg|jpg|jpeg)/g.test(DefaultDarkBackgroundImage)) {
-        imagePath = DefaultDarkBackgroundImage;
-        imageUrl = await convertBackgroundToBase64(imagePath);
-      } else {
-        imageUrl = darkBackgroundImage;
-      }
-    }
-    const memoShareDiv = document.querySelector(".dialog-wrapper .memo-background .property-image");
-    memoShareDiv.style.backgroundImage = "url('" + imageUrl + "')";
-    if (document.body.className.contains("theme-dark")) {
-      memoShareDiv.style.backgroundColor = "#1f1f1f";
-    }
-  };
-  const handleCopytoClipboardBtnClick = async () => {
-    const {
-      vault
-    } = appStore.getState().dailyNotesState.app;
-    const divs = document.querySelector(".memo-shortcut-img");
-    const myBase64 = divs.getAttribute("src").split("base64,")[1];
-    const blobInput = convertBase64ToBlob(myBase64, "image/png");
-    let aFile;
-    if (AutoSaveWhenOnMobile && require$$0.Platform.isMobile) {
-      blobInput.arrayBuffer().then(async (buffer) => {
-        const ext = "png";
-        const dailyNotes = getAllDailyNotes_1();
-        for (const string in dailyNotes) {
-          if (dailyNotes[string] instanceof require$$0.TFile) {
-            aFile = dailyNotes[string];
-            break;
-          }
-        }
-        if (aFile !== void 0) {
-          await vault.createBinary(
-            await vault.getAvailablePathForAttachments(`Pasted Image ${require$$0.moment().format("YYYYMMDDHHmmss")}`, ext, aFile),
-            buffer
-          );
-        }
-      });
-    }
-    const clipboardItemInput = new ClipboardItem({
-      "image/png": blobInput
-    });
-    window.navigator["clipboard"].write([clipboardItemInput]);
-    new require$$0.Notice("Send to clipboard successfully");
-  };
-  const handleImageOnLoad = (ev) => {
-    if (ev.type === "error") {
-      new require$$0.Notice(t$1("Image load failed"));
-      ev.target.remove();
-    }
-    setImgAmount(imgAmount - 1);
-  };
-  return /* @__PURE__ */ jsxs(Fragment, {
-    children: [/* @__PURE__ */ jsxs("div", {
-      className: "dialog-header-container",
-      children: [/* @__PURE__ */ jsxs("p", {
-        className: "title-text",
-        children: [/* @__PURE__ */ jsx("span", {
-          className: "icon-text",
-          children: "\u{1F970}"
-        }), t$1("Share Memo Image")]
-      }), /* @__PURE__ */ jsxs("div", {
-        className: "btn-group",
-        children: [/* @__PURE__ */ jsx("button", {
-          className: "btn copy-btn",
-          onClick: handleCopytoClipboardBtnClick,
-          children: /* @__PURE__ */ jsx(SvgShare, {
-            className: "icon-img"
-          })
-        }), /* @__PURE__ */ jsx("button", {
-          className: "btn close-btn",
-          onClick: handleCloseBtnClick,
-          children: /* @__PURE__ */ jsx(SvgClose, {
-            className: "icon-img"
-          })
-        })]
-      })]
-    }), /* @__PURE__ */ jsxs("div", {
-      className: "dialog-content-container",
-      children: [/* @__PURE__ */ jsx("div", {
-        className: `tip-words-container ${shortcutImgUrl ? "finish" : "loading"}`,
-        children: /* @__PURE__ */ jsx("p", {
-          className: "tip-text",
-          children: shortcutImgUrl ? t$1("\u2197Click the button to save") : t$1("Image is generating...")
-        })
-      }), /* @__PURE__ */ jsxs("div", {
-        className: "memo-container",
-        ref: memoElRef,
-        children: [/* @__PURE__ */ jsx(Only, {
-          when: shortcutImgUrl !== "",
-          children: /* @__PURE__ */ jsx("img", {
-            className: "memo-shortcut-img",
-            src: shortcutImgUrl
-          })
-        }), /* @__PURE__ */ jsxs("div", {
-          className: "memo-background",
-          children: [/* @__PURE__ */ jsx("div", {
-            className: "property-image",
-            style: {
-              backgroundSize: "cover",
-              backgroundRepeat: "no-repeat"
-            }
-          }), /* @__PURE__ */ jsx("span", {
-            className: "background-container"
-          }), /* @__PURE__ */ jsx("div", {
-            className: "memo-content-text",
-            dangerouslySetInnerHTML: {
-              __html: formatMemoContent(memo2.content)
-            }
-          }), /* @__PURE__ */ jsx(Only, {
-            when: externalImageUrls.length > 0,
-            children: /* @__PURE__ */ jsx("div", {
-              className: "images-container",
-              children: externalImageUrls.map((imgUrl, idx) => /* @__PURE__ */ jsx("img", {
-                src: imgUrl,
-                alt: "",
-                referrerPolicy: "no-referrer",
-                onLoad: handleImageOnLoad,
-                onError: handleImageOnLoad
-              }, idx))
-            })
-          }), /* @__PURE__ */ jsx(Only, {
-            when: internalImageUrls.length > 0,
-            children: /* @__PURE__ */ jsx("div", {
-              className: "images-container internal-embed image-embed is-loaded",
-              children: internalImageUrls.map((imgUrl, idx) => /* @__PURE__ */ jsx("img", {
-                className: "memo-img",
-                src: imgUrl.path,
-                alt: imgUrl.altText,
-                path: imgUrl.filePath
-              }, idx))
-            })
-          }), /* @__PURE__ */ jsxs("div", {
-            className: "watermark-container",
-            children: [/* @__PURE__ */ jsxs("span", {
-              className: "normal-text footer-start",
-              children: [/* @__PURE__ */ jsx("div", {
-                className: "property-social-icons"
-              }), /* @__PURE__ */ jsx("span", {
-                className: "name-text",
-                children: footerStart
-              })]
-            }), /* @__PURE__ */ jsx("span", {
-              className: "normal-text footer-end",
-              children: /* @__PURE__ */ jsx("span", {
-                className: "name-text",
-                children: footerEnd
-              })
-            })]
-          })]
-        })]
-      })]
-    })]
-  });
-};
-function showShareMemoImageDialog(memo2) {
-  showDialog({
-    className: "share-memo-image-dialog"
-  }, ShareMemoImageDialog, {
-    memo: memo2
-  });
+    loadingState.setFinish();
+  }, []);
+  return /* @__PURE__ */ jsx(Fragment, {});
 }
-const memo = "";
-const showMemoInDailyNotes = async (memoId, memoPath) => {
-  const { app: app2 } = dailyNotesService.getState();
-  const lineNum = parseInt(memoId.slice(14));
-  const file = app2.metadataCache.getFirstLinkpathDest("", memoPath);
-  if (!require$$0.Platform.isMobile) {
-    const leaf = app2.workspace.splitActiveLeaf();
-    leaf.openFile(file, { eState: { line: lineNum } });
-  } else {
-    let leaf = app2.workspace.activeLeaf;
-    if (leaf === null) {
-      leaf = app2.workspace.getLeaf(true);
-    }
-    leaf.openFile(file, { eState: { line: lineNum } });
-  }
-  return;
+const appRouter = {
+  "/homeboard": /* @__PURE__ */ jsx(Home, {}),
+  "*": /* @__PURE__ */ jsx(Home$1, {})
 };
-const SvgMore = (props) => /* @__PURE__ */ react.exports.createElement("svg", { xmlns: "http://www.w3.org/2000/svg", width: 24, height: 24, fill: "#37352f", viewBox: "0 0 24 24", ...props }, /* @__PURE__ */ react.exports.createElement("path", { fill: "none", d: "M0 0h24v24H0V0z" }), /* @__PURE__ */ react.exports.createElement("path", { d: "M6 10c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm12 0c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm-6 0c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z" }));
-const SvgComment = (props) => /* @__PURE__ */ react.exports.createElement("svg", { t: 1650249616615, className: "icon", viewBox: "0 0 1024 1024", xmlns: "http://www.w3.org/2000/svg", "p-id": 2597, width: 20, height: 20, fill: "#37352f", ...props }, /* @__PURE__ */ react.exports.createElement("path", { d: "M853.333333 768c35.413333 0 64-20.650667 64-55.978667V170.581333A63.978667 63.978667 0 0 0 853.333333 106.666667H170.666667C135.253333 106.666667 106.666667 135.253333 106.666667 170.581333v541.44C106.666667 747.285333 135.338667 768 170.666667 768h201.173333l110.016 117.44a42.752 42.752 0 0 0 60.586667 0.042667L651.904 768H853.333333z m-219.029333-42.666667h-6.250667l-115.797333 129.962667c-0.106667 0.106667-116.010667-129.962667-116.010667-129.962667H170.666667c-11.776 0-21.333333-1.621333-21.333334-13.312V170.581333A21.205333 21.205333 0 0 1 170.666667 149.333333h682.666666c11.776 0 21.333333 9.536 21.333334 21.248v541.44c0 11.754667-9.472 13.312-21.333334 13.312H634.304zM341.333333 490.666667a42.666667 42.666667 0 1 0 0-85.333334 42.666667 42.666667 0 0 0 0 85.333334z m170.666667 0a42.666667 42.666667 0 1 0 0-85.333334 42.666667 42.666667 0 0 0 0 85.333334z m170.666667 0a42.666667 42.666667 0 1 0 0-85.333334 42.666667 42.666667 0 0 0 0 85.333334z", fill: "#3D3D3D", "p-id": 2598 }));
-const SvgTaskBlank = (props) => /* @__PURE__ */ react.exports.createElement("svg", { xmlns: "http://www.w3.org/2000/svg", height: "20px", viewBox: "0 0 24 24", width: "20px", fill: "#37352f", ...props }, /* @__PURE__ */ react.exports.createElement("path", { d: "M0 0h24v24H0V0z", fill: "none" }), /* @__PURE__ */ react.exports.createElement("path", { d: "M19 5v14H5V5h14m0-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2z" }));
-const SvgTask = (props) => /* @__PURE__ */ react.exports.createElement("svg", { xmlns: "http://www.w3.org/2000/svg", height: "20px", viewBox: "0 0 24 24", width: "20px", fill: "#37352f", ...props }, /* @__PURE__ */ react.exports.createElement("path", { d: "M0 0h24v24H0V0z", fill: "none" }), /* @__PURE__ */ react.exports.createElement("path", { d: "M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V5h14v14zM17.99 9l-1.41-1.42-6.59 6.59-2.58-2.57-1.42 1.41 4 3.99z" }));
 const getInitialAction = () => {
   return {
     type: "initialText",
@@ -35563,6 +34667,20 @@ const getSuggestions = (inputStr) => {
   });
   return files;
 };
+var react_1 = react.exports;
+var isFunction = function(setStateAction) {
+  return typeof setStateAction === "function";
+};
+var useStateRef = function(initialState) {
+  var _a = react_1.useState(initialState), state = _a[0], setState = _a[1];
+  var ref = react_1.useRef(state);
+  var dispatch = react_1.useCallback(function(setStateAction) {
+    ref.current = isFunction(setStateAction) ? setStateAction(ref.current) : setStateAction;
+    setState(ref.current);
+  }, []);
+  return [state, dispatch, ref];
+};
+var dist = useStateRef;
 const TItem = ({
   entity: {
     name,
@@ -35887,2069 +35005,6 @@ const Editor = react.exports.forwardRef((props, ref) => {
     })]
   });
 });
-const Memo = (props) => {
-  var _a;
-  const {
-    globalState
-  } = react.exports.useContext(appContext);
-  const {
-    memo: propsMemo
-  } = props;
-  const [showConfirmDeleteBtn, toggleConfirmDeleteBtn] = useToggle(false);
-  const memoCommentRef = react.exports.useRef(null);
-  const [isCommentShown, toggleComment] = useToggle(false);
-  const [isCommentListShown, toggleCommentList] = useToggle(ShowCommentOnMemos);
-  const [commentMemos, setCommentMemos, commentMemosRef] = dist([]);
-  const [, setAddRandomIDflag, RandomIDRef] = dist(false);
-  react.exports.useEffect(() => {
-    if (!memoCommentRef.current) {
-      return;
-    }
-    if (!CommentOnMemos) {
-      return;
-    }
-    const fetchCommentMemos = async () => {
-      const allCommentMemos = memoService.getState().commentMemos.filter((m) => m.linkId === propsMemo.hasId).sort((a, b) => utils$1.getTimeStampByDate(b.createdAt) - utils$1.getTimeStampByDate(a.createdAt));
-      setCommentMemos(allCommentMemos);
-    };
-    fetchCommentMemos();
-  }, [propsMemo.content, propsMemo.id]);
-  react.exports.useEffect(() => {
-    if (!memoCommentRef.current) {
-      return;
-    }
-    const handlePasteEvent = async (event) => {
-      var _a2;
-      if (event.clipboardData && event.clipboardData.files.length > 0) {
-        event.preventDefault();
-        const file = event.clipboardData.files[0];
-        const url = await handleUploadFile(file);
-        if (url) {
-          (_a2 = memoCommentRef.current) == null ? void 0 : _a2.insertText(url);
-        }
-      }
-    };
-    const handleDropEvent = async (event) => {
-      var _a2;
-      if (event.dataTransfer && event.dataTransfer.files.length > 0) {
-        event.preventDefault();
-        const file = event.dataTransfer.files[0];
-        const url = await handleUploadFile(file);
-        if (url) {
-          (_a2 = memoCommentRef.current) == null ? void 0 : _a2.insertText(url);
-        }
-      }
-    };
-    const handleClickEvent = () => {
-      var _a2, _b;
-      handleContentChange((_b = (_a2 = memoCommentRef.current) == null ? void 0 : _a2.element.value) != null ? _b : "");
-    };
-    const handleKeyDownEvent = () => {
-      setTimeout(() => {
-        var _a2, _b;
-        handleContentChange((_b = (_a2 = memoCommentRef.current) == null ? void 0 : _a2.element.value) != null ? _b : "");
-      });
-    };
-    memoCommentRef.current.element.addEventListener("paste", handlePasteEvent);
-    memoCommentRef.current.element.addEventListener("drop", handleDropEvent);
-    memoCommentRef.current.element.addEventListener("click", handleClickEvent);
-    memoCommentRef.current.element.addEventListener("keydown", handleKeyDownEvent);
-    return () => {
-      var _a2, _b;
-      (_a2 = memoCommentRef.current) == null ? void 0 : _a2.element.removeEventListener("paste", handlePasteEvent);
-      (_b = memoCommentRef.current) == null ? void 0 : _b.element.removeEventListener("drop", handleDropEvent);
-    };
-  }, []);
-  const handleCancelBtnClick = react.exports.useCallback(() => {
-    var _a2;
-    globalStateService.setCommentMemoId("");
-    (_a2 = memoCommentRef.current) == null ? void 0 : _a2.setContent("");
-    toggleComment(false);
-  }, []);
-  const handleContentChange = react.exports.useCallback((content) => {
-    const tempDiv = document.createElement("div");
-    tempDiv.innerHTML = content;
-    if (tempDiv.innerText.trim() === "") {
-      content = "";
-    }
-    setTimeout(() => {
-      var _a2;
-      (_a2 = memoCommentRef.current) == null ? void 0 : _a2.focus();
-    });
-  }, []);
-  const handleSaveBtnClick = react.exports.useCallback(async (content) => {
-    var _a2, _b;
-    if (content === "") {
-      new require$$0.Notice(t$1("Content cannot be empty"));
-      return;
-    }
-    const {
-      commentMemoId
-    } = globalStateService.getState();
-    content = content.replaceAll("&nbsp;", " ");
-    globalStateService.setChangedByMemos(true);
-    try {
-      if (commentMemoId) {
-        (_a2 = memoCommentRef.current) == null ? void 0 : _a2.setContent("");
-        let prevMemo;
-        if (CommentOnMemos && CommentsInOriginalNotes) {
-          prevMemo = memoService.getCommentMemoById(commentMemoId);
-          content = require$$0.moment().format("YYYYMMDDHHmmss") + " " + content;
-        } else {
-          prevMemo = memoService.getMemoById(commentMemoId);
-          content = prevMemo.content.replace(/^(.*) comment:/g, content + " comment:");
-        }
-        if (prevMemo && prevMemo.content !== content) {
-          let editedMemo;
-          if (CommentOnMemos && CommentsInOriginalNotes) {
-            editedMemo = await memoService.updateMemo(prevMemo.id, prevMemo.content, content, prevMemo.memoType, prevMemo.path);
-          } else {
-            editedMemo = await memoService.updateMemo(prevMemo.id, prevMemo.content, content, prevMemo.memoType);
-          }
-          if (CommentOnMemos && CommentsInOriginalNotes) {
-            memoService.editCommentMemo(editedMemo);
-          } else {
-            editedMemo.updatedAt = utils$1.getDateTimeString(Date.now());
-            memoService.editMemo(editedMemo);
-          }
-          setCommentMemos(commentMemosRef.current.map((m) => {
-            if (m.id.slice(14) === commentMemoId.slice(14) && m.path === prevMemo.path) {
-              return editedMemo;
-            }
-            return m;
-          }));
-        }
-        globalStateService.setCommentMemoId("");
-        toggleComment(false);
-      } else {
-        const dailyFormat = getDailyNoteFormat();
-        let randomId;
-        if (propsMemo.hasId.length > 0) {
-          randomId = propsMemo.hasId;
-        } else if (!CommentsInOriginalNotes) {
-          randomId = Math.random().toString(36).slice(-6);
-          setAddRandomIDflag(true);
-        }
-        if (!CommentsInOriginalNotes) {
-          content = content + " comment: [[" + require$$0.moment(propsMemo.id.slice(0, 8)).format(dailyFormat) + "#^" + randomId + "]]";
-        }
-        (_b = memoCommentRef.current) == null ? void 0 : _b.setContent("");
-        let newMemo;
-        if (CommentsInOriginalNotes) {
-          newMemo = await memoService.createCommentMemo(content, true, propsMemo.path, propsMemo.id, randomId);
-          memoService.pushCommentMemo(newMemo);
-        } else {
-          newMemo = await memoService.createMemo(content, true);
-          memoService.pushMemo(newMemo);
-        }
-        setCommentMemos([...commentMemosRef.current, newMemo].sort((a, b) => utils$1.getTimeStampByDate(b.createdAt) - utils$1.getTimeStampByDate(a.createdAt)));
-        if (RandomIDRef.current) {
-          const editedMemo = await memoService.updateMemo(propsMemo.id, propsMemo.content, propsMemo.content + " ^" + randomId, propsMemo.memoType);
-          editedMemo.updatedAt = utils$1.getDateTimeString(Date.now());
-          memoService.editMemo(editedMemo);
-          setAddRandomIDflag(false);
-        }
-      }
-    } catch (error) {
-      new require$$0.Notice(error.message);
-    }
-  }, []);
-  const handleUploadFile = react.exports.useCallback(async (file) => {
-    const {
-      type
-    } = file;
-    if (!type.startsWith("image")) {
-      return;
-    }
-    try {
-      const image2 = await resourceService.upload(file);
-      const url = `${image2}`;
-      return url;
-    } catch (error) {
-      new require$$0.Notice(error);
-    }
-  }, []);
-  const handleShowMemoStoryDialog = () => {
-    showMemoCardDialog(propsMemo);
-  };
-  const handleMarkMemoClick = () => {
-    if (UseButtonToShowEditor && DefaultEditorLocation === "Bottom") {
-      const elem = document.querySelector("div[data-type='memos_view'] .view-content .memo-show-editor-button");
-      if (typeof (elem == null ? void 0 : elem.onclick) == "function") {
-        elem.onclick.apply(elem);
-      }
-    }
-    globalStateService.setMarkMemoId(propsMemo.id);
-  };
-  const handleEditMemoClick = () => {
-    if (UseButtonToShowEditor && DefaultEditorLocation === "Bottom" && require$$0.Platform.isMobile) {
-      const elem = document.querySelector("div[data-type='memos_view'] .view-content .memo-show-editor-button");
-      if (typeof elem.onclick == "function") {
-        elem.onclick.apply(elem);
-      }
-    }
-    globalStateService.setEditMemoId(propsMemo.id);
-  };
-  const handleSourceMemoClick = (m) => {
-    showMemoInDailyNotes(m.id, m.path);
-  };
-  const handleDeleteMemoClick = async () => {
-    if (showConfirmDeleteBtn) {
-      try {
-        await memoService.hideMemoById(propsMemo.id);
-      } catch (error) {
-        new require$$0.Notice(error.message);
-      }
-      if (globalStateService.getState().editMemoId === propsMemo.id) {
-        globalStateService.setEditMemoId("");
-      }
-    } else {
-      toggleConfirmDeleteBtn();
-    }
-  };
-  const handleMouseLeaveMemoWrapper = () => {
-    if (showConfirmDeleteBtn) {
-      toggleConfirmDeleteBtn(false);
-    }
-  };
-  const handleGenMemoImageBtnClick = () => {
-    showShareMemoImageDialog(propsMemo);
-  };
-  const handleMemoTypeShow = () => {
-    if (!ShowTaskLabel) {
-      return;
-    }
-    if (propsMemo.memoType === "TASK-TODO") {
-      return /* @__PURE__ */ jsx(SvgTaskBlank, {});
-    } else if (propsMemo.memoType === "TASK-DONE") {
-      return /* @__PURE__ */ jsx(SvgTask, {});
-    }
-  };
-  const handleMemoDoubleClick = react.exports.useCallback((event) => {
-    if (event) {
-      handleEditMemoClick();
-    }
-  }, []);
-  const handleMemoContentClick = async (e, m) => {
-    var _a2;
-    const targetEl = e.target;
-    if (e.ctrlKey || e.metaKey) {
-      handleSourceMemoClick(m);
-    }
-    if (targetEl.className === "memo-link-text") {
-      const memoId = (_a2 = targetEl.dataset) == null ? void 0 : _a2.value;
-      const memoTemp = memoService.getMemoById(memoId != null ? memoId : "");
-      if (memoTemp) {
-        showMemoCardDialog(memoTemp);
-      } else {
-        new require$$0.Notice("MEMO Not Found");
-        targetEl.classList.remove("memo-link-text");
-      }
-    } else if (targetEl.className === "todo-block")
-      ;
-  };
-  const handleCommentBlock = () => {
-    if (!isCommentShown) {
-      toggleComment(true);
-    } else {
-      toggleComment(false);
-    }
-    if (!isCommentListShown) {
-      toggleCommentList(true);
-    } else if (!ShowCommentOnMemos && isCommentListShown) {
-      toggleCommentList(false);
-    }
-  };
-  const handleEditCommentClick = react.exports.useCallback((memo2) => {
-    var _a2, _b;
-    if (!CommentOnMemos) {
-      return;
-    }
-    globalStateService.setCommentMemoId(memo2.id);
-    if (!isCommentShown) {
-      toggleComment(true);
-    }
-    (_a2 = memoCommentRef.current) == null ? void 0 : _a2.focus();
-    (_b = memoCommentRef.current) == null ? void 0 : _b.setContent(memo2.content.replace(/ comment: (.*)$/g, "").replace(/^\d{14} /g, ""));
-  }, []);
-  const showEditStatus = Boolean(globalState.commentMemoId);
-  const editorConfig = react.exports.useMemo(() => ({
-    className: "memo-editor",
-    inputerType: "commentMemo",
-    initialContent: "",
-    placeholder: t$1("Comment it..."),
-    showConfirmBtn: true,
-    showCancelBtn: showEditStatus,
-    showTools: true,
-    onConfirmBtnClick: handleSaveBtnClick,
-    onCancelBtnClick: handleCancelBtnClick,
-    onContentChange: handleContentChange
-  }), [globalState.commentMemoId]);
-  const imageProps = {
-    memo: propsMemo.content
-  };
-  return /* @__PURE__ */ jsxs("div", {
-    className: `memo-wrapper ${"memos-" + propsMemo.id} ${propsMemo.memoType}`,
-    onMouseLeave: handleMouseLeaveMemoWrapper,
-    draggable: "true",
-    onDragStart: (e) => {
-      e.dataTransfer.setData("text/plain", propsMemo.content.replace(/<br>/g, "\n"));
-    },
-    children: [/* @__PURE__ */ jsxs("div", {
-      className: "memo-top-wrapper",
-      children: [/* @__PURE__ */ jsxs("div", {
-        className: "memo-top-left-wrapper",
-        children: [/* @__PURE__ */ jsx("span", {
-          className: "time-text",
-          onClick: handleShowMemoStoryDialog,
-          children: propsMemo.createdAt
-        }), /* @__PURE__ */ jsx("div", {
-          className: `memo-type-img ${(propsMemo.memoType === "TASK-TODO" || propsMemo.memoType === "TASK-DONE") && ShowTaskLabel ? "" : "hidden"}`,
-          children: (_a = handleMemoTypeShow()) != null ? _a : ""
-        })]
-      }), /* @__PURE__ */ jsxs("div", {
-        className: "memo-top-right-wrapper",
-        children: [CommentOnMemos ? /* @__PURE__ */ jsxs("div", {
-          className: "comment-button-wrapper",
-          children: [/* @__PURE__ */ jsx(SvgComment, {
-            className: "icon-img",
-            onClick: handleCommentBlock
-          }), commentMemos.length > 0 ? /* @__PURE__ */ jsx("div", {
-            className: "comment-text-count",
-            children: commentMemos.length
-          }) : null]
-        }) : "", /* @__PURE__ */ jsxs("div", {
-          className: "btns-container",
-          children: [/* @__PURE__ */ jsx("span", {
-            className: "btn more-action-btn",
-            children: /* @__PURE__ */ jsx(SvgMore, {
-              className: "icon-img"
-            })
-          }), /* @__PURE__ */ jsx("div", {
-            className: "more-action-btns-wrapper",
-            children: /* @__PURE__ */ jsxs("div", {
-              className: "more-action-btns-container",
-              children: [/* @__PURE__ */ jsx("span", {
-                className: "btn",
-                onClick: handleShowMemoStoryDialog,
-                children: t$1("READ")
-              }), /* @__PURE__ */ jsx("span", {
-                className: "btn",
-                onClick: handleMarkMemoClick,
-                children: t$1("MARK")
-              }), /* @__PURE__ */ jsx("span", {
-                className: "btn",
-                onClick: handleGenMemoImageBtnClick,
-                children: t$1("SHARE")
-              }), /* @__PURE__ */ jsx("span", {
-                className: "btn",
-                onClick: handleEditMemoClick,
-                children: t$1("EDIT")
-              }), /* @__PURE__ */ jsx("span", {
-                className: "btn",
-                onClick: () => handleSourceMemoClick(propsMemo),
-                children: t$1("SOURCE")
-              }), /* @__PURE__ */ jsx("span", {
-                className: `btn delete-btn ${showConfirmDeleteBtn ? "final-confirm" : ""}`,
-                onClick: handleDeleteMemoClick,
-                children: showConfirmDeleteBtn ? t$1("CONFIRM\uFF01") : t$1("DELETE")
-              })]
-            })
-          })]
-        })]
-      })]
-    }), /* @__PURE__ */ jsx("div", {
-      className: "memo-content-text",
-      onClick: (e) => handleMemoContentClick(e, propsMemo),
-      onDoubleClick: handleMemoDoubleClick,
-      dangerouslySetInnerHTML: {
-        __html: formatMemoContent(propsMemo.content, propsMemo.id)
-      }
-    }), /* @__PURE__ */ jsx(MemoImage, {
-      ...imageProps
-    }), CommentOnMemos ? /* @__PURE__ */ jsxs("div", {
-      className: `memo-comment-wrapper`,
-      children: [commentMemos.length > 0 && isCommentListShown ? /* @__PURE__ */ jsx("div", {
-        className: `memo-comment-list`,
-        children: commentMemos.map((m, idx) => /* @__PURE__ */ jsxs("div", {
-          className: "memo-comment",
-          children: [/* @__PURE__ */ jsx("div", {
-            className: "memo-comment-time",
-            children: m.createdAt
-          }), /* @__PURE__ */ jsx("div", {
-            className: "memo-comment-text",
-            onClick: (e) => handleMemoContentClick(e, m),
-            onDoubleClick: () => handleEditCommentClick(m),
-            dangerouslySetInnerHTML: {
-              __html: formatMemoContent(m.content.replace(/comment:(.*)]]/g, "").replace(/^\d{14} /g, "").trim(), m.id)
-            }
-          })]
-        }, idx))
-      }) : null, /* @__PURE__ */ jsx("div", {
-        className: `memo-comment-inputer ${isCommentShown ? "" : "hidden"}`,
-        children: /* @__PURE__ */ jsx(Editor, {
-          ref: memoCommentRef,
-          ...editorConfig
-        })
-      })]
-    }) : ""]
-  });
-};
-function formatMemoContent(content, memoid) {
-  var _a;
-  content = encodeHtml(content);
-  content = parseRawTextToHtml(content).split("<br>").map((t2) => {
-    return `<p>${t2 !== "" ? t2 : "<br>"}</p>`;
-  }).join("");
-  const {
-    shouldUseMarkdownParser,
-    shouldHideImageUrl
-  } = globalStateService.getState();
-  if (shouldUseMarkdownParser) {
-    content = parseMarkedToHtml(content, memoid);
-  }
-  if (shouldHideImageUrl) {
-    content = content.replace(WIKI_IMAGE_URL_REG, "").replace(MARKDOWN_URL_REG, "").replace(IMAGE_URL_REG, "");
-  }
-  content = content.replace(TAG_REG, "<span class='tag-span'>#$1</span>").replace(FIRST_TAG_REG, "<p><span class='tag-span'>#$2</span>").replace(LINK_REG, "$1<a class='link' target='_blank' rel='noreferrer' href='$2'>$2</a>").replace(MD_LINK_REG, "<a class='link' target='_blank' rel='noreferrer' href='$2'>$1</a>").replace(MEMO_LINK_REG, "<span class='memo-link-text' data-value='$2'>$1</span>").replace(/\^\S{6}/g, "");
-  const tempDivContainer = document.createElement("div");
-  tempDivContainer.innerHTML = content;
-  for (let i = 0; i < tempDivContainer.children.length; i++) {
-    const c = tempDivContainer.children[i];
-    if (c.tagName === "P" && c.textContent === "" && ((_a = c.firstElementChild) == null ? void 0 : _a.tagName) !== "BR") {
-      c.remove();
-      i--;
-      continue;
-    }
-  }
-  return tempDivContainer.innerHTML;
-}
-const Memo$1 = react.exports.memo(Memo);
-const dailyMemo = "";
-const DailyMemo = (props) => {
-  var _a;
-  const {
-    app: app2
-  } = appStore.getState().dailyNotesState;
-  const {
-    memo: propsMemo
-  } = props;
-  const memo2 = {
-    ...propsMemo,
-    createdAtStr: utils$1.getDateTimeString(propsMemo.createdAt),
-    timeStr: utils$1.getTimeString(propsMemo.createdAt)
-  };
-  const getPathOfImage2 = (vault, image2) => {
-    return vault.getResourcePath(image2);
-  };
-  const detectWikiInternalLink2 = (lineText, app22) => {
-    var _a2, _b;
-    const internalFileName = (_a2 = WIKI_IMAGE_URL_REG.exec(lineText)) == null ? void 0 : _a2[1];
-    const internalAltName = (_b = WIKI_IMAGE_URL_REG.exec(lineText)) == null ? void 0 : _b[5];
-    const file = app22.metadataCache.getFirstLinkpathDest(decodeURIComponent(internalFileName), "");
-    if (file === null) {
-      return {
-        linkText: internalFileName,
-        altText: internalAltName,
-        path: "",
-        filePath: ""
-      };
-    } else {
-      const imagePath = getPathOfImage2(app22.vault, file);
-      if (internalAltName) {
-        return {
-          linkText: internalFileName,
-          altText: internalAltName,
-          path: imagePath,
-          filePath: file.path
-        };
-      } else {
-        return {
-          linkText: internalFileName,
-          altText: "",
-          path: imagePath,
-          filePath: file.path
-        };
-      }
-    }
-  };
-  const detectMDInternalLink2 = (lineText, app22) => {
-    var _a2, _b;
-    const internalFileName = (_a2 = MARKDOWN_URL_REG.exec(lineText)) == null ? void 0 : _a2[5];
-    const internalAltName = (_b = MARKDOWN_URL_REG.exec(lineText)) == null ? void 0 : _b[2];
-    const file = app22.metadataCache.getFirstLinkpathDest(decodeURIComponent(internalFileName), "");
-    if (file === null) {
-      return {
-        linkText: internalFileName,
-        altText: internalAltName,
-        path: "",
-        filePath: ""
-      };
-    } else {
-      const imagePath = getPathOfImage2(app22.vault, file);
-      if (internalAltName) {
-        return {
-          linkText: internalFileName,
-          altText: internalAltName,
-          path: imagePath,
-          filePath: file.path
-        };
-      } else {
-        return {
-          linkText: internalFileName,
-          altText: "",
-          path: imagePath,
-          filePath: file.path
-        };
-      }
-    }
-  };
-  let externalImageUrls = [];
-  const internalImageUrls = [];
-  let allMarkdownLink = [];
-  let allInternalLink = [];
-  if (IMAGE_URL_REG.test(memo2.content)) {
-    let allExternalImageUrls = [];
-    const anotherExternalImageUrls = [];
-    if (MARKDOWN_URL_REG.test(memo2.content)) {
-      allMarkdownLink = Array.from(memo2.content.match(MARKDOWN_URL_REG));
-    }
-    if (WIKI_IMAGE_URL_REG.test(memo2.content)) {
-      allInternalLink = Array.from(memo2.content.match(WIKI_IMAGE_URL_REG));
-    }
-    if (MARKDOWN_WEB_URL_REG.test(memo2.content)) {
-      allExternalImageUrls = Array.from(memo2.content.match(MARKDOWN_WEB_URL_REG));
-    }
-    if (allInternalLink.length) {
-      for (let i = 0; i < allInternalLink.length; i++) {
-        const allInternalLinkElement = allInternalLink[i];
-        internalImageUrls.push(detectWikiInternalLink2(allInternalLinkElement, app2));
-      }
-    }
-    if (allMarkdownLink.length) {
-      for (let i = 0; i < allMarkdownLink.length; i++) {
-        const allMarkdownLinkElement = allMarkdownLink[i];
-        if (/(.*)http[s]?(.*)/.test(allMarkdownLinkElement)) {
-          anotherExternalImageUrls.push((_a = MARKDOWN_URL_REG.exec(allMarkdownLinkElement)) == null ? void 0 : _a[5]);
-        } else {
-          internalImageUrls.push(detectMDInternalLink2(allMarkdownLinkElement, app2));
-        }
-      }
-    }
-    externalImageUrls = allExternalImageUrls.concat(anotherExternalImageUrls);
-  }
-  return /* @__PURE__ */ jsxs("div", {
-    className: "daily-memo-wrapper",
-    children: [/* @__PURE__ */ jsx("div", {
-      className: "time-wrapper",
-      children: /* @__PURE__ */ jsx("span", {
-        className: "normal-text",
-        children: memo2.timeStr
-      })
-    }), /* @__PURE__ */ jsxs("div", {
-      className: "memo-content-container",
-      children: [/* @__PURE__ */ jsx("div", {
-        className: "memo-content-text",
-        dangerouslySetInnerHTML: {
-          __html: formatMemoContent(memo2.content)
-        }
-      }), /* @__PURE__ */ jsx(Only, {
-        when: externalImageUrls.length > 0,
-        children: /* @__PURE__ */ jsx("div", {
-          className: "images-container",
-          children: externalImageUrls.map((imgUrl, idx) => /* @__PURE__ */ jsx("img", {
-            src: imgUrl,
-            referrerPolicy: "no-referrer"
-          }, idx))
-        })
-      }), /* @__PURE__ */ jsx(Only, {
-        when: internalImageUrls.length > 0,
-        children: /* @__PURE__ */ jsx("div", {
-          className: "images-container internal-embed image-embed is-loaded",
-          children: internalImageUrls.map((imgUrl, idx) => /* @__PURE__ */ jsx("img", {
-            src: imgUrl.path,
-            alt: imgUrl.altText,
-            path: imgUrl.filePath
-          }, idx))
-        })
-      })]
-    })]
-  });
-};
-const datePicker = "";
-const SvgArrowLeft = (props) => /* @__PURE__ */ react.exports.createElement("svg", { xmlns: "http://www.w3.org/2000/svg", height: "24px", viewBox: "0 0 24 24", width: "24px", fill: "#37352f", ...props }, /* @__PURE__ */ react.exports.createElement("path", { d: "M0 0h24v24H0V0z", fill: "none" }), /* @__PURE__ */ react.exports.createElement("path", { d: "M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12l4.58-4.59z" }));
-const SvgArrowRight = (props) => /* @__PURE__ */ react.exports.createElement("svg", { xmlns: "http://www.w3.org/2000/svg", height: "24px", viewBox: "0 0 24 24", width: "24px", fill: "#37352f", ...props }, /* @__PURE__ */ react.exports.createElement("path", { d: "M0 0h24v24H0V0z", fill: "none" }), /* @__PURE__ */ react.exports.createElement("path", { d: "M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6-6-6z" }));
-const DatePicker = (props) => {
-  var _a, _b;
-  const {
-    className,
-    datestamp,
-    handleDateStampChange
-  } = props;
-  const [currentDateStamp, setCurrentDateStamp] = react.exports.useState(getMonthFirstDayDateStamp(datestamp));
-  react.exports.useEffect(() => {
-    setCurrentDateStamp(getMonthFirstDayDateStamp(datestamp));
-  }, [datestamp]);
-  const firstDate = new Date(currentDateStamp);
-  const firstDateDay = firstDate.getDay() === 0 ? 7 : firstDate.getDay();
-  const dayList = [];
-  for (let i = 0; i < firstDateDay; i++) {
-    dayList.push({
-      date: 0,
-      datestamp: firstDate.getTime() - DAILY_TIMESTAMP * (7 - i)
-    });
-  }
-  const dayAmount = getMonthDayAmount(currentDateStamp);
-  for (let i = 1; i <= dayAmount; i++) {
-    dayList.push({
-      date: i,
-      datestamp: firstDate.getTime() + DAILY_TIMESTAMP * (i - 1)
-    });
-  }
-  const handleDateItemClick = (datestamp2) => {
-    handleDateStampChange(datestamp2);
-  };
-  const handleChangeMonthBtnClick = (i) => {
-    const year = firstDate.getFullYear();
-    const month = firstDate.getMonth() + 1;
-    let nextDateStamp = 0;
-    if (month === 1 && i === -1) {
-      nextDateStamp = new Date(`${year - 1}/12/1`).getTime();
-    } else if (month === 12 && i === 1) {
-      nextDateStamp = new Date(`${year + 1}/1/1`).getTime();
-    } else {
-      nextDateStamp = new Date(`${year}/${month + i}/1`).getTime();
-    }
-    setCurrentDateStamp(getMonthFirstDayDateStamp(nextDateStamp));
-  };
-  return /* @__PURE__ */ jsxs("div", {
-    className: `date-picker-wrapper ${className}`,
-    children: [/* @__PURE__ */ jsxs("div", {
-      className: "date-picker-header",
-      children: [/* @__PURE__ */ jsx("span", {
-        className: "btn-text",
-        onClick: () => handleChangeMonthBtnClick(-1),
-        children: /* @__PURE__ */ jsx(SvgArrowLeft, {
-          className: "icon-img"
-        })
-      }), /* @__PURE__ */ jsxs("span", {
-        className: "normal-text",
-        children: [firstDate.getFullYear(), " ", t$1("year"), " ", (_a = t$1("monthsShort")[firstDate.getMonth()]) != null ? _a : firstDate.getMonth() + 1, " ", (_b = t$1("month")) != null ? _b : ""]
-      }), /* @__PURE__ */ jsx("span", {
-        className: "btn-text",
-        onClick: () => handleChangeMonthBtnClick(1),
-        children: /* @__PURE__ */ jsx(SvgArrowRight, {
-          className: "icon-img"
-        })
-      })]
-    }), /* @__PURE__ */ jsxs("div", {
-      className: "date-picker-day-container",
-      children: [/* @__PURE__ */ jsxs("div", {
-        className: "date-picker-day-header",
-        children: [/* @__PURE__ */ jsx("span", {
-          className: "day-item",
-          children: t$1("weekDaysShort")[0]
-        }), /* @__PURE__ */ jsx("span", {
-          className: "day-item",
-          children: t$1("weekDaysShort")[1]
-        }), /* @__PURE__ */ jsx("span", {
-          className: "day-item",
-          children: t$1("weekDaysShort")[2]
-        }), /* @__PURE__ */ jsx("span", {
-          className: "day-item",
-          children: t$1("weekDaysShort")[3]
-        }), /* @__PURE__ */ jsx("span", {
-          className: "day-item",
-          children: t$1("weekDaysShort")[4]
-        }), /* @__PURE__ */ jsx("span", {
-          className: "day-item",
-          children: t$1("weekDaysShort")[5]
-        }), /* @__PURE__ */ jsx("span", {
-          className: "day-item",
-          children: t$1("weekDaysShort")[6]
-        })]
-      }), dayList.map((d) => {
-        if (d.date === 0) {
-          return /* @__PURE__ */ jsx("span", {
-            className: "day-item null",
-            children: ""
-          }, d.datestamp);
-        } else {
-          return /* @__PURE__ */ jsx("span", {
-            className: `day-item ${d.datestamp === datestamp ? "current" : ""}`,
-            onClick: () => handleDateItemClick(d.datestamp),
-            children: d.date
-          }, d.datestamp);
-        }
-      })]
-    })]
-  });
-};
-function getMonthDayAmount(datestamp) {
-  const dateTemp = new Date(datestamp);
-  const currentDate = new Date(`${dateTemp.getFullYear()}/${dateTemp.getMonth() + 1}/1`);
-  const nextMonthDate = currentDate.getMonth() === 11 ? new Date(`${currentDate.getFullYear() + 1}/1/1`) : new Date(`${currentDate.getFullYear()}/${currentDate.getMonth() + 2}/1`);
-  return (nextMonthDate.getTime() - currentDate.getTime()) / DAILY_TIMESTAMP;
-}
-function getMonthFirstDayDateStamp(timestamp) {
-  const dateTemp = new Date(timestamp);
-  const currentDate = new Date(`${dateTemp.getFullYear()}/${dateTemp.getMonth() + 1}/1`);
-  return currentDate.getTime();
-}
-const dailyMemoDiaryDialog = "";
-const DailyMemoDiaryDialog = (props) => {
-  const loadingState = useLoading();
-  const [memos, setMemos] = react.exports.useState([]);
-  const [currentDateStamp, setCurrentDateStamp] = react.exports.useState(utils$1.getDateStampByDate(utils$1.getDateString(props.currentDateStamp)));
-  const [showDatePicker, toggleShowDatePicker] = useToggle(false);
-  const memosElRef = react.exports.useRef(null);
-  const currentDate = new Date(currentDateStamp);
-  const {
-    vault
-  } = appStore.getState().dailyNotesState.app;
-  react.exports.useEffect(() => {
-    const setDailyMemos = () => {
-      const dailyMemos = memoService.getState().memos.filter((a) => utils$1.getTimeStampByDate(a.createdAt) >= currentDateStamp && utils$1.getTimeStampByDate(a.createdAt) < currentDateStamp + DAILY_TIMESTAMP).sort((a, b) => utils$1.getTimeStampByDate(a.createdAt) - utils$1.getTimeStampByDate(b.createdAt));
-      setMemos(dailyMemos);
-      loadingState.setFinish();
-    };
-    setDailyMemos();
-  }, [currentDateStamp]);
-  const convertBase64ToBlob = (base64, type) => {
-    var bytes = window.atob(base64);
-    var ab = new ArrayBuffer(bytes.length);
-    var ia = new Uint8Array(ab);
-    for (var i = 0; i < bytes.length; i++) {
-      ia[i] = bytes.charCodeAt(i);
-    }
-    return new Blob([ab], {
-      type
-    });
-  };
-  const handleShareBtnClick = async () => {
-    toggleShowDatePicker(false);
-    setTimeout(() => {
-      if (!memosElRef.current) {
-        return;
-      }
-      toImage(memosElRef.current, {
-        backgroundColor: "#ffffff",
-        pixelRatio: window.devicePixelRatio * 2
-      }).then((url) => {
-        if (AutoSaveWhenOnMobile && require$$0.Platform.isMobile) {
-          const myBase64 = url.split("base64,")[1];
-          const blobInput = convertBase64ToBlob(myBase64, "image/png");
-          blobInput.arrayBuffer().then(async (buffer) => {
-            let aFile;
-            const ext = "png";
-            const dailyNotes = getAllDailyNotes_1();
-            for (const string in dailyNotes) {
-              if (dailyNotes[string] instanceof require$$0.TFile) {
-                aFile = dailyNotes[string];
-                break;
-              }
-            }
-            if (aFile !== void 0) {
-              await vault.createBinary(
-                await vault.getAvailablePathForAttachments(`Pasted Image ${require$$0.moment().format("YYYYMMDDHHmmss")}`, ext, aFile),
-                buffer
-              );
-            }
-          });
-        }
-        showPreviewImageDialog(url);
-      }).catch(() => {
-      });
-    }, 0);
-  };
-  const handleDataPickerChange = (datestamp) => {
-    setCurrentDateStamp(datestamp);
-    toggleShowDatePicker(false);
-  };
-  return /* @__PURE__ */ jsxs(Fragment, {
-    children: [/* @__PURE__ */ jsx("div", {
-      className: "dialog-header-container",
-      children: /* @__PURE__ */ jsxs("div", {
-        className: "header-wrapper",
-        children: [/* @__PURE__ */ jsx("p", {
-          className: "title-text",
-          children: t$1("Daily Memos")
-        }), /* @__PURE__ */ jsxs("div", {
-          className: "btns-container",
-          children: [/* @__PURE__ */ jsx("span", {
-            className: "btn-text",
-            onClick: () => setCurrentDateStamp(currentDateStamp - DAILY_TIMESTAMP),
-            children: /* @__PURE__ */ jsx(SvgArrowLeft, {
-              className: "icon-img"
-            })
-          }), /* @__PURE__ */ jsx("span", {
-            className: "btn-text",
-            onClick: () => setCurrentDateStamp(currentDateStamp + DAILY_TIMESTAMP),
-            children: /* @__PURE__ */ jsx(SvgArrowRight, {
-              className: "icon-img"
-            })
-          }), /* @__PURE__ */ jsx("span", {
-            className: "btn-text share-btn",
-            onClick: handleShareBtnClick,
-            children: /* @__PURE__ */ jsx(SvgShare, {
-              className: "icon-img"
-            })
-          }), /* @__PURE__ */ jsx("span", {
-            className: "btn-text",
-            onClick: () => props.destroy(),
-            children: /* @__PURE__ */ jsx(SvgClose, {
-              className: "icon-img"
-            })
-          })]
-        })]
-      })
-    }), /* @__PURE__ */ jsxs("div", {
-      className: "dialog-content-container",
-      ref: memosElRef,
-      children: [/* @__PURE__ */ jsxs("div", {
-        className: "date-card-container",
-        onClick: () => toggleShowDatePicker(),
-        children: [/* @__PURE__ */ jsx("div", {
-          className: "year-text",
-          children: currentDate.getFullYear()
-        }), /* @__PURE__ */ jsxs("div", {
-          className: "date-container",
-          children: [/* @__PURE__ */ jsx("div", {
-            className: "month-text",
-            children: t$1("months")[currentDate.getMonth()]
-          }), /* @__PURE__ */ jsx("div", {
-            className: "date-text",
-            children: currentDate.getDate()
-          }), /* @__PURE__ */ jsx("div", {
-            className: "day-text",
-            children: t$1("weekDays")[currentDate.getDay()]
-          })]
-        })]
-      }), /* @__PURE__ */ jsx(DatePicker, {
-        className: `date-picker ${showDatePicker ? "" : "hidden"}`,
-        datestamp: currentDateStamp,
-        handleDateStampChange: handleDataPickerChange
-      }), loadingState.isLoading ? /* @__PURE__ */ jsx("div", {
-        className: "tip-container",
-        children: /* @__PURE__ */ jsx("p", {
-          className: "tip-text",
-          children: t$1("Loading...")
-        })
-      }) : memos.length === 0 ? /* @__PURE__ */ jsx("div", {
-        className: "tip-container",
-        children: /* @__PURE__ */ jsx("p", {
-          className: "tip-text",
-          children: t$1("Noooop!")
-        })
-      }) : /* @__PURE__ */ jsx("div", {
-        className: "dailymemos-wrapper",
-        children: memos.map((memo2) => /* @__PURE__ */ jsx(DailyMemo, {
-          memo: memo2
-        }, `${memo2.id}-${memo2.updatedAt}`))
-      })]
-    })]
-  });
-};
-function showDailyMemoDiaryDialog(datestamp = Date.now()) {
-  showDialog({
-    className: "daily-memo-diary-dialog"
-  }, DailyMemoDiaryDialog, {
-    currentDateStamp: datestamp
-  });
-}
-const userBanner = "";
-const UserBanner = () => {
-  const {
-    memoState: {
-      memos,
-      tags
-    },
-    userState: {
-      user
-    }
-  } = react.exports.useContext(appContext);
-  const username = user ? user.username : UserName;
-  let memosLength;
-  let createdDays;
-  if (memos.length) {
-    memosLength = memos.length - 1;
-    createdDays = memos ? Math.ceil((Date.now() - utils$1.getTimeStampByDate(memos[memosLength].createdAt)) / 1e3 / 3600 / 24) + 1 : 0;
-  }
-  const [shouldShowPopupBtns, setShouldShowPopupBtns] = react.exports.useState(false);
-  const handleUsernameClick = react.exports.useCallback(() => {
-    locationService.pushHistory("/");
-    locationService.clearQuery();
-  }, []);
-  const handlePopupBtnClick = () => {
-    const sidebarEl = document.querySelector(".memos-sidebar-wrapper");
-    const popupEl = document.querySelector(".menu-btns-popup");
-    popupEl.style.top = 70 - sidebarEl.scrollTop + "px";
-    setShouldShowPopupBtns(true);
-  };
-  return /* @__PURE__ */ jsxs("div", {
-    className: "user-banner-container",
-    children: [/* @__PURE__ */ jsxs("div", {
-      className: "userinfo-header-container",
-      children: [/* @__PURE__ */ jsx("p", {
-        className: "username-text",
-        onClick: handleUsernameClick,
-        children: username
-      }), /* @__PURE__ */ jsx("span", {
-        className: "action-btn menu-popup-btn",
-        onClick: handlePopupBtnClick,
-        children: /* @__PURE__ */ jsx(SvgMore, {
-          className: "icon-img"
-        })
-      }), /* @__PURE__ */ jsx(MenuBtnsPopup, {
-        shownStatus: shouldShowPopupBtns,
-        setShownStatus: setShouldShowPopupBtns
-      })]
-    }), /* @__PURE__ */ jsxs("div", {
-      className: "status-text-container",
-      children: [/* @__PURE__ */ jsxs("div", {
-        className: "status-text memos-text",
-        children: [/* @__PURE__ */ jsx("span", {
-          className: "amount-text",
-          children: memos.length
-        }), /* @__PURE__ */ jsx("span", {
-          className: "type-text",
-          children: "MEMO"
-        })]
-      }), /* @__PURE__ */ jsxs("div", {
-        className: "status-text tags-text",
-        children: [/* @__PURE__ */ jsx("span", {
-          className: "amount-text",
-          children: tags.length
-        }), /* @__PURE__ */ jsx("span", {
-          className: "type-text",
-          children: t$1("TAG")
-        })]
-      }), /* @__PURE__ */ jsxs("div", {
-        className: "status-text duration-text",
-        onClick: () => showDailyMemoDiaryDialog(),
-        children: [/* @__PURE__ */ jsx("span", {
-          className: "amount-text",
-          children: createdDays != null ? createdDays : 0
-        }), /* @__PURE__ */ jsx("span", {
-          className: "type-text",
-          children: t$1("DAY")
-        })]
-      })]
-    })]
-  });
-};
-const relationConsts = [
-  { text: "AND", value: "AND" },
-  { text: "OR", value: "OR" }
-];
-const filterConsts = {
-  TAG: {
-    value: "TAG",
-    text: t$1("TAG"),
-    operators: [
-      {
-        text: t$1("INCLUDE"),
-        value: "CONTAIN"
-      },
-      {
-        text: t$1("EXCLUDE"),
-        value: "NOT_CONTAIN"
-      }
-    ]
-  },
-  TYPE: {
-    value: "TYPE",
-    text: t$1("TYPE"),
-    operators: [
-      {
-        value: "IS",
-        text: t$1("IS")
-      },
-      {
-        value: "IS_NOT",
-        text: t$1("ISNOT")
-      }
-    ],
-    values: [
-      {
-        value: "CONNECTED",
-        text: t$1("LINKED")
-      },
-      {
-        value: "NOT_TAGGED",
-        text: t$1("NO TAGS")
-      },
-      {
-        value: "LINKED",
-        text: t$1("HAS LINKS")
-      },
-      {
-        value: "IMAGED",
-        text: t$1("HAS IMAGES")
-      }
-    ]
-  },
-  TEXT: {
-    value: "TEXT",
-    text: t$1("TEXT"),
-    operators: [
-      {
-        value: "CONTAIN",
-        text: t$1("INCLUDE")
-      },
-      {
-        value: "NOT_CONTAIN",
-        text: t$1("EXCLUDE")
-      }
-    ]
-  },
-  DATE: {
-    value: "DATE",
-    text: t$1("DATE"),
-    operators: [
-      {
-        value: "NOT_CONTAIN",
-        text: t$1("BEFORE")
-      },
-      {
-        value: "CONTAIN",
-        text: t$1("AFTER")
-      }
-    ]
-  }
-};
-const memoSpecialTypes = filterConsts["TYPE"].values;
-const getTextWithMemoType = (type) => {
-  for (const t2 of memoSpecialTypes) {
-    if (t2.value === type) {
-      return t2.text;
-    }
-  }
-  return "";
-};
-const getDefaultFilter = () => {
-  return {
-    type: "TAG",
-    value: {
-      operator: "CONTAIN",
-      value: ""
-    },
-    relation: "AND"
-  };
-};
-const checkShouldShowMemoWithFilters = (memo2, filters) => {
-  let shouldShow = true;
-  for (const f of filters) {
-    const { relation } = f;
-    const r = checkShouldShowMemo(memo2, f);
-    if (relation === "OR") {
-      shouldShow = shouldShow || r;
-    } else {
-      shouldShow = shouldShow && r;
-    }
-  }
-  return shouldShow;
-};
-const checkShouldShowMemo = (memo2, filter) => {
-  var _a, _b;
-  const {
-    type,
-    value: { operator, value }
-  } = filter;
-  if (value === "") {
-    return true;
-  }
-  let shouldShow = true;
-  if (type === "TAG") {
-    let contained = true;
-    const tagsSet = /* @__PURE__ */ new Set();
-    for (const t2 of Array.from((_a = memo2.content.match(TAG_REG)) != null ? _a : [])) {
-      const tag = t2.replace(TAG_REG, "$1").trim();
-      const items = tag.split("/");
-      let temp = "";
-      for (const i of items) {
-        temp += i;
-        tagsSet.add(temp);
-        temp += "/";
-      }
-    }
-    for (const t2 of Array.from((_b = memo2.content.match(NOP_FIRST_TAG_REG)) != null ? _b : [])) {
-      const tag = t2.replace(NOP_FIRST_TAG_REG, "$1").trim();
-      const items = tag.split("/");
-      let temp = "";
-      for (const i of items) {
-        temp += i;
-        tagsSet.add(temp);
-        temp += "/";
-      }
-    }
-    if (!tagsSet.has(value)) {
-      contained = false;
-    }
-    if (operator === "NOT_CONTAIN") {
-      contained = !contained;
-    }
-    shouldShow = contained;
-  } else if (type === "TYPE") {
-    let matched = false;
-    if (value === "NOT_TAGGED" && memo2.content.match(TAG_REG) === null) {
-      matched = true;
-    } else if (value === "LINKED" && memo2.content.match(LINK_REG) !== null) {
-      matched = true;
-    } else if (value === "IMAGED" && memo2.content.match(IMAGE_URL_REG) !== null) {
-      matched = true;
-    } else if (value === "CONNECTED" && memo2.content.match(MEMO_LINK_REG) !== null) {
-      matched = true;
-    }
-    if (operator === "IS_NOT") {
-      matched = !matched;
-    }
-    shouldShow = matched;
-  } else if (type === "TEXT") {
-    let contained = memo2.content.includes(value);
-    if (operator === "NOT_CONTAIN") {
-      contained = !contained;
-    }
-    shouldShow = contained;
-  } else if (type === "DATE") {
-    if (!app.plugins.enabledPlugins.has("nldates-obsidian")) {
-      new require$$0.Notice(t$1("OBSIDIAN_NLDATES_PLUGIN_NOT_ENABLED"));
-    } else {
-      const nldatesPlugin = app.plugins.getPlugin("nldates-obsidian");
-      const parsedResult = nldatesPlugin.parseDate(value);
-      let contained;
-      if (parsedResult.date !== null) {
-        contained = parsedResult.moment.isBefore(require$$0.moment(memo2.createdAt), "day");
-      }
-      if (operator === "NOT_CONTAIN") {
-        contained = !contained;
-      }
-      shouldShow = contained;
-    }
-  }
-  shouldShow = memo2.linkId === "" ? shouldShow : false;
-  return shouldShow;
-};
-const selector = "";
-const nullItem = {
-  text: t$1("SELECT"),
-  value: ""
-};
-const Selector = (props) => {
-  const {
-    className,
-    dataSource,
-    handleValueChanged,
-    value
-  } = props;
-  const [showSelector, toggleSelectorStatus] = useToggle(false);
-  const seletorElRef = react.exports.useRef(null);
-  let currentItem = nullItem;
-  for (const d of dataSource) {
-    if (d.value === value) {
-      currentItem = d;
-      break;
-    }
-  }
-  react.exports.useEffect(() => {
-    if (showSelector) {
-      const handleClickOutside = (event) => {
-        var _a;
-        if (!((_a = seletorElRef.current) == null ? void 0 : _a.contains(event.target))) {
-          toggleSelectorStatus(false);
-        }
-      };
-      window.addEventListener("click", handleClickOutside, {
-        capture: true,
-        once: true
-      });
-    }
-  }, [showSelector]);
-  const handleItemClick = (item) => {
-    if (handleValueChanged) {
-      handleValueChanged(item.value);
-    }
-    toggleSelectorStatus(false);
-  };
-  const handleCurrentValueClick = (event) => {
-    event.stopPropagation();
-    toggleSelectorStatus();
-  };
-  return /* @__PURE__ */ jsxs("div", {
-    className: `selector-wrapper ${className != null ? className : ""}`,
-    ref: seletorElRef,
-    children: [/* @__PURE__ */ jsxs("div", {
-      className: `current-value-container ${showSelector ? "active" : ""}`,
-      onClick: handleCurrentValueClick,
-      children: [/* @__PURE__ */ jsx("span", {
-        className: "value-text",
-        children: currentItem.text
-      }), /* @__PURE__ */ jsx("span", {
-        className: "arrow-text",
-        children: /* @__PURE__ */ jsx(SvgArrowRight, {
-          className: "icon-img"
-        })
-      })]
-    }), /* @__PURE__ */ jsx("div", {
-      className: `items-wrapper ${showSelector ? "" : "hidden"}`,
-      children: dataSource.map((d) => {
-        return /* @__PURE__ */ jsx("div", {
-          className: `item-container ${d.value === value ? "selected" : ""}`,
-          onClick: () => {
-            handleItemClick(d);
-          },
-          children: d.text
-        }, d.value);
-      })
-    })]
-  });
-};
-const Selector$1 = react.exports.memo(Selector);
-const createQueryDialog = "";
-const CreateQueryDialog = (props) => {
-  const {
-    destroy,
-    queryId
-  } = props;
-  const [title, setTitle] = react.exports.useState("");
-  const [filters, setFilters] = react.exports.useState([]);
-  const requestState = useLoading(false);
-  const shownMemoLength = memoService.getState().memos.filter((memo2) => {
-    return checkShouldShowMemoWithFilters(memo2, filters);
-  }).length;
-  react.exports.useEffect(() => {
-    const queryTemp = queryService.getQueryById(queryId != null ? queryId : "");
-    if (queryTemp) {
-      setTitle(queryTemp.title);
-      const temp = JSON.parse(queryTemp.querystring);
-      if (Array.isArray(temp)) {
-        setFilters(temp);
-      }
-    }
-  }, [queryId]);
-  const handleTitleInputChange = (e) => {
-    const text = e.target.value;
-    setTitle(text);
-  };
-  const handleSaveBtnClick = async () => {
-    if (!title) {
-      new require$$0.Notice(t$1("TITLE CANNOT BE NULL!"));
-      return;
-    }
-    if (filters.length === 0) {
-      new require$$0.Notice(t$1("FILTER CANNOT BE NULL!"));
-      return;
-    }
-    try {
-      if (queryId) {
-        const editedQuery = await queryService.updateQuery(queryId, title, JSON.stringify(filters));
-        queryService.editQuery(editedQuery);
-        queryService.getMyAllQueries();
-      } else {
-        const query = await queryService.createQuery(title, JSON.stringify(filters));
-        queryService.pushQuery(query);
-        queryService.getMyAllQueries();
-      }
-    } catch (error) {
-      new require$$0.Notice(error.message);
-    }
-    destroy();
-  };
-  const handleAddFilterBenClick = () => {
-    if (filters.length > 0) {
-      const lastFilter = filters[filters.length - 1];
-      if (lastFilter.value.value === "") {
-        new require$$0.Notice(t$1("Please finish the last filter setting first"));
-        return;
-      }
-    }
-    setFilters([...filters, getDefaultFilter()]);
-  };
-  const handleFilterChange = react.exports.useCallback((index, filter) => {
-    setFilters((filters2) => {
-      const temp = [...filters2];
-      temp[index] = filter;
-      return temp;
-    });
-  }, []);
-  const handleFilterRemove = react.exports.useCallback((index) => {
-    setFilters((filters2) => {
-      const temp = filters2.filter((_, i) => i !== index);
-      return temp;
-    });
-  }, []);
-  return /* @__PURE__ */ jsxs(Fragment, {
-    children: [/* @__PURE__ */ jsxs("div", {
-      className: "dialog-header-container",
-      children: [/* @__PURE__ */ jsxs("p", {
-        className: "title-text",
-        children: [/* @__PURE__ */ jsx("span", {
-          className: "icon-text",
-          children: "\u{1F516}"
-        }), queryId ? t$1("EDIT QUERY") : t$1("CREATE QUERY")]
-      }), /* @__PURE__ */ jsx("button", {
-        className: "btn close-btn",
-        onClick: destroy,
-        children: /* @__PURE__ */ jsx(SvgClose, {
-          className: "icon-img"
-        })
-      })]
-    }), /* @__PURE__ */ jsxs("div", {
-      className: "dialog-content-container",
-      children: [/* @__PURE__ */ jsxs("div", {
-        className: "form-item-container input-form-container",
-        children: [/* @__PURE__ */ jsx("span", {
-          className: "normal-text",
-          children: t$1("TITLE")
-        }), /* @__PURE__ */ jsx("input", {
-          className: "title-input",
-          type: "text",
-          value: title,
-          onChange: handleTitleInputChange
-        })]
-      }), /* @__PURE__ */ jsxs("div", {
-        className: "form-item-container filter-form-container",
-        children: [/* @__PURE__ */ jsx("span", {
-          className: "normal-text",
-          children: t$1("FILTER")
-        }), /* @__PURE__ */ jsxs("div", {
-          className: "filters-wrapper",
-          children: [filters.map((f, index) => {
-            return /* @__PURE__ */ jsx(MemoFilterInputer, {
-              index,
-              filter: f,
-              handleFilterChange,
-              handleFilterRemove
-            }, index);
-          }), /* @__PURE__ */ jsx("div", {
-            className: "create-filter-btn",
-            onClick: handleAddFilterBenClick,
-            children: t$1("ADD FILTER TERMS")
-          })]
-        })]
-      })]
-    }), /* @__PURE__ */ jsxs("div", {
-      className: "dialog-footer-container",
-      children: [/* @__PURE__ */ jsx("div", {}), /* @__PURE__ */ jsxs("div", {
-        className: "btns-container",
-        children: [/* @__PURE__ */ jsxs("span", {
-          className: `tip-text ${filters.length === 0 && "hidden"}`,
-          children: [t$1("MATCH"), " Memo ", /* @__PURE__ */ jsx("strong", {
-            children: shownMemoLength
-          }), " ", t$1("TIMES")]
-        }), /* @__PURE__ */ jsx("button", {
-          className: `btn save-btn ${requestState.isLoading ? "requesting" : ""}`,
-          onClick: handleSaveBtnClick,
-          children: "SAVE"
-        })]
-      })]
-    })]
-  });
-};
-const FilterInputer = (props) => {
-  const {
-    index,
-    filter,
-    handleFilterChange,
-    handleFilterRemove
-  } = props;
-  const {
-    type
-  } = filter;
-  const [inputElements, setInputElements] = react.exports.useState(/* @__PURE__ */ jsx(Fragment, {}));
-  react.exports.useEffect(() => {
-    let operatorElement = /* @__PURE__ */ jsx(Fragment, {});
-    if (Object.keys(filterConsts).includes(type)) {
-      operatorElement = /* @__PURE__ */ jsx(Selector$1, {
-        className: "operator-selector",
-        dataSource: Object.values(filterConsts[type].operators),
-        value: filter.value.operator,
-        handleValueChanged: handleOperatorChange
-      });
-    }
-    let valueElement = /* @__PURE__ */ jsx(Fragment, {});
-    switch (type) {
-      case "TYPE": {
-        valueElement = /* @__PURE__ */ jsx(Selector$1, {
-          className: "value-selector",
-          dataSource: filterConsts["TYPE"].values,
-          value: filter.value.value,
-          handleValueChanged: handleValueChange
-        });
-        break;
-      }
-      case "TAG": {
-        valueElement = /* @__PURE__ */ jsx(Selector$1, {
-          className: "value-selector",
-          dataSource: memoService.getState().tags.sort().map((t2) => {
-            return {
-              text: t2,
-              value: t2
-            };
-          }),
-          value: filter.value.value,
-          handleValueChanged: handleValueChange
-        });
-        break;
-      }
-      case "TEXT": {
-        valueElement = /* @__PURE__ */ jsx("input", {
-          type: "text",
-          className: "value-inputer",
-          value: filter.value.value,
-          onChange: (event) => {
-            handleValueChange(event.target.value);
-            event.target.focus();
-          }
-        });
-        break;
-      }
-      case "DATE": {
-        valueElement = /* @__PURE__ */ jsx("input", {
-          type: "text",
-          className: "value-inputer",
-          value: filter.value.value,
-          onChange: (event) => {
-            handleValueChange(event.target.value);
-            event.target.focus();
-          }
-        });
-        break;
-      }
-    }
-    setInputElements(/* @__PURE__ */ jsxs(Fragment, {
-      children: [operatorElement, valueElement]
-    }));
-  }, [type, filter]);
-  const handleRelationChange = react.exports.useCallback((value) => {
-    if (["AND", "OR"].includes(value)) {
-      handleFilterChange(index, {
-        ...filter,
-        relation: value
-      });
-    }
-  }, [filter]);
-  const handleTypeChange = react.exports.useCallback((value) => {
-    if (filter.type !== value) {
-      const ops = Object.values(filterConsts[value].operators);
-      handleFilterChange(index, {
-        ...filter,
-        type: value,
-        value: {
-          operator: ops[0].value,
-          value: ""
-        }
-      });
-    }
-  }, [filter]);
-  const handleOperatorChange = react.exports.useCallback((value) => {
-    handleFilterChange(index, {
-      ...filter,
-      value: {
-        ...filter.value,
-        operator: value
-      }
-    });
-  }, [filter]);
-  const handleValueChange = react.exports.useCallback((value) => {
-    handleFilterChange(index, {
-      ...filter,
-      value: {
-        ...filter.value,
-        value
-      }
-    });
-  }, [filter]);
-  const handleRemoveBtnClick = () => {
-    handleFilterRemove(index);
-  };
-  return /* @__PURE__ */ jsxs("div", {
-    className: "memo-filter-input-wrapper",
-    children: [index > 0 ? /* @__PURE__ */ jsx(Selector$1, {
-      className: "relation-selector",
-      dataSource: relationConsts,
-      value: filter.relation,
-      handleValueChanged: handleRelationChange
-    }) : null, /* @__PURE__ */ jsx(Selector$1, {
-      className: "type-selector",
-      dataSource: Object.values(filterConsts),
-      value: filter.type,
-      handleValueChanged: handleTypeChange
-    }), inputElements, /* @__PURE__ */ jsx(SvgClose, {
-      className: "remove-btn",
-      onClick: handleRemoveBtnClick
-    })]
-  });
-};
-const MemoFilterInputer = react.exports.memo(FilterInputer);
-function showCreateQueryDialog(queryId) {
-  showDialog({
-    className: "create-query-dialog"
-  }, CreateQueryDialog, {
-    queryId
-  });
-}
-const queryList = "";
-const SvgMoreWhite = (props) => /* @__PURE__ */ react.exports.createElement("svg", { xmlns: "http://www.w3.org/2000/svg", width: 24, height: 24, fill: "#FFF", viewBox: "0 0 24 24", ...props }, /* @__PURE__ */ react.exports.createElement("path", { fill: "none", d: "M0 0h24v24H0V0z" }), /* @__PURE__ */ react.exports.createElement("path", { d: "M6 10c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm12 0c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm-6 0c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z" }));
-const QueryList = () => {
-  const {
-    queryState: {
-      queries
-    },
-    locationState: {
-      query: {
-        filter
-      }
-    }
-  } = react.exports.useContext(appContext);
-  const loadingState = useLoading();
-  const sortedQueries = queries.sort((a, b) => utils$1.getTimeStampByDate(b.createdAt) - utils$1.getTimeStampByDate(a.createdAt)).sort((a, b) => {
-    var _a, _b;
-    return utils$1.getTimeStampByDate((_a = b.pinnedAt) != null ? _a : 0) - utils$1.getTimeStampByDate((_b = a.pinnedAt) != null ? _b : 0);
-  });
-  react.exports.useEffect(() => {
-    queryService.getMyAllQueries().catch(() => {
-    }).finally(() => {
-      loadingState.setFinish();
-    });
-  }, []);
-  return /* @__PURE__ */ jsxs("div", {
-    className: "queries-wrapper",
-    children: [/* @__PURE__ */ jsxs("p", {
-      className: "title-text",
-      children: [/* @__PURE__ */ jsx("span", {
-        className: "normal-text",
-        children: t$1("QUERY")
-      }), /* @__PURE__ */ jsx("span", {
-        className: "btn",
-        onClick: () => showCreateQueryDialog(),
-        children: "+"
-      })]
-    }), /* @__PURE__ */ jsx(Only, {
-      when: loadingState.isSucceed && sortedQueries.length === 0,
-      children: /* @__PURE__ */ jsx("div", {
-        className: "create-query-btn-container",
-        children: /* @__PURE__ */ jsx("span", {
-          className: "btn",
-          onClick: () => showCreateQueryDialog(),
-          children: t$1("CREATE FILTER")
-        })
-      })
-    }), /* @__PURE__ */ jsx("div", {
-      className: "queries-container",
-      children: sortedQueries.map((q) => {
-        return /* @__PURE__ */ jsx(QueryItemContainer, {
-          query: q,
-          isActive: q.id === filter
-        }, q.id);
-      })
-    })]
-  });
-};
-const QueryItemContainer = (props) => {
-  const {
-    query,
-    isActive
-  } = props;
-  const [showActionBtns, toggleShowActionBtns] = useToggle(false);
-  const [showConfirmDeleteBtn, toggleConfirmDeleteBtn] = useToggle(false);
-  const handleQueryClick = () => {
-    if (isActive) {
-      locationService.setMemoFilter("");
-    } else {
-      locationService.setMemoFilter(query.id);
-    }
-  };
-  const handleShowActionBtnClick = (event) => {
-    event.stopPropagation();
-    toggleShowActionBtns();
-  };
-  const handleActionBtnContainerMouseLeave = () => {
-    toggleShowActionBtns(false);
-  };
-  const handleDeleteMemoClick = async (event) => {
-    event.stopPropagation();
-    if (showConfirmDeleteBtn) {
-      try {
-        await queryService.deleteQuery(query.id);
-      } catch (error) {
-        new require$$0.Notice(error.message);
-      }
-    } else {
-      toggleConfirmDeleteBtn();
-    }
-  };
-  const handleEditQueryBtnClick = (event) => {
-    event.stopPropagation();
-    showCreateQueryDialog(query.id);
-  };
-  const handlePinQueryBtnClick = async (event) => {
-    event.stopPropagation();
-    try {
-      if (query.pinnedAt) {
-        await queryService.unpinQuery(query.id);
-        queryService.editQuery({
-          ...query,
-          pinnedAt: ""
-        });
-      } else {
-        await queryService.pinQuery(query.id);
-        queryService.editQuery({
-          ...query,
-          pinnedAt: utils$1.getDateTimeString(Date.now())
-        });
-      }
-    } catch (error) {
-    }
-  };
-  const handleDeleteBtnMouseLeave = () => {
-    toggleConfirmDeleteBtn(false);
-  };
-  return /* @__PURE__ */ jsx(Fragment, {
-    children: /* @__PURE__ */ jsxs("div", {
-      className: `query-item-container ${isActive ? "active" : ""}`,
-      onClick: handleQueryClick,
-      children: [/* @__PURE__ */ jsxs("div", {
-        className: "query-text-container",
-        children: [/* @__PURE__ */ jsx("span", {
-          className: "icon-text",
-          children: "#"
-        }), /* @__PURE__ */ jsx("span", {
-          className: "query-text",
-          children: query.title
-        })]
-      }), /* @__PURE__ */ jsxs("div", {
-        className: "btns-container",
-        children: [/* @__PURE__ */ jsx("span", {
-          className: "action-btn toggle-btn",
-          onClick: handleShowActionBtnClick,
-          children: isActive ? /* @__PURE__ */ jsx(SvgMoreWhite, {}) : /* @__PURE__ */ jsx(SvgMore, {})
-        }), /* @__PURE__ */ jsx("div", {
-          className: `action-btns-wrapper ${showActionBtns ? "" : "hidden"}`,
-          onMouseLeave: handleActionBtnContainerMouseLeave,
-          children: /* @__PURE__ */ jsxs("div", {
-            className: "action-btns-container",
-            children: [/* @__PURE__ */ jsx("span", {
-              className: "btn",
-              onClick: handlePinQueryBtnClick,
-              children: query.pinnedAt ? t$1("UNPIN") : t$1("PIN")
-            }), /* @__PURE__ */ jsx("span", {
-              className: "btn",
-              onClick: handleEditQueryBtnClick,
-              children: t$1("EDIT")
-            }), /* @__PURE__ */ jsx("span", {
-              className: `btn delete-btn ${showConfirmDeleteBtn ? "final-confirm" : ""}`,
-              onClick: handleDeleteMemoClick,
-              onMouseLeave: handleDeleteBtnMouseLeave,
-              children: showConfirmDeleteBtn ? t$1("CONFIRM\uFF01") : t$1("DELETE")
-            })]
-          })
-        })]
-      })]
-    })
-  });
-};
-const tagList = "";
-const TagList = () => {
-  const {
-    locationState: {
-      query: {
-        tag: tagQuery
-      }
-    },
-    memoState: {
-      tags: tagsText,
-      tagsNum: tagsCount,
-      memos
-    }
-  } = react.exports.useContext(appContext);
-  const [tags, setTags] = react.exports.useState([]);
-  react.exports.useEffect(() => {
-    memoService.updateTagsState();
-  }, [memos]);
-  react.exports.useEffect(() => {
-    const sortedTags = Array.from(tagsText).sort();
-    const root = {
-      subTags: []
-    };
-    for (const tag of sortedTags) {
-      const subtags = tag.split("/");
-      let tempObj = root;
-      let tagText = "";
-      for (let i = 0; i < subtags.length; i++) {
-        const key = subtags[i];
-        if (i === 0) {
-          tagText += key;
-        } else {
-          tagText += "/" + key;
-        }
-        let obj = null;
-        for (const t2 of tempObj.subTags) {
-          if (t2.text === tagText) {
-            obj = t2;
-            break;
-          }
-        }
-        if (!obj) {
-          obj = {
-            key,
-            text: tagText,
-            count: tagsCount[tagText],
-            subTags: []
-          };
-          tempObj.subTags.push(obj);
-        }
-        tempObj = obj;
-      }
-    }
-    setTags(root.subTags);
-  }, [tagsText]);
-  return /* @__PURE__ */ jsxs("div", {
-    className: "tags-wrapper",
-    children: [/* @__PURE__ */ jsx("p", {
-      className: "title-text",
-      children: t$1("Frequently Used Tags")
-    }), /* @__PURE__ */ jsxs("div", {
-      className: "tags-container",
-      children: [tags.map((t2, idx) => /* @__PURE__ */ jsx(TagItemContainer, {
-        tag: t2,
-        tagQuery
-      }, t2.text + "-" + idx)), /* @__PURE__ */ jsx(Only, {
-        when: tags.length < 5 && memoService.initialized,
-        children: /* @__PURE__ */ jsxs("p", {
-          className: "tag-tip-container",
-          children: ["Input", /* @__PURE__ */ jsx("span", {
-            className: "code-text",
-            children: "#Tag "
-          }), "to create tag..."]
-        })
-      })]
-    })]
-  });
-};
-const TagItemContainer = (props) => {
-  const {
-    tag,
-    tagQuery
-  } = props;
-  const isActive = tagQuery === tag.text;
-  const hasSubTags = tag.subTags.length > 0;
-  const [showSubTags, toggleSubTags] = useToggle(false);
-  const handleTagClick = () => {
-    if (isActive) {
-      locationService.setTagQuery("");
-    } else {
-      utils$1.copyTextToClipboard(`#${tag.text} `);
-      if (!["/", "/recycle"].includes(locationService.getState().pathname)) {
-        locationService.setPathname("/");
-      }
-      locationService.setTagQuery(tag.text);
-    }
-  };
-  const handleToggleBtnClick = (event) => {
-    event.stopPropagation();
-    toggleSubTags();
-  };
-  return /* @__PURE__ */ jsxs(Fragment, {
-    children: [/* @__PURE__ */ jsxs("div", {
-      className: `tag-item-container ${isActive ? "active" : ""}`,
-      onClick: handleTagClick,
-      children: [/* @__PURE__ */ jsxs("div", {
-        className: "tag-text-container",
-        children: [/* @__PURE__ */ jsx("span", {
-          className: "icon-text",
-          children: "#"
-        }), /* @__PURE__ */ jsx("span", {
-          className: "tag-text",
-          children: tag.key
-        })]
-      }), /* @__PURE__ */ jsxs("div", {
-        className: "btns-container",
-        children: [/* @__PURE__ */ jsx("span", {
-          className: "tag-count",
-          children: tag.count
-        }), hasSubTags ? /* @__PURE__ */ jsx("span", {
-          className: `action-btn toggle-btn ${showSubTags ? "shown" : ""}`,
-          onClick: handleToggleBtnClick,
-          children: /* @__PURE__ */ jsx(SvgArrowRight, {
-            className: "icon-img"
-          })
-        }) : null]
-      })]
-    }), hasSubTags ? /* @__PURE__ */ jsx("div", {
-      className: `subtags-container ${showSubTags ? "" : "hidden"}`,
-      children: tag.subTags.map((st, idx) => /* @__PURE__ */ jsx(TagItemContainer, {
-        tag: st,
-        tagQuery
-      }, st.text + "-" + idx))
-    }) : null]
-  });
-};
-const usageHeatMap = "";
-const tableConfig = {
-  width: 12,
-  height: 7
-};
-const getInitialUsageStat = (usedDaysAmount, beginDayTimestamp) => {
-  const initialUsageStat = [];
-  for (let i = 0; i <= usedDaysAmount; i++) {
-    initialUsageStat.push({
-      timestamp: parseInt(require$$0.moment(beginDayTimestamp).add(i, "days").format("x")),
-      count: 0
-    });
-  }
-  return initialUsageStat;
-};
-const UsageHeatMap = () => {
-  const todayTimeStamp = parseInt(require$$0.moment().endOf("day").format("x"));
-  const todayDay = new Date(todayTimeStamp).getDay() || 7;
-  const nullCell = new Array(7 - todayDay).fill(0);
-  const usedDaysAmount = (tableConfig.width - 1) * tableConfig.height + todayDay;
-  const beginDayTimestamp = parseInt(require$$0.moment().startOf("day").subtract(usedDaysAmount, "days").format("x"));
-  const startDate = require$$0.moment().startOf("day").subtract(usedDaysAmount, "days");
-  const {
-    memoState: {
-      memos
-    }
-  } = react.exports.useContext(appContext);
-  const newMemos = memos.filter((memo2) => memo2.linkId === "");
-  const [allStat, setAllStat] = dist(getInitialUsageStat(usedDaysAmount, beginDayTimestamp));
-  const [popupStat, setPopupStat] = dist(null);
-  const [currentStat, setCurrentStat] = dist(null);
-  const [fromTo, setFromTo, fromToRef] = dist("");
-  const containerElRef = react.exports.useRef(null);
-  const popupRef = react.exports.useRef(null);
-  react.exports.useEffect(() => {
-    const newStat = getInitialUsageStat(usedDaysAmount, beginDayTimestamp);
-    for (const m of newMemos) {
-      const creationDate = require$$0.moment(m.createdAt.replaceAll("/", "-")).startOf("day");
-      const index = creationDate.diff(startDate, "days");
-      if (index >= 0 && index < newStat.length) {
-        newStat[index].count += 1;
-      }
-    }
-    setAllStat([...newStat]);
-  }, [memos]);
-  const handleUsageStatItemMouseEnter = react.exports.useCallback((event, item) => {
-    var _a, _b;
-    setPopupStat(item);
-    if (!popupRef.current) {
-      return;
-    }
-    const {
-      isMobileView
-    } = globalStateService.getState();
-    const targetEl = event.target;
-    const sidebarEl = document.querySelector(".memos-sidebar-wrapper");
-    popupRef.current.style.left = targetEl.offsetLeft - ((_b = (_a = containerElRef.current) == null ? void 0 : _a.offsetLeft) != null ? _b : 0) + "px";
-    let topValue = targetEl.offsetTop;
-    if (!isMobileView) {
-      topValue -= sidebarEl.scrollTop;
-    }
-    popupRef.current.style.top = topValue + "px";
-  }, []);
-  const handleUsageStatItemMouseLeave = react.exports.useCallback(() => {
-    setPopupStat(null);
-  }, []);
-  const handleUsageStatItemClick = react.exports.useCallback((event, item) => {
-    var _a, _b, _c, _d, _e, _f, _g, _h, _i, _j, _k, _l, _m, _n, _o, _p, _q, _r;
-    if (((_a = locationService.getState().query.duration) == null ? void 0 : _a.from) === item.timestamp && require$$0.moment((_b = locationService.getState().query.duration) == null ? void 0 : _b.from).diff((_c = locationService.getState().query.duration) == null ? void 0 : _c.to, "day") == 0) {
-      locationService.setFromAndToQuery(0, 0);
-      setCurrentStat(null);
-      setFromTo(null);
-    } else if (((_d = locationService.getState().query.duration) == null ? void 0 : _d.from) !== item.timestamp && ((_e = locationService.getState().query.duration) == null ? void 0 : _e.from) > 0 && event.shiftKey) {
-      const timeStampDays = require$$0.moment(item.timestamp).endOf("day").diff((_f = locationService.getState().query.duration) == null ? void 0 : _f.to, "day");
-      if (timeStampDays > 0 && require$$0.moment((_g = locationService.getState().query.duration) == null ? void 0 : _g.from).diff((_h = locationService.getState().query.duration) == null ? void 0 : _h.to, "day") == 0) {
-        setFromTo("from");
-      } else if (timeStampDays < 0 && require$$0.moment((_i = locationService.getState().query.duration) == null ? void 0 : _i.from).diff((_j = locationService.getState().query.duration) == null ? void 0 : _j.to, "day") == 0) {
-        setFromTo("to");
-      }
-      if (require$$0.moment((_k = locationService.getState().query.duration) == null ? void 0 : _k.from).isBefore(item.timestamp)) {
-        if (fromToRef.current === "to") {
-          if (timeStampDays < 0) {
-            locationService.setFromAndToQuery(item.timestamp, (_l = locationService.getState().query.duration) == null ? void 0 : _l.to);
-          } else {
-            locationService.setFromAndToQuery(parseInt(require$$0.moment((_m = locationService.getState().query.duration) == null ? void 0 : _m.to).startOf("day").format("x")), parseInt(require$$0.moment(item.timestamp).endOf("day").format("x")));
-            setFromTo("from");
-          }
-        } else if (fromToRef.current === "from") {
-          if (timeStampDays < 0) {
-            locationService.setFromAndToQuery((_n = locationService.getState().query.duration) == null ? void 0 : _n.from, parseInt(require$$0.moment(item.timestamp).endOf("day").format("x")));
-          } else {
-            locationService.setFromAndToQuery((_o = locationService.getState().query.duration) == null ? void 0 : _o.from, parseInt(require$$0.moment(item.timestamp).endOf("day").format("x")));
-          }
-        }
-      } else {
-        if (fromToRef.current === "to") {
-          locationService.setFromAndToQuery(item.timestamp, (_p = locationService.getState().query.duration) == null ? void 0 : _p.to);
-        } else if (fromToRef.current === "from") {
-          locationService.setFromAndToQuery(item.timestamp, parseInt(require$$0.moment((_q = locationService.getState().query.duration) == null ? void 0 : _q.from).endOf("day").format("x")));
-          setFromTo("to");
-        }
-      }
-    } else if (((_r = locationService.getState().query.duration) == null ? void 0 : _r.from) === 0 && event.shiftKey) {
-      locationService.setFromAndToQuery(item.timestamp, parseInt(require$$0.moment().endOf("day").format("x")));
-    } else if (item.count > 0 && (event.ctrlKey || event.metaKey)) {
-      const {
-        app: app2,
-        dailyNotes
-      } = dailyNotesService.getState();
-      const file = getDailyNote_1(require$$0.moment(item.timestamp), dailyNotes);
-      if (!require$$0.Platform.isMobile) {
-        const leaf = app2.workspace.splitActiveLeaf();
-        leaf.openFile(file);
-      } else {
-        let leaf = app2.workspace.activeLeaf;
-        if (leaf === null) {
-          leaf = app2.workspace.getLeaf(true);
-        }
-        leaf.openFile(file);
-      }
-    } else if (item.count > 0 && !event.shiftKey && !event.ctrlKey && !event.metaKey) {
-      if (!["/", "/recycle"].includes(locationService.getState().pathname)) {
-        locationService.setPathname("/");
-      }
-      locationService.setFromAndToQuery(item.timestamp, utils$1.getTimeStampByDate(require$$0.moment(item.timestamp + DAILY_TIMESTAMP).subtract(1, "days").endOf("day").format("YYYY-MM-DD HH:mm:ss")));
-      setCurrentStat(item);
-    }
-  }, []);
-  return /* @__PURE__ */ jsxs("div", {
-    className: "usage-heat-map-wrapper",
-    ref: containerElRef,
-    children: [/* @__PURE__ */ jsxs("div", {
-      className: "day-tip-text-container",
-      children: [/* @__PURE__ */ jsx("span", {
-        className: "tip-text",
-        children: t$1("weekDaysShort")[0]
-      }), /* @__PURE__ */ jsx("span", {
-        className: "tip-text"
-      }), /* @__PURE__ */ jsx("span", {
-        className: "tip-text",
-        children: t$1("weekDaysShort")[2]
-      }), /* @__PURE__ */ jsx("span", {
-        className: "tip-text"
-      }), /* @__PURE__ */ jsx("span", {
-        className: "tip-text",
-        children: t$1("weekDaysShort")[4]
-      }), /* @__PURE__ */ jsx("span", {
-        className: "tip-text"
-      }), /* @__PURE__ */ jsx("span", {
-        className: "tip-text",
-        children: t$1("weekDaysShort")[6]
-      })]
-    }), /* @__PURE__ */ jsxs("div", {
-      ref: popupRef,
-      className: "usage-detail-container pop-up " + (popupStat ? "" : "hidden"),
-      children: [popupStat == null ? void 0 : popupStat.count, " memos on", " ", /* @__PURE__ */ jsx("span", {
-        className: "date-text",
-        children: new Date(popupStat == null ? void 0 : popupStat.timestamp).toDateString()
-      })]
-    }), /* @__PURE__ */ jsxs("div", {
-      className: "usage-heat-map",
-      children: [allStat.map((v, i) => {
-        const count = v.count;
-        const colorLevel = count <= 0 ? "" : count <= 1 ? "stat-day-L1-bg" : count <= 2 ? "stat-day-L2-bg" : count <= 4 ? "stat-day-L3-bg" : "stat-day-L4-bg";
-        return /* @__PURE__ */ jsx("span", {
-          className: `stat-container ${colorLevel} ${currentStat === v ? "current" : ""} ${todayTimeStamp === v.timestamp ? "today" : ""}`,
-          onMouseEnter: (e) => handleUsageStatItemMouseEnter(e, v),
-          onMouseLeave: handleUsageStatItemMouseLeave,
-          onClick: (e) => handleUsageStatItemClick(e, v)
-        }, i);
-      }), nullCell.map((v, i) => /* @__PURE__ */ jsx("span", {
-        className: "stat-container null"
-      }, i))]
-    })]
-  });
-};
-const siderbar = "";
-const Sidebar = () => {
-  const {
-    locationState,
-    globalState: {
-      isMobileView,
-      showSiderbarInMobileView
-    }
-  } = react.exports.useContext(appContext);
-  const wrapperElRef = react.exports.useRef(null);
-  const handleClickOutsideOfWrapper = react.exports.useMemo(() => {
-    return (event) => {
-      var _a, _b, _c;
-      const siderbarShown = globalStateService.getState().showSiderbarInMobileView;
-      if (!siderbarShown) {
-        window.removeEventListener("click", handleClickOutsideOfWrapper, {
-          capture: true
-        });
-        return;
-      }
-      if (!((_a = wrapperElRef.current) == null ? void 0 : _a.contains(event.target))) {
-        if ((_c = (_b = wrapperElRef.current) == null ? void 0 : _b.parentNode) == null ? void 0 : _c.contains(event.target)) {
-          if (siderbarShown) {
-            event.stopPropagation();
-          }
-          globalStateService.setShowSiderbarInMobileView(false);
-          window.removeEventListener("click", handleClickOutsideOfWrapper, {
-            capture: true
-          });
-        }
-      }
-    };
-  }, []);
-  react.exports.useEffect(() => {
-    globalStateService.setShowSiderbarInMobileView(false);
-  }, [locationState]);
-  react.exports.useEffect(() => {
-    if (showSiderbarInMobileView) {
-      document.body.classList.add(SHOW_SIDERBAR_MOBILE_CLASSNAME);
-    } else {
-      document.body.classList.remove(SHOW_SIDERBAR_MOBILE_CLASSNAME);
-    }
-  }, [showSiderbarInMobileView]);
-  react.exports.useEffect(() => {
-    if (isMobileView && showSiderbarInMobileView) {
-      window.addEventListener("click", handleClickOutsideOfWrapper, {
-        capture: true
-      });
-    }
-  }, [isMobileView, showSiderbarInMobileView]);
-  return /* @__PURE__ */ jsxs("aside", {
-    className: "memos-sidebar-wrapper",
-    ref: wrapperElRef,
-    children: [/* @__PURE__ */ jsx(UserBanner, {}), /* @__PURE__ */ jsx(UsageHeatMap, {}), /* @__PURE__ */ jsx(QueryList, {}), /* @__PURE__ */ jsx(TagList, {})]
-  });
-};
-const home = "";
-function Home$1() {
-  const {
-    locationState: {
-      pathname
-    }
-  } = react.exports.useContext(appContext);
-  const loadingState = useLoading();
-  react.exports.useEffect(() => {
-    loadingState.setFinish();
-  }, []);
-  return /* @__PURE__ */ jsx(Fragment, {
-    children: /* @__PURE__ */ jsxs("section", {
-      id: "page-wrapper",
-      children: [/* @__PURE__ */ jsx(Sidebar, {}), /* @__PURE__ */ jsx("main", {
-        className: "content-wrapper",
-        children: homeRouterSwitch(pathname)
-      })]
-    })
-  });
-}
-function Home() {
-  react.exports.useContext(appContext);
-  const loadingState = useLoading();
-  react.exports.useEffect(() => {
-    loadingState.setFinish();
-  }, []);
-  return /* @__PURE__ */ jsx(Fragment, {});
-}
-const appRouter = {
-  "/homeboard": /* @__PURE__ */ jsx(Home, {}),
-  "*": /* @__PURE__ */ jsx(Home$1, {})
-};
 const memoEditor = "";
 const selectDatePicker = "";
 const SvgTag = (props) => /* @__PURE__ */ react.exports.createElement("svg", { xmlns: "http://www.w3.org/2000/svg", enableBackground: "new 0 0 24 24", height: "24px", viewBox: "0 0 24 24", width: "24px", fill: "#000000", ...props }, /* @__PURE__ */ react.exports.createElement("g", null, /* @__PURE__ */ react.exports.createElement("rect", { fill: "none", height: 24, width: 24 })), /* @__PURE__ */ react.exports.createElement("g", null, /* @__PURE__ */ react.exports.createElement("path", { d: "M20,10V8h-4V4h-2v4h-4V4H8v4H4v2h4v4H4v2h4v4h2v-4h4v4h2v-4h4v-2h-4v-4H20z M14,14h-4v-4h4V14z" })));
@@ -39463,6 +36518,125 @@ var usePopper = function usePopper2(referenceElement, popperElement, options) {
     forceUpdate: popperInstanceRef.current ? popperInstanceRef.current.forceUpdate : null
   };
 };
+const datePicker = "";
+const SvgArrowLeft = (props) => /* @__PURE__ */ react.exports.createElement("svg", { xmlns: "http://www.w3.org/2000/svg", height: "24px", viewBox: "0 0 24 24", width: "24px", fill: "#37352f", ...props }, /* @__PURE__ */ react.exports.createElement("path", { d: "M0 0h24v24H0V0z", fill: "none" }), /* @__PURE__ */ react.exports.createElement("path", { d: "M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12l4.58-4.59z" }));
+const DatePicker = (props) => {
+  var _a, _b;
+  const {
+    className,
+    datestamp,
+    handleDateStampChange
+  } = props;
+  const [currentDateStamp, setCurrentDateStamp] = react.exports.useState(getMonthFirstDayDateStamp(datestamp));
+  react.exports.useEffect(() => {
+    setCurrentDateStamp(getMonthFirstDayDateStamp(datestamp));
+  }, [datestamp]);
+  const firstDate = new Date(currentDateStamp);
+  const firstDateDay = firstDate.getDay() === 0 ? 7 : firstDate.getDay();
+  const dayList = [];
+  for (let i = 0; i < firstDateDay; i++) {
+    dayList.push({
+      date: 0,
+      datestamp: firstDate.getTime() - DAILY_TIMESTAMP * (7 - i)
+    });
+  }
+  const dayAmount = getMonthDayAmount(currentDateStamp);
+  for (let i = 1; i <= dayAmount; i++) {
+    dayList.push({
+      date: i,
+      datestamp: firstDate.getTime() + DAILY_TIMESTAMP * (i - 1)
+    });
+  }
+  const handleDateItemClick = (datestamp2) => {
+    handleDateStampChange(datestamp2);
+  };
+  const handleChangeMonthBtnClick = (i) => {
+    const year = firstDate.getFullYear();
+    const month = firstDate.getMonth() + 1;
+    let nextDateStamp = 0;
+    if (month === 1 && i === -1) {
+      nextDateStamp = new Date(`${year - 1}/12/1`).getTime();
+    } else if (month === 12 && i === 1) {
+      nextDateStamp = new Date(`${year + 1}/1/1`).getTime();
+    } else {
+      nextDateStamp = new Date(`${year}/${month + i}/1`).getTime();
+    }
+    setCurrentDateStamp(getMonthFirstDayDateStamp(nextDateStamp));
+  };
+  return /* @__PURE__ */ jsxs("div", {
+    className: `date-picker-wrapper ${className}`,
+    children: [/* @__PURE__ */ jsxs("div", {
+      className: "date-picker-header",
+      children: [/* @__PURE__ */ jsx("span", {
+        className: "btn-text",
+        onClick: () => handleChangeMonthBtnClick(-1),
+        children: /* @__PURE__ */ jsx(SvgArrowLeft, {
+          className: "icon-img"
+        })
+      }), /* @__PURE__ */ jsxs("span", {
+        className: "normal-text",
+        children: [firstDate.getFullYear(), " ", t$1("year"), " ", (_a = t$1("monthsShort")[firstDate.getMonth()]) != null ? _a : firstDate.getMonth() + 1, " ", (_b = t$1("month")) != null ? _b : ""]
+      }), /* @__PURE__ */ jsx("span", {
+        className: "btn-text",
+        onClick: () => handleChangeMonthBtnClick(1),
+        children: /* @__PURE__ */ jsx(SvgArrowRight, {
+          className: "icon-img"
+        })
+      })]
+    }), /* @__PURE__ */ jsxs("div", {
+      className: "date-picker-day-container",
+      children: [/* @__PURE__ */ jsxs("div", {
+        className: "date-picker-day-header",
+        children: [/* @__PURE__ */ jsx("span", {
+          className: "day-item",
+          children: t$1("weekDaysShort")[0]
+        }), /* @__PURE__ */ jsx("span", {
+          className: "day-item",
+          children: t$1("weekDaysShort")[1]
+        }), /* @__PURE__ */ jsx("span", {
+          className: "day-item",
+          children: t$1("weekDaysShort")[2]
+        }), /* @__PURE__ */ jsx("span", {
+          className: "day-item",
+          children: t$1("weekDaysShort")[3]
+        }), /* @__PURE__ */ jsx("span", {
+          className: "day-item",
+          children: t$1("weekDaysShort")[4]
+        }), /* @__PURE__ */ jsx("span", {
+          className: "day-item",
+          children: t$1("weekDaysShort")[5]
+        }), /* @__PURE__ */ jsx("span", {
+          className: "day-item",
+          children: t$1("weekDaysShort")[6]
+        })]
+      }), dayList.map((d) => {
+        if (d.date === 0) {
+          return /* @__PURE__ */ jsx("span", {
+            className: "day-item null",
+            children: ""
+          }, d.datestamp);
+        } else {
+          return /* @__PURE__ */ jsx("span", {
+            className: `day-item ${d.datestamp === datestamp ? "current" : ""}`,
+            onClick: () => handleDateItemClick(d.datestamp),
+            children: d.date
+          }, d.datestamp);
+        }
+      })]
+    })]
+  });
+};
+function getMonthDayAmount(datestamp) {
+  const dateTemp = new Date(datestamp);
+  const currentDate = new Date(`${dateTemp.getFullYear()}/${dateTemp.getMonth() + 1}/1`);
+  const nextMonthDate = currentDate.getMonth() === 11 ? new Date(`${currentDate.getFullYear() + 1}/1/1`) : new Date(`${currentDate.getFullYear()}/${currentDate.getMonth() + 2}/1`);
+  return (nextMonthDate.getTime() - currentDate.getTime()) / DAILY_TIMESTAMP;
+}
+function getMonthFirstDayDateStamp(timestamp) {
+  const dateTemp = new Date(timestamp);
+  const currentDate = new Date(`${dateTemp.getFullYear()}/${dateTemp.getMonth() + 1}/1`);
+  return currentDate.getTime();
+}
 const getCursorPostion = (input) => {
   const {
     offsetLeft: inputX,
@@ -40131,6 +37305,91 @@ function setEditorContentCache(content) {
     editorContentCache: content
   });
 }
+const filterConsts = {
+  TAG: {
+    value: "TAG",
+    text: t$1("TAG"),
+    operators: [
+      {
+        text: t$1("INCLUDE"),
+        value: "CONTAIN"
+      },
+      {
+        text: t$1("EXCLUDE"),
+        value: "NOT_CONTAIN"
+      }
+    ]
+  },
+  TYPE: {
+    value: "TYPE",
+    text: t$1("TYPE"),
+    operators: [
+      {
+        value: "IS",
+        text: t$1("IS")
+      },
+      {
+        value: "IS_NOT",
+        text: t$1("ISNOT")
+      }
+    ],
+    values: [
+      {
+        value: "CONNECTED",
+        text: t$1("LINKED")
+      },
+      {
+        value: "NOT_TAGGED",
+        text: t$1("NO TAGS")
+      },
+      {
+        value: "LINKED",
+        text: t$1("HAS LINKS")
+      },
+      {
+        value: "IMAGED",
+        text: t$1("HAS IMAGES")
+      }
+    ]
+  },
+  TEXT: {
+    value: "TEXT",
+    text: t$1("TEXT"),
+    operators: [
+      {
+        value: "CONTAIN",
+        text: t$1("INCLUDE")
+      },
+      {
+        value: "NOT_CONTAIN",
+        text: t$1("EXCLUDE")
+      }
+    ]
+  },
+  DATE: {
+    value: "DATE",
+    text: t$1("DATE"),
+    operators: [
+      {
+        value: "NOT_CONTAIN",
+        text: t$1("BEFORE")
+      },
+      {
+        value: "CONTAIN",
+        text: t$1("AFTER")
+      }
+    ]
+  }
+};
+const memoSpecialTypes = filterConsts["TYPE"].values;
+const getTextWithMemoType = (type) => {
+  for (const t2 of memoSpecialTypes) {
+    if (t2.value === type) {
+      return t2.text;
+    }
+  }
+  return "";
+};
 const searchBar = "";
 const SvgSearch = (props) => /* @__PURE__ */ react.exports.createElement("svg", { xmlns: "http://www.w3.org/2000/svg", height: "24px", viewBox: "0 0 24 24", width: "24px", fill: "#37352f", ...props }, /* @__PURE__ */ react.exports.createElement("path", { d: "M0 0h24v24H0V0z", fill: "none" }), /* @__PURE__ */ react.exports.createElement("path", { d: "M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z" }));
 const SearchBar = () => {
@@ -40238,27 +37497,10 @@ const memosHeader = "";
 const SvgMenu = (props) => /* @__PURE__ */ react.exports.createElement("svg", { xmlns: "http://www.w3.org/2000/svg", height: "24px", viewBox: "0 0 24 24", width: "24px", fill: "#37352f", ...props }, /* @__PURE__ */ react.exports.createElement("path", { d: "M0 0h24v24H0V0z", fill: "none" }), /* @__PURE__ */ react.exports.createElement("path", { d: "M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z" }));
 const MemosHeader = () => {
   const {
-    locationState: {
-      query: {
-        filter
-      }
-    },
     globalState: {
       isMobileView
-    },
-    queryState: {
-      queries
     }
   } = react.exports.useContext(appContext);
-  const [titleText, setTitleText] = react.exports.useState("MEMOS");
-  react.exports.useEffect(() => {
-    const query = queryService.getQueryById(filter);
-    if (query) {
-      setTitleText(query.title);
-    } else {
-      setTitleText("MEMOS");
-    }
-  }, [filter, queries]);
   const handleMemoTextClick = react.exports.useCallback(() => {
     memoService.fetchAllMemos(true).catch(() => {
     });
@@ -40282,13 +37524,1006 @@ const MemosHeader = () => {
         })
       }), /* @__PURE__ */ jsx("span", {
         className: "normal-text",
-        children: titleText
+        children: "MEMOS"
       })]
     }), /* @__PURE__ */ jsx(SearchBar, {})]
   });
 };
 const memoFilter = "";
 const SvgCopy = (props) => /* @__PURE__ */ react.exports.createElement("svg", { width: 24, height: 24, viewBox: "0 0 48 48", fill: "none", xmlns: "http://www.w3.org/2000/svg", ...props }, /* @__PURE__ */ react.exports.createElement("path", { d: "M13 12.4316V7.8125C13 6.2592 14.2592 5 15.8125 5H40.1875C41.7408 5 43 6.2592 43 7.8125V32.1875C43 33.7408 41.7408 35 40.1875 35H35.5163", stroke: "#333", strokeWidth: 3, strokeLinecap: "round", strokeLinejoin: "round" }), /* @__PURE__ */ react.exports.createElement("path", { d: "M32.1875 13H7.8125C6.2592 13 5 14.2592 5 15.8125V40.1875C5 41.7408 6.2592 43 7.8125 43H32.1875C33.7408 43 35 41.7408 35 40.1875V15.8125C35 14.2592 33.7408 13 32.1875 13Z", fill: "none", stroke: "#333", strokeWidth: 3, strokeLinejoin: "round" }));
+const CODE_BLOCK_REG = /```([\s\S]*?)```/g;
+const BOLD_TEXT_REG = /\*\*(.+?)\*\*/g;
+const EM_TEXT_REG = /\*(.+?)\*/g;
+const TODO_BLOCK_REG = /\[ \] /g;
+const DONE_BLOCK_REG = /\[.{1}\] /g;
+const DOT_LI_REG = /^[*-]/g;
+const NUM_LI_REG = /(\d+)\. /g;
+const INTERNAL_MD_REG = /\[\[([^\]]+)\]\]/g;
+const EXRERNAL_MD_REG = /\[([^\]]+)\]\((([^\]]+).md)\)/g;
+const parseMarkedToHtml = (markedStr, memoid) => {
+  const htmlText = markedStr.replace(CODE_BLOCK_REG, "<pre lang=''>$1</pre>").replace(DOT_LI_REG, "<span class='counter-block'>\u2022</span>").replace(NUM_LI_REG, "<span class='counter-block'>$1.</span>").replace(TODO_BLOCK_REG, "<span class='todo-block' data-type='todo'>\u2B1C</span>").replace(DONE_BLOCK_REG, "<span class='todo-block' data-type='done'>\u2705</span>").replace(BOLD_TEXT_REG, "<strong>$1</strong>").replace(EM_TEXT_REG, "<em>$1</em>").replace(/&lt;br&gt;/g, "</p><p>").replace(/&amp;/g, "&");
+  let newHtmlText = htmlText;
+  if (memoid) {
+    if (INTERNAL_MD_REG.test(htmlText)) {
+      const internalMD = htmlText.match(INTERNAL_MD_REG);
+      for (let i = 0; i < internalMD.length; i++) {
+        if (!/(jpeg|jpg|gif|png|svg|bmp|wepg)/g.test(internalMD[i])) {
+          const internalContent = getContentFromInternalLink(internalMD[i]);
+          if (/\|/g.test(internalContent)) {
+            const [link, label] = internalContent.split("|");
+            const replaceMent = replaceMd(link, label);
+            newHtmlText = htmlText.replace(internalMD[i], replaceMent);
+          } else {
+            const link = internalContent;
+            const label = "";
+            const replaceMent = replaceMd(link, label);
+            newHtmlText = newHtmlText.replace(internalMD[i], replaceMent);
+          }
+        }
+      }
+    }
+    if (EXRERNAL_MD_REG.test(htmlText)) {
+      const externalMD = htmlText.match(EXRERNAL_MD_REG);
+      for (let i = 0; i < externalMD.length; i++) {
+        if (!/(jpeg|jpg|gif|png|svg|bmp|wepg)/g.test(externalMD[i])) {
+          const link = getContentFromExternalLink(externalMD[i]);
+          const label = getLabelFromExternalLink(externalMD[i]);
+          const replaceMent = replaceMd(link, label);
+          newHtmlText = htmlText.replace(externalMD[i], replaceMent);
+        }
+      }
+    }
+  }
+  return newHtmlText;
+};
+const replaceMd = (internalLink, label) => {
+  const { metadataCache } = appStore.getState().dailyNotesState.app;
+  const file = metadataCache.getFirstLinkpathDest(decodeURIComponent(internalLink), "");
+  if (file instanceof require$$0.TFile) {
+    if (label) {
+      return `<a data-href="${internalLink}" data-type="link" data-filepath="${internalLink}" class="internal-link">${label}</a>`;
+    } else {
+      return `<a data-href="${internalLink}" data-type="link" data-filepath="${internalLink}" class="internal-link">${internalLink}</a>`;
+    }
+  } else if (label) {
+    return `<a data-href="${internalLink}" data-type="link" data-filepath="${internalLink}" class="internal-link is-unresolved">${label}</a>`;
+  } else {
+    return `<a data-href="${internalLink}" data-type="link" data-filepath="${internalLink}" class="internal-link is-unresolved">${internalLink}</a>`;
+  }
+};
+const getContentFromInternalLink = (line) => {
+  var _a;
+  return (_a = /\[\[([^\]]+)\]\]/g.exec(line)) == null ? void 0 : _a[1];
+};
+const getLabelFromExternalLink = (line) => {
+  var _a;
+  return (_a = EXRERNAL_MD_REG.exec(line)) == null ? void 0 : _a[1];
+};
+const getContentFromExternalLink = (line) => {
+  var _a;
+  return (_a = /\[([^\]]+)\]\((([^\]]+).md)\)/g.exec(line)) == null ? void 0 : _a[3];
+};
+const parseHtmlToRawText = (htmlStr) => {
+  const tempEl = document.createElement("div");
+  tempEl.className = "memo-content-text";
+  tempEl.innerHTML = htmlStr;
+  const text = tempEl.innerText;
+  return text;
+};
+const parseRawTextToHtml = (rawTextStr) => {
+  const htmlText = rawTextStr.replace(/\n/g, "<br>");
+  return htmlText;
+};
+const encodeHtml = (htmlStr) => {
+  const t2 = document.createElement("div");
+  t2.textContent = htmlStr;
+  return t2.innerHTML;
+};
+const memoCardDialog = "";
+const SvgEdit = (props) => /* @__PURE__ */ react.exports.createElement("svg", { xmlns: "http://www.w3.org/2000/svg", height: "20px", viewBox: "0 0 24 24", width: "20px", fill: "#37352f", ...props }, /* @__PURE__ */ react.exports.createElement("path", { d: "M0 0h24v24H0V0z", fill: "none" }), /* @__PURE__ */ react.exports.createElement("path", { d: "M14.06 9.02l.92.92L5.92 19H5v-.92l9.06-9.06M17.66 3c-.25 0-.51.1-.7.29l-1.83 1.83 3.75 3.75 1.83-1.83c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.2-.2-.45-.29-.71-.29zm-3.6 3.19L3 17.25V21h3.75L17.81 9.94l-3.75-3.75z" }));
+const previewImageDialog = "";
+const PreviewImageDialog = ({
+  destroy,
+  imgUrl,
+  filepath
+}) => {
+  const imgRef = react.exports.useRef(null);
+  const [imgWidth, setImgWidth] = react.exports.useState(-1);
+  const {
+    vault
+  } = appStore.getState().dailyNotesState.app;
+  react.exports.useEffect(() => {
+    utils$1.getImageSize(imgUrl).then(({
+      width
+    }) => {
+      if (width !== 0) {
+        setImgWidth(80);
+      } else {
+        setImgWidth(0);
+      }
+    });
+  }, []);
+  const handleCloseBtnClick = () => {
+    destroy();
+  };
+  const handleDecreaseImageSize = () => {
+    if (imgWidth > 30) {
+      setImgWidth(imgWidth - 10);
+    }
+  };
+  const handleIncreaseImageSize = () => {
+    setImgWidth(imgWidth + 10);
+  };
+  const convertBase64ToBlob = (base64, type) => {
+    var bytes = window.atob(base64);
+    var ab = new ArrayBuffer(bytes.length);
+    var ia = new Uint8Array(ab);
+    for (var i = 0; i < bytes.length; i++) {
+      ia[i] = bytes.charCodeAt(i);
+    }
+    return new Blob([ab], {
+      type
+    });
+  };
+  const copyImageToClipboard = async () => {
+    if ((filepath === null || filepath === void 0) && imgUrl !== null) {
+      const myBase64 = imgUrl.split("base64,")[1];
+      const blobInput = convertBase64ToBlob(myBase64, "image/png");
+      const clipboardItemInput = new ClipboardItem({
+        "image/png": blobInput
+      });
+      window.navigator["clipboard"].write([clipboardItemInput]);
+      new require$$0.Notice("Send to clipboard successfully");
+    } else {
+      const buffer = await vault.adapter.readBinary(filepath);
+      const arr = new Uint8Array(buffer);
+      const blob = new Blob([arr], {
+        type: "image/png"
+      });
+      const item = new ClipboardItem({
+        "image/png": blob
+      });
+      window.navigator["clipboard"].write([item]);
+    }
+  };
+  return /* @__PURE__ */ jsxs(Fragment, {
+    children: [/* @__PURE__ */ jsx("button", {
+      className: "btn close-btn",
+      onClick: handleCloseBtnClick,
+      children: /* @__PURE__ */ jsx(SvgClose, {
+        className: "icon-img"
+      })
+    }), /* @__PURE__ */ jsxs("div", {
+      className: "img-container internal-embed image-embed is-loaded",
+      children: [/* @__PURE__ */ jsx("img", {
+        className: imgWidth <= 0 ? "hidden" : "",
+        ref: imgRef,
+        width: imgWidth + "%",
+        src: imgUrl
+      }), /* @__PURE__ */ jsx("span", {
+        className: "loading-text " + (imgWidth === -1 ? "" : "hidden"),
+        children: t$1("Image is loading...")
+      }), /* @__PURE__ */ jsx("span", {
+        className: "loading-text " + (imgWidth === 0 ? "" : "hidden"),
+        children: t$1("\u{1F61F} Cannot load image, image link maybe broken")
+      })]
+    }), /* @__PURE__ */ jsxs("div", {
+      className: "action-btns-container",
+      children: [/* @__PURE__ */ jsx("button", {
+        className: "btn",
+        onClick: handleDecreaseImageSize,
+        children: "\u2796"
+      }), /* @__PURE__ */ jsx("button", {
+        className: "btn",
+        onClick: handleIncreaseImageSize,
+        children: "\u2795"
+      }), /* @__PURE__ */ jsx("button", {
+        className: "btn",
+        onClick: () => setImgWidth(80),
+        children: "\u2B55"
+      }), /* @__PURE__ */ jsx("button", {
+        className: "btn",
+        onClick: copyImageToClipboard,
+        children: "\u{1F4C4}"
+      })]
+    })]
+  });
+};
+function showPreviewImageDialog(imgUrl, filepath) {
+  if (filepath) {
+    showDialog({
+      className: "preview-image-dialog"
+    }, PreviewImageDialog, {
+      imgUrl,
+      filepath
+    });
+  } else {
+    showDialog({
+      className: "preview-image-dialog"
+    }, PreviewImageDialog, {
+      imgUrl
+    });
+  }
+}
+const image = "";
+const Image$1 = (props) => {
+  const {
+    className,
+    imgUrl,
+    alt,
+    referrerPolicy,
+    filepath
+  } = props;
+  const handleImageClick = () => {
+    if (filepath) {
+      showPreviewImageDialog(imgUrl, filepath);
+    } else {
+      showPreviewImageDialog(imgUrl);
+    }
+  };
+  return /* @__PURE__ */ jsx("div", {
+    className: "image-container " + className,
+    onClick: handleImageClick,
+    referrerPolicy,
+    children: /* @__PURE__ */ jsx("img", {
+      src: imgUrl,
+      alt,
+      decoding: "async",
+      loading: "lazy"
+    })
+  });
+};
+const MemoImage = (props) => {
+  var _a;
+  const {
+    memo: memo2
+  } = props;
+  const getPathOfImage = (vault, image2) => {
+    return vault.getResourcePath(image2);
+  };
+  const detectWikiInternalLink = (lineText) => {
+    var _a2, _b;
+    const {
+      metadataCache,
+      vault
+    } = appStore.getState().dailyNotesState.app;
+    const internalFileName = (_a2 = WIKI_IMAGE_URL_REG.exec(lineText)) == null ? void 0 : _a2[1];
+    const internalAltName = (_b = WIKI_IMAGE_URL_REG.exec(lineText)) == null ? void 0 : _b[5];
+    const file = metadataCache.getFirstLinkpathDest(decodeURIComponent(internalFileName), "");
+    if (file === null) {
+      return {
+        linkText: internalFileName,
+        altText: internalAltName,
+        path: "",
+        filepath: ""
+      };
+    } else {
+      const imagePath = getPathOfImage(vault, file);
+      const filePath = file.path;
+      if (internalAltName) {
+        return {
+          linkText: internalFileName,
+          altText: internalAltName,
+          path: imagePath,
+          filepath: filePath
+        };
+      } else {
+        return {
+          linkText: internalFileName,
+          altText: "",
+          path: imagePath,
+          filepath: filePath
+        };
+      }
+    }
+  };
+  const detectMDInternalLink = (lineText) => {
+    var _a2, _b;
+    const {
+      metadataCache,
+      vault
+    } = appStore.getState().dailyNotesState.app;
+    const internalFileName = (_a2 = MARKDOWN_URL_REG.exec(lineText)) == null ? void 0 : _a2[5];
+    const internalAltName = (_b = MARKDOWN_URL_REG.exec(lineText)) == null ? void 0 : _b[2];
+    const file = metadataCache.getFirstLinkpathDest(decodeURIComponent(internalFileName), "");
+    if (file === null) {
+      return {
+        linkText: internalFileName,
+        altText: internalAltName,
+        path: "",
+        filepath: ""
+      };
+    } else {
+      const imagePath = getPathOfImage(vault, file);
+      const filePath = file.path;
+      if (internalAltName) {
+        return {
+          linkText: internalFileName,
+          altText: internalAltName,
+          path: imagePath,
+          filepath: filePath
+        };
+      } else {
+        return {
+          linkText: internalFileName,
+          altText: "",
+          path: imagePath,
+          filepath: filePath
+        };
+      }
+    }
+  };
+  let externalImageUrls = [];
+  const internalImageUrls = [];
+  let allMarkdownLink = [];
+  let allInternalLink = [];
+  if (IMAGE_URL_REG.test(memo2)) {
+    let allExternalImageUrls = [];
+    const anotherExternalImageUrls = [];
+    if (MARKDOWN_URL_REG.test(memo2)) {
+      allMarkdownLink = Array.from(memo2.match(MARKDOWN_URL_REG));
+    }
+    if (WIKI_IMAGE_URL_REG.test(memo2)) {
+      allInternalLink = Array.from(memo2.match(WIKI_IMAGE_URL_REG));
+    }
+    if (MARKDOWN_WEB_URL_REG.test(memo2)) {
+      allExternalImageUrls = Array.from(memo2.match(MARKDOWN_WEB_URL_REG));
+    }
+    if (allInternalLink.length) {
+      for (let i = 0; i < allInternalLink.length; i++) {
+        const allInternalLinkElement = allInternalLink[i];
+        internalImageUrls.push(detectWikiInternalLink(allInternalLinkElement));
+      }
+    }
+    if (allMarkdownLink.length) {
+      for (let i = 0; i < allMarkdownLink.length; i++) {
+        const allMarkdownLinkElement = allMarkdownLink[i];
+        if (/(.*)http[s]?(.*)/.test(allMarkdownLinkElement)) {
+          anotherExternalImageUrls.push((_a = MARKDOWN_URL_REG.exec(allMarkdownLinkElement)) == null ? void 0 : _a[5]);
+        } else {
+          internalImageUrls.push(detectMDInternalLink(allMarkdownLinkElement));
+        }
+      }
+    }
+    externalImageUrls = allExternalImageUrls.concat(anotherExternalImageUrls);
+  }
+  return /* @__PURE__ */ jsxs(Fragment, {
+    children: [/* @__PURE__ */ jsx(Only, {
+      when: externalImageUrls.length > 0,
+      children: /* @__PURE__ */ jsx("div", {
+        className: "images-wrapper",
+        children: externalImageUrls.map((imgUrl, idx) => /* @__PURE__ */ jsx(Image$1, {
+          alt: "",
+          className: "memo-img",
+          imgUrl,
+          referrerPolicy: "no-referrer"
+        }, idx))
+      })
+    }), /* @__PURE__ */ jsx(Only, {
+      when: internalImageUrls.length > 0,
+      children: /* @__PURE__ */ jsx("div", {
+        className: "images-wrapper internal-embed image-embed is-loaded",
+        children: internalImageUrls.map((imgUrl, idx) => /* @__PURE__ */ jsx(Image$1, {
+          className: "memo-img",
+          imgUrl: imgUrl.path,
+          alt: imgUrl.altText,
+          filepath: imgUrl.filepath
+        }, idx))
+      })
+    })]
+  });
+};
+const MemoCardDialog = (props) => {
+  const [memo2, setMemo] = react.exports.useState({
+    ...props.memo,
+    createdAtStr: utils$1.getDateTimeString(props.memo.createdAt)
+  });
+  const [linkMemos, setLinkMemos] = react.exports.useState([]);
+  const [linkedMemos, setLinkedMemos] = react.exports.useState([]);
+  react.exports.useEffect(() => {
+    const fetchLinkedMemos = async () => {
+      try {
+        const linkMemos2 = [];
+        const matchedArr = [...memo2.content.matchAll(MEMO_LINK_REG)];
+        for (const matchRes of matchedArr) {
+          if (matchRes && matchRes.length === 3) {
+            const id2 = matchRes[2];
+            const memoTemp = memoService.getMemoById(id2);
+            if (memoTemp) {
+              linkMemos2.push({
+                ...memoTemp,
+                createdAtStr: utils$1.getDateTimeString(memoTemp.createdAt),
+                dateStr: utils$1.getDateString(memoTemp.createdAt)
+              });
+            }
+          }
+        }
+        setLinkMemos([...linkMemos2]);
+        const linkedMemos2 = await memoService.getLinkedMemos(memo2.id);
+        setLinkedMemos(linkedMemos2.sort((a, b) => utils$1.getTimeStampByDate(b.createdAt) - utils$1.getTimeStampByDate(a.createdAt)).map((m) => ({
+          ...m,
+          createdAtStr: utils$1.getDateTimeString(m.createdAt),
+          dateStr: utils$1.getDateString(m.createdAt)
+        })));
+      } catch (error) {
+      }
+    };
+    fetchLinkedMemos();
+  }, [memo2.id]);
+  const handleMemoContentClick = react.exports.useCallback(async (e) => {
+    var _a;
+    const targetEl = e.target;
+    if (targetEl.className === "memo-link-text") {
+      const nextMemoId = (_a = targetEl.dataset) == null ? void 0 : _a.value;
+      const memoTemp = memoService.getMemoById(nextMemoId != null ? nextMemoId : "");
+      if (memoTemp) {
+        const nextMemo = {
+          ...memoTemp,
+          createdAtStr: utils$1.getDateTimeString(memoTemp.createdAt)
+        };
+        setLinkMemos([]);
+        setLinkedMemos([]);
+        setMemo(nextMemo);
+      } else {
+        new require$$0.Notice("MEMO Not Found");
+        targetEl.classList.remove("memo-link-text");
+      }
+    }
+  }, []);
+  const handleLinkedMemoClick = react.exports.useCallback((memo22) => {
+    setLinkMemos([]);
+    setLinkedMemos([]);
+    setMemo(memo22);
+  }, []);
+  const handleEditMemoBtnClick = react.exports.useCallback(() => {
+    props.destroy();
+    globalStateService.setEditMemoId(memo2.id);
+  }, [memo2.id]);
+  return /* @__PURE__ */ jsxs(Fragment, {
+    children: [/* @__PURE__ */ jsxs("div", {
+      className: "memo-card-container",
+      children: [/* @__PURE__ */ jsxs("div", {
+        className: "header-container",
+        children: [/* @__PURE__ */ jsx("p", {
+          className: "time-text",
+          children: memo2.createdAtStr
+        }), /* @__PURE__ */ jsxs("div", {
+          className: "btns-container",
+          children: [/* @__PURE__ */ jsx("button", {
+            className: "btn edit-btn",
+            onClick: handleEditMemoBtnClick,
+            children: /* @__PURE__ */ jsx(SvgEdit, {
+              className: "icon-img"
+            })
+          }), /* @__PURE__ */ jsx("button", {
+            className: "btn close-btn",
+            onClick: props.destroy,
+            children: /* @__PURE__ */ jsx(SvgClose, {
+              className: "icon-img"
+            })
+          })]
+        })]
+      }), /* @__PURE__ */ jsxs("div", {
+        className: "memo-container",
+        children: [/* @__PURE__ */ jsx("div", {
+          className: "memo-content-text",
+          onClick: handleMemoContentClick,
+          dangerouslySetInnerHTML: {
+            __html: formatMemoContent(memo2.content)
+          }
+        }), /* @__PURE__ */ jsx(MemoImage, {
+          memo: memo2.content
+        })]
+      }), /* @__PURE__ */ jsx("div", {
+        className: "layer-container"
+      }), linkMemos.map((_, idx) => {
+        if (idx < 4) {
+          return /* @__PURE__ */ jsx("div", {
+            className: "background-layer-container",
+            style: {
+              bottom: (idx + 1) * -3 + "px",
+              left: (idx + 1) * 5 + "px",
+              width: `calc(100% - ${(idx + 1) * 10}px)`,
+              zIndex: -idx - 1
+            }
+          }, idx);
+        } else {
+          return null;
+        }
+      })]
+    }), linkMemos.length > 0 ? /* @__PURE__ */ jsxs("div", {
+      className: "linked-memos-wrapper",
+      children: [/* @__PURE__ */ jsxs("p", {
+        className: "normal-text",
+        children: [t$1("LINKED"), " ", linkMemos.length, " MEMO", " "]
+      }), linkMemos.map((m) => {
+        const rawtext = parseHtmlToRawText(formatMemoContent(m.content)).replaceAll("\n", " ");
+        return /* @__PURE__ */ jsxs("div", {
+          className: "linked-memo-container",
+          onClick: () => handleLinkedMemoClick(m),
+          children: [/* @__PURE__ */ jsxs("span", {
+            className: "time-text",
+            children: [m.dateStr, " "]
+          }), rawtext]
+        }, m.id);
+      })]
+    }) : null, linkedMemos.length > 0 ? /* @__PURE__ */ jsxs("div", {
+      className: "linked-memos-wrapper",
+      children: [/* @__PURE__ */ jsxs("p", {
+        className: "normal-text",
+        children: [linkedMemos.length, " MEMO ", t$1("LINK TO THE"), " MEMO"]
+      }), linkedMemos.map((m) => {
+        const rawtext = parseHtmlToRawText(formatMemoContent(m.content)).replaceAll("\n", " ");
+        return /* @__PURE__ */ jsxs("div", {
+          className: "linked-memo-container",
+          onClick: () => handleLinkedMemoClick(m),
+          children: [/* @__PURE__ */ jsxs("span", {
+            className: "time-text",
+            children: [m.dateStr, " "]
+          }), rawtext]
+        }, m.id);
+      })]
+    }) : null]
+  });
+};
+function showMemoCardDialog(memo2) {
+  showDialog({
+    className: "memo-card-dialog"
+  }, MemoCardDialog, {
+    memo: memo2
+  });
+}
+const memo = "";
+const showMemoInDailyNotes = async (memoId, memoPath) => {
+  const { app: app2 } = dailyNotesService.getState();
+  const lineNum = parseInt(memoId.slice(14));
+  const file = app2.metadataCache.getFirstLinkpathDest("", memoPath);
+  if (!require$$0.Platform.isMobile) {
+    const leaf = app2.workspace.splitActiveLeaf();
+    leaf.openFile(file, { eState: { line: lineNum } });
+  } else {
+    let leaf = app2.workspace.activeLeaf;
+    if (leaf === null) {
+      leaf = app2.workspace.getLeaf(true);
+    }
+    leaf.openFile(file, { eState: { line: lineNum } });
+  }
+  return;
+};
+const SvgComment = (props) => /* @__PURE__ */ react.exports.createElement("svg", { t: 1650249616615, className: "icon", viewBox: "0 0 1024 1024", xmlns: "http://www.w3.org/2000/svg", "p-id": 2597, width: 20, height: 20, fill: "#37352f", ...props }, /* @__PURE__ */ react.exports.createElement("path", { d: "M853.333333 768c35.413333 0 64-20.650667 64-55.978667V170.581333A63.978667 63.978667 0 0 0 853.333333 106.666667H170.666667C135.253333 106.666667 106.666667 135.253333 106.666667 170.581333v541.44C106.666667 747.285333 135.338667 768 170.666667 768h201.173333l110.016 117.44a42.752 42.752 0 0 0 60.586667 0.042667L651.904 768H853.333333z m-219.029333-42.666667h-6.250667l-115.797333 129.962667c-0.106667 0.106667-116.010667-129.962667-116.010667-129.962667H170.666667c-11.776 0-21.333333-1.621333-21.333334-13.312V170.581333A21.205333 21.205333 0 0 1 170.666667 149.333333h682.666666c11.776 0 21.333333 9.536 21.333334 21.248v541.44c0 11.754667-9.472 13.312-21.333334 13.312H634.304zM341.333333 490.666667a42.666667 42.666667 0 1 0 0-85.333334 42.666667 42.666667 0 0 0 0 85.333334z m170.666667 0a42.666667 42.666667 0 1 0 0-85.333334 42.666667 42.666667 0 0 0 0 85.333334z m170.666667 0a42.666667 42.666667 0 1 0 0-85.333334 42.666667 42.666667 0 0 0 0 85.333334z", fill: "#3D3D3D", "p-id": 2598 }));
+const SvgTaskBlank = (props) => /* @__PURE__ */ react.exports.createElement("svg", { xmlns: "http://www.w3.org/2000/svg", height: "20px", viewBox: "0 0 24 24", width: "20px", fill: "#37352f", ...props }, /* @__PURE__ */ react.exports.createElement("path", { d: "M0 0h24v24H0V0z", fill: "none" }), /* @__PURE__ */ react.exports.createElement("path", { d: "M19 5v14H5V5h14m0-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2z" }));
+const SvgTask = (props) => /* @__PURE__ */ react.exports.createElement("svg", { xmlns: "http://www.w3.org/2000/svg", height: "20px", viewBox: "0 0 24 24", width: "20px", fill: "#37352f", ...props }, /* @__PURE__ */ react.exports.createElement("path", { d: "M0 0h24v24H0V0z", fill: "none" }), /* @__PURE__ */ react.exports.createElement("path", { d: "M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V5h14v14zM17.99 9l-1.41-1.42-6.59 6.59-2.58-2.57-1.42 1.41 4 3.99z" }));
+const Memo = (props) => {
+  var _a;
+  const {
+    globalState
+  } = react.exports.useContext(appContext);
+  const {
+    memo: propsMemo
+  } = props;
+  const [showConfirmDeleteBtn, toggleConfirmDeleteBtn] = useToggle(false);
+  const memoCommentRef = react.exports.useRef(null);
+  const [isCommentShown, toggleComment] = useToggle(false);
+  const [isCommentListShown, toggleCommentList] = useToggle(ShowCommentOnMemos);
+  const [commentMemos, setCommentMemos, commentMemosRef] = dist([]);
+  const [, setAddRandomIDflag, RandomIDRef] = dist(false);
+  react.exports.useEffect(() => {
+    if (!memoCommentRef.current) {
+      return;
+    }
+    if (!CommentOnMemos) {
+      return;
+    }
+    const fetchCommentMemos = async () => {
+      const allCommentMemos = memoService.getState().commentMemos.filter((m) => m.linkId === propsMemo.hasId).sort((a, b) => utils$1.getTimeStampByDate(b.createdAt) - utils$1.getTimeStampByDate(a.createdAt));
+      setCommentMemos(allCommentMemos);
+    };
+    fetchCommentMemos();
+  }, [propsMemo.content, propsMemo.id]);
+  react.exports.useEffect(() => {
+    if (!memoCommentRef.current) {
+      return;
+    }
+    const handlePasteEvent = async (event) => {
+      var _a2;
+      if (event.clipboardData && event.clipboardData.files.length > 0) {
+        event.preventDefault();
+        const file = event.clipboardData.files[0];
+        const url = await handleUploadFile(file);
+        if (url) {
+          (_a2 = memoCommentRef.current) == null ? void 0 : _a2.insertText(url);
+        }
+      }
+    };
+    const handleDropEvent = async (event) => {
+      var _a2;
+      if (event.dataTransfer && event.dataTransfer.files.length > 0) {
+        event.preventDefault();
+        const file = event.dataTransfer.files[0];
+        const url = await handleUploadFile(file);
+        if (url) {
+          (_a2 = memoCommentRef.current) == null ? void 0 : _a2.insertText(url);
+        }
+      }
+    };
+    const handleClickEvent = () => {
+      var _a2, _b;
+      handleContentChange((_b = (_a2 = memoCommentRef.current) == null ? void 0 : _a2.element.value) != null ? _b : "");
+    };
+    const handleKeyDownEvent = () => {
+      setTimeout(() => {
+        var _a2, _b;
+        handleContentChange((_b = (_a2 = memoCommentRef.current) == null ? void 0 : _a2.element.value) != null ? _b : "");
+      });
+    };
+    memoCommentRef.current.element.addEventListener("paste", handlePasteEvent);
+    memoCommentRef.current.element.addEventListener("drop", handleDropEvent);
+    memoCommentRef.current.element.addEventListener("click", handleClickEvent);
+    memoCommentRef.current.element.addEventListener("keydown", handleKeyDownEvent);
+    return () => {
+      var _a2, _b;
+      (_a2 = memoCommentRef.current) == null ? void 0 : _a2.element.removeEventListener("paste", handlePasteEvent);
+      (_b = memoCommentRef.current) == null ? void 0 : _b.element.removeEventListener("drop", handleDropEvent);
+    };
+  }, []);
+  const handleCancelBtnClick = react.exports.useCallback(() => {
+    var _a2;
+    globalStateService.setCommentMemoId("");
+    (_a2 = memoCommentRef.current) == null ? void 0 : _a2.setContent("");
+    toggleComment(false);
+  }, []);
+  const handleContentChange = react.exports.useCallback((content) => {
+    const tempDiv = document.createElement("div");
+    tempDiv.innerHTML = content;
+    if (tempDiv.innerText.trim() === "") {
+      content = "";
+    }
+    setTimeout(() => {
+      var _a2;
+      (_a2 = memoCommentRef.current) == null ? void 0 : _a2.focus();
+    });
+  }, []);
+  const handleSaveBtnClick = react.exports.useCallback(async (content) => {
+    var _a2, _b;
+    if (content === "") {
+      new require$$0.Notice(t$1("Content cannot be empty"));
+      return;
+    }
+    const {
+      commentMemoId
+    } = globalStateService.getState();
+    content = content.replaceAll("&nbsp;", " ");
+    globalStateService.setChangedByMemos(true);
+    try {
+      if (commentMemoId) {
+        (_a2 = memoCommentRef.current) == null ? void 0 : _a2.setContent("");
+        let prevMemo;
+        if (CommentOnMemos && CommentsInOriginalNotes) {
+          prevMemo = memoService.getCommentMemoById(commentMemoId);
+          content = require$$0.moment().format("YYYYMMDDHHmmss") + " " + content;
+        } else {
+          prevMemo = memoService.getMemoById(commentMemoId);
+          content = prevMemo.content.replace(/^(.*) comment:/g, content + " comment:");
+        }
+        if (prevMemo && prevMemo.content !== content) {
+          let editedMemo;
+          if (CommentOnMemos && CommentsInOriginalNotes) {
+            editedMemo = await memoService.updateMemo(prevMemo.id, prevMemo.content, content, prevMemo.memoType, prevMemo.path);
+          } else {
+            editedMemo = await memoService.updateMemo(prevMemo.id, prevMemo.content, content, prevMemo.memoType);
+          }
+          if (CommentOnMemos && CommentsInOriginalNotes) {
+            memoService.editCommentMemo(editedMemo);
+          } else {
+            editedMemo.updatedAt = utils$1.getDateTimeString(Date.now());
+            memoService.editMemo(editedMemo);
+          }
+          setCommentMemos(commentMemosRef.current.map((m) => {
+            if (m.id.slice(14) === commentMemoId.slice(14) && m.path === prevMemo.path) {
+              return editedMemo;
+            }
+            return m;
+          }));
+        }
+        globalStateService.setCommentMemoId("");
+        toggleComment(false);
+      } else {
+        const dailyFormat = getDailyNoteFormat();
+        let randomId;
+        if (propsMemo.hasId.length > 0) {
+          randomId = propsMemo.hasId;
+        } else if (!CommentsInOriginalNotes) {
+          randomId = Math.random().toString(36).slice(-6);
+          setAddRandomIDflag(true);
+        }
+        if (!CommentsInOriginalNotes) {
+          content = content + " comment: [[" + require$$0.moment(propsMemo.id.slice(0, 8)).format(dailyFormat) + "#^" + randomId + "]]";
+        }
+        (_b = memoCommentRef.current) == null ? void 0 : _b.setContent("");
+        let newMemo;
+        if (CommentsInOriginalNotes) {
+          newMemo = await memoService.createCommentMemo(content, true, propsMemo.path, propsMemo.id, randomId);
+          memoService.pushCommentMemo(newMemo);
+        } else {
+          newMemo = await memoService.createMemo(content, true);
+          memoService.pushMemo(newMemo);
+        }
+        setCommentMemos([...commentMemosRef.current, newMemo].sort((a, b) => utils$1.getTimeStampByDate(b.createdAt) - utils$1.getTimeStampByDate(a.createdAt)));
+        if (RandomIDRef.current) {
+          const editedMemo = await memoService.updateMemo(propsMemo.id, propsMemo.content, propsMemo.content + " ^" + randomId, propsMemo.memoType);
+          editedMemo.updatedAt = utils$1.getDateTimeString(Date.now());
+          memoService.editMemo(editedMemo);
+          setAddRandomIDflag(false);
+        }
+      }
+    } catch (error) {
+      new require$$0.Notice(error.message);
+    }
+  }, []);
+  const handleUploadFile = react.exports.useCallback(async (file) => {
+    const {
+      type
+    } = file;
+    if (!type.startsWith("image")) {
+      return;
+    }
+    try {
+      const image2 = await resourceService.upload(file);
+      const url = `${image2}`;
+      return url;
+    } catch (error) {
+      new require$$0.Notice(error);
+    }
+  }, []);
+  const handleShowMemoStoryDialog = () => {
+    showMemoCardDialog(propsMemo);
+  };
+  const handleMarkMemoClick = () => {
+    if (UseButtonToShowEditor && DefaultEditorLocation === "Bottom") {
+      const elem = document.querySelector("div[data-type='memos_view'] .view-content .memo-show-editor-button");
+      if (typeof (elem == null ? void 0 : elem.onclick) == "function") {
+        elem.onclick.apply(elem);
+      }
+    }
+    globalStateService.setMarkMemoId(propsMemo.id);
+  };
+  const handleEditMemoClick = () => {
+    if (UseButtonToShowEditor && DefaultEditorLocation === "Bottom" && require$$0.Platform.isMobile) {
+      const elem = document.querySelector("div[data-type='memos_view'] .view-content .memo-show-editor-button");
+      if (typeof elem.onclick == "function") {
+        elem.onclick.apply(elem);
+      }
+    }
+    globalStateService.setEditMemoId(propsMemo.id);
+  };
+  const handleSourceMemoClick = (m) => {
+    showMemoInDailyNotes(m.id, m.path);
+  };
+  const handleDeleteMemoClick = async () => {
+    if (showConfirmDeleteBtn) {
+      try {
+        await memoService.hideMemoById(propsMemo.id);
+      } catch (error) {
+        new require$$0.Notice(error.message);
+      }
+      if (globalStateService.getState().editMemoId === propsMemo.id) {
+        globalStateService.setEditMemoId("");
+      }
+    } else {
+      toggleConfirmDeleteBtn();
+    }
+  };
+  const handleMouseLeaveMemoWrapper = () => {
+    if (showConfirmDeleteBtn) {
+      toggleConfirmDeleteBtn(false);
+    }
+  };
+  const handleMemoTypeShow = () => {
+    if (!ShowTaskLabel) {
+      return;
+    }
+    if (propsMemo.memoType === "TASK-TODO") {
+      return /* @__PURE__ */ jsx(SvgTaskBlank, {});
+    } else if (propsMemo.memoType === "TASK-DONE") {
+      return /* @__PURE__ */ jsx(SvgTask, {});
+    }
+  };
+  const handleMemoDoubleClick = react.exports.useCallback((event) => {
+    if (event) {
+      handleEditMemoClick();
+    }
+  }, []);
+  const handleMemoContentClick = async (e, m) => {
+    var _a2;
+    const targetEl = e.target;
+    if (e.ctrlKey || e.metaKey) {
+      handleSourceMemoClick(m);
+    }
+    if (targetEl.className === "memo-link-text") {
+      const memoId = (_a2 = targetEl.dataset) == null ? void 0 : _a2.value;
+      const memoTemp = memoService.getMemoById(memoId != null ? memoId : "");
+      if (memoTemp) {
+        showMemoCardDialog(memoTemp);
+      } else {
+        new require$$0.Notice("MEMO Not Found");
+        targetEl.classList.remove("memo-link-text");
+      }
+    } else if (targetEl.className === "todo-block")
+      ;
+  };
+  const handleCommentBlock = () => {
+    if (!isCommentShown) {
+      toggleComment(true);
+    } else {
+      toggleComment(false);
+    }
+    if (!isCommentListShown) {
+      toggleCommentList(true);
+    } else if (!ShowCommentOnMemos && isCommentListShown) {
+      toggleCommentList(false);
+    }
+  };
+  const handleEditCommentClick = react.exports.useCallback((memo2) => {
+    var _a2, _b;
+    if (!CommentOnMemos) {
+      return;
+    }
+    globalStateService.setCommentMemoId(memo2.id);
+    if (!isCommentShown) {
+      toggleComment(true);
+    }
+    (_a2 = memoCommentRef.current) == null ? void 0 : _a2.focus();
+    (_b = memoCommentRef.current) == null ? void 0 : _b.setContent(memo2.content.replace(/ comment: (.*)$/g, "").replace(/^\d{14} /g, ""));
+  }, []);
+  const showEditStatus = Boolean(globalState.commentMemoId);
+  const editorConfig = react.exports.useMemo(() => ({
+    className: "memo-editor",
+    inputerType: "commentMemo",
+    initialContent: "",
+    placeholder: t$1("Comment it..."),
+    showConfirmBtn: true,
+    showCancelBtn: showEditStatus,
+    showTools: true,
+    onConfirmBtnClick: handleSaveBtnClick,
+    onCancelBtnClick: handleCancelBtnClick,
+    onContentChange: handleContentChange
+  }), [globalState.commentMemoId]);
+  const imageProps = {
+    memo: propsMemo.content
+  };
+  return /* @__PURE__ */ jsxs("div", {
+    className: `memo-wrapper ${"memos-" + propsMemo.id} ${propsMemo.memoType}`,
+    onMouseLeave: handleMouseLeaveMemoWrapper,
+    draggable: "true",
+    onDragStart: (e) => {
+      e.dataTransfer.setData("text/plain", propsMemo.content.replace(/<br>/g, "\n"));
+    },
+    children: [/* @__PURE__ */ jsxs("div", {
+      className: "memo-top-wrapper",
+      children: [/* @__PURE__ */ jsxs("div", {
+        className: "memo-top-left-wrapper",
+        children: [/* @__PURE__ */ jsx("span", {
+          className: "time-text",
+          onClick: handleShowMemoStoryDialog,
+          children: propsMemo.createdAt
+        }), /* @__PURE__ */ jsx("div", {
+          className: `memo-type-img ${(propsMemo.memoType === "TASK-TODO" || propsMemo.memoType === "TASK-DONE") && ShowTaskLabel ? "" : "hidden"}`,
+          children: (_a = handleMemoTypeShow()) != null ? _a : ""
+        })]
+      }), /* @__PURE__ */ jsxs("div", {
+        className: "memo-top-right-wrapper",
+        children: [CommentOnMemos ? /* @__PURE__ */ jsxs("div", {
+          className: "comment-button-wrapper",
+          children: [/* @__PURE__ */ jsx(SvgComment, {
+            className: "icon-img",
+            onClick: handleCommentBlock
+          }), commentMemos.length > 0 ? /* @__PURE__ */ jsx("div", {
+            className: "comment-text-count",
+            children: commentMemos.length
+          }) : null]
+        }) : "", /* @__PURE__ */ jsxs("div", {
+          className: "btns-container",
+          children: [/* @__PURE__ */ jsx("span", {
+            className: "btn more-action-btn",
+            children: /* @__PURE__ */ jsx(SvgMore, {
+              className: "icon-img"
+            })
+          }), /* @__PURE__ */ jsx("div", {
+            className: "more-action-btns-wrapper",
+            children: /* @__PURE__ */ jsxs("div", {
+              className: "more-action-btns-container",
+              children: [/* @__PURE__ */ jsx("span", {
+                className: "btn",
+                onClick: handleShowMemoStoryDialog,
+                children: t$1("READ")
+              }), /* @__PURE__ */ jsx("span", {
+                className: "btn",
+                onClick: handleMarkMemoClick,
+                children: t$1("MARK")
+              }), /* @__PURE__ */ jsx("span", {
+                className: "btn",
+                onClick: handleEditMemoClick,
+                children: t$1("EDIT")
+              }), /* @__PURE__ */ jsx("span", {
+                className: "btn",
+                onClick: () => handleSourceMemoClick(propsMemo),
+                children: t$1("SOURCE")
+              }), /* @__PURE__ */ jsx("span", {
+                className: `btn delete-btn ${showConfirmDeleteBtn ? "final-confirm" : ""}`,
+                onClick: handleDeleteMemoClick,
+                children: showConfirmDeleteBtn ? t$1("CONFIRM\uFF01") : t$1("DELETE")
+              })]
+            })
+          })]
+        })]
+      })]
+    }), /* @__PURE__ */ jsx("div", {
+      className: "memo-content-text",
+      onClick: (e) => handleMemoContentClick(e, propsMemo),
+      onDoubleClick: handleMemoDoubleClick,
+      dangerouslySetInnerHTML: {
+        __html: formatMemoContent(propsMemo.content, propsMemo.id)
+      }
+    }), /* @__PURE__ */ jsx(MemoImage, {
+      ...imageProps
+    }), CommentOnMemos ? /* @__PURE__ */ jsxs("div", {
+      className: `memo-comment-wrapper`,
+      children: [commentMemos.length > 0 && isCommentListShown ? /* @__PURE__ */ jsx("div", {
+        className: `memo-comment-list`,
+        children: commentMemos.map((m, idx) => /* @__PURE__ */ jsxs("div", {
+          className: "memo-comment",
+          children: [/* @__PURE__ */ jsx("div", {
+            className: "memo-comment-time",
+            children: m.createdAt
+          }), /* @__PURE__ */ jsx("div", {
+            className: "memo-comment-text",
+            onClick: (e) => handleMemoContentClick(e, m),
+            onDoubleClick: () => handleEditCommentClick(m),
+            dangerouslySetInnerHTML: {
+              __html: formatMemoContent(m.content.replace(/comment:(.*)]]/g, "").replace(/^\d{14} /g, "").trim(), m.id)
+            }
+          })]
+        }, idx))
+      }) : null, /* @__PURE__ */ jsx("div", {
+        className: `memo-comment-inputer ${isCommentShown ? "" : "hidden"}`,
+        children: /* @__PURE__ */ jsx(Editor, {
+          ref: memoCommentRef,
+          ...editorConfig
+        })
+      })]
+    }) : ""]
+  });
+};
+function formatMemoContent(content, memoid) {
+  var _a;
+  content = encodeHtml(content);
+  content = parseRawTextToHtml(content).split("<br>").map((t2) => {
+    return `<p>${t2 !== "" ? t2 : "<br>"}</p>`;
+  }).join("");
+  const {
+    shouldUseMarkdownParser,
+    shouldHideImageUrl
+  } = globalStateService.getState();
+  if (shouldUseMarkdownParser) {
+    content = parseMarkedToHtml(content, memoid);
+  }
+  if (shouldHideImageUrl) {
+    content = content.replace(WIKI_IMAGE_URL_REG, "").replace(MARKDOWN_URL_REG, "").replace(IMAGE_URL_REG, "");
+  }
+  content = content.replace(TAG_REG, "<span class='tag-span'>#$1</span>").replace(FIRST_TAG_REG, "<p><span class='tag-span'>#$2</span>").replace(LINK_REG, "$1<a class='link' target='_blank' rel='noreferrer' href='$2'>$2</a>").replace(MD_LINK_REG, "<a class='link' target='_blank' rel='noreferrer' href='$2'>$1</a>").replace(MEMO_LINK_REG, "<span class='memo-link-text' data-value='$2'>$1</span>").replace(/\^\S{6}/g, "");
+  const tempDivContainer = document.createElement("div");
+  tempDivContainer.innerHTML = content;
+  for (let i = 0; i < tempDivContainer.children.length; i++) {
+    const c = tempDivContainer.children[i];
+    if (c.tagName === "P" && c.textContent === "" && ((_a = c.firstElementChild) == null ? void 0 : _a.tagName) !== "BR") {
+      c.remove();
+      i--;
+      continue;
+    }
+  }
+  return tempDivContainer.innerHTML;
+}
+const Memo$1 = react.exports.memo(Memo);
 const memolist = "";
 let copyShownMemos;
 const MemoList = () => {
@@ -40306,12 +38541,10 @@ const MemoList = () => {
     tag: tagQuery,
     duration,
     type: memoContentType,
-    text: textQuery,
-    filter: queryId
+    text: textQuery
   } = query;
-  const queryFilter = queryService.getQueryById(queryId);
-  const showMemoFilter = Boolean(tagQuery || duration && duration.from < duration.to || memoContentType || textQuery || queryFilter);
-  const shownMemos = showMemoFilter || queryFilter || HideDoneTasks ? memos.filter((memo2) => {
+  const showMemoFilter = Boolean(tagQuery || duration && duration.from < duration.to || memoContentType || textQuery);
+  const shownMemos = showMemoFilter || HideDoneTasks ? memos.filter((memo2) => {
     var _a, _b, _c;
     let shouldShow = true;
     if (memo2.memoType !== void 0) {
@@ -40321,12 +38554,6 @@ const MemoList = () => {
     }
     if (memo2.content.contains("comment:")) {
       shouldShow = false;
-    }
-    if (queryFilter) {
-      const filters = JSON.parse(queryFilter.querystring);
-      if (Array.isArray(filters)) {
-        shouldShow = checkShouldShowMemoWithFilters(memo2, filters);
-      }
     }
     if (tagQuery) {
       const tagsSet = /* @__PURE__ */ new Set();
@@ -40570,11 +38797,9 @@ const MemoFilter = () => {
     tag: tagQuery,
     duration,
     type: memoType,
-    text: textQuery,
-    filter
+    text: textQuery
   } = query;
-  const queryFilter = queryService.getQueryById(filter);
-  const showFilter = Boolean(tagQuery || duration && duration.from < duration.to || memoType || textQuery || queryFilter);
+  const showFilter = Boolean(tagQuery || duration && duration.from < duration.to || memoType || textQuery);
   const handleCopyClick = async () => {
     if (!(copyShownMemos.length > 0)) {
       return;
@@ -40591,15 +38816,6 @@ const MemoFilter = () => {
       children: [/* @__PURE__ */ jsx("span", {
         className: "tip-text",
         children: "FILTER: "
-      }), /* @__PURE__ */ jsxs("div", {
-        className: "filter-item-container " + (queryFilter ? "" : "hidden"),
-        onClick: () => {
-          locationService.setMemoFilter("");
-        },
-        children: [/* @__PURE__ */ jsx("span", {
-          className: "icon-text",
-          children: "\u{1F516}"
-        }), " ", queryFilter == null ? void 0 : queryFilter.title]
       }), /* @__PURE__ */ jsxs("div", {
         className: "filter-item-container " + (tagQuery ? "" : "hidden"),
         onClick: () => {
@@ -40752,20 +38968,12 @@ const MemoTrash = () => {
     tag: tagQuery,
     duration,
     type: memoType,
-    text: textQuery,
-    filter: queryId
+    text: textQuery
   } = query;
-  const queryFilter = queryService.getQueryById(queryId);
-  const showMemoFilter = Boolean(tagQuery || duration && duration.from < duration.to || memoType || textQuery || queryFilter);
-  const shownMemos = showMemoFilter || queryFilter ? deletedMemos.filter((memo2) => {
+  const showMemoFilter = Boolean(tagQuery || duration && duration.from < duration.to || memoType || textQuery);
+  const shownMemos = showMemoFilter ? deletedMemos.filter((memo2) => {
     var _a, _b;
     let shouldShow = true;
-    if (queryFilter) {
-      const filters = JSON.parse(queryFilter.querystring);
-      if (Array.isArray(filters)) {
-        shouldShow = checkShouldShowMemoWithFilters(memo2, filters);
-      }
-    }
     if (tagQuery) {
       const tagsSet = /* @__PURE__ */ new Set();
       for (const t2 of Array.from((_a = memo2.content.match(TAG_REG)) != null ? _a : [])) {
@@ -41104,20 +39312,20 @@ class Memos extends require$$0.ItemView {
     DefaultEditorLocation = this.plugin.settings.DefaultEditorLocation;
     UseButtonToShowEditor = this.plugin.settings.UseButtonToShowEditor;
     FocusOnEditor = this.plugin.settings.FocusOnEditor;
-    OpenDailyMemosWithMemos = this.plugin.settings.OpenDailyMemosWithMemos;
+    this.plugin.settings.OpenDailyMemosWithMemos;
     HideDoneTasks = this.plugin.settings.HideDoneTasks;
-    ShareFooterStart = this.plugin.settings.ShareFooterStart;
-    ShareFooterEnd = this.plugin.settings.ShareFooterEnd;
+    this.plugin.settings.ShareFooterStart;
+    this.plugin.settings.ShareFooterEnd;
     this.plugin.settings.OpenMemosAutomatically;
     ShowTime = this.plugin.settings.ShowTime;
     ShowDate = this.plugin.settings.ShowDate;
     AddBlankLineWhenDate = this.plugin.settings.AddBlankLineWhenDate;
-    AutoSaveWhenOnMobile = this.plugin.settings.AutoSaveWhenOnMobile;
+    this.plugin.settings.AutoSaveWhenOnMobile;
     QueryFileName = this.plugin.settings.QueryFileName;
     DeleteFileName = this.plugin.settings.DeleteFileName;
     UseVaultTags = this.plugin.settings.UseVaultTags;
-    DefaultDarkBackgroundImage = this.plugin.settings.DefaultDarkBackgroundImage;
-    DefaultLightBackgroundImage = this.plugin.settings.DefaultLightBackgroundImage;
+    this.plugin.settings.DefaultDarkBackgroundImage;
+    this.plugin.settings.DefaultLightBackgroundImage;
     DefaultMemoComposition = this.plugin.settings.DefaultMemoComposition;
     ShowTaskLabel = this.plugin.settings.ShowTaskLabel;
     CommentOnMemos = this.plugin.settings.CommentOnMemos;
@@ -41211,20 +39419,20 @@ class Memos extends require$$0.ItemView {
     DefaultEditorLocation = this.plugin.settings.DefaultEditorLocation;
     UseButtonToShowEditor = this.plugin.settings.UseButtonToShowEditor;
     FocusOnEditor = this.plugin.settings.FocusOnEditor;
-    OpenDailyMemosWithMemos = this.plugin.settings.OpenDailyMemosWithMemos;
+    this.plugin.settings.OpenDailyMemosWithMemos;
     HideDoneTasks = this.plugin.settings.HideDoneTasks;
-    ShareFooterStart = this.plugin.settings.ShareFooterStart;
-    ShareFooterEnd = this.plugin.settings.ShareFooterEnd;
+    this.plugin.settings.ShareFooterStart;
+    this.plugin.settings.ShareFooterEnd;
     this.plugin.settings.OpenMemosAutomatically;
     ShowTime = this.plugin.settings.ShowTime;
     ShowDate = this.plugin.settings.ShowDate;
     AddBlankLineWhenDate = this.plugin.settings.AddBlankLineWhenDate;
-    AutoSaveWhenOnMobile = this.plugin.settings.AutoSaveWhenOnMobile;
+    this.plugin.settings.AutoSaveWhenOnMobile;
     QueryFileName = this.plugin.settings.QueryFileName;
     DeleteFileName = this.plugin.settings.DeleteFileName;
     UseVaultTags = this.plugin.settings.UseVaultTags;
-    DefaultDarkBackgroundImage = this.plugin.settings.DefaultDarkBackgroundImage;
-    DefaultLightBackgroundImage = this.plugin.settings.DefaultLightBackgroundImage;
+    this.plugin.settings.DefaultDarkBackgroundImage;
+    this.plugin.settings.DefaultLightBackgroundImage;
     DefaultMemoComposition = this.plugin.settings.DefaultMemoComposition;
     ShowTaskLabel = this.plugin.settings.ShowTaskLabel;
     CommentOnMemos = this.plugin.settings.CommentOnMemos;
@@ -41259,19 +39467,13 @@ let InsertDateFormat;
 let DefaultEditorLocation;
 let UseButtonToShowEditor;
 let FocusOnEditor;
-let OpenDailyMemosWithMemos;
 let HideDoneTasks;
-let ShareFooterStart;
-let ShareFooterEnd;
 let ShowTime;
 let ShowDate;
 let AddBlankLineWhenDate;
-let AutoSaveWhenOnMobile;
 let QueryFileName;
 let DeleteFileName;
 let UseVaultTags;
-let DefaultDarkBackgroundImage;
-let DefaultLightBackgroundImage;
 let DefaultMemoComposition;
 let ShowTaskLabel;
 let CommentOnMemos;
@@ -41300,27 +39502,20 @@ const DEFAULT_SETTINGS = {
   Language: "en",
   SaveMemoButtonLabel: "NOTEIT",
   SaveMemoButtonIcon: "\u270D\uFE0F",
-  ShareFooterStart: "{MemosNum} Memos {UsedDay} Day",
-  ShareFooterEnd: "\u270D\uFE0F by {UserName}",
   DefaultPrefix: "List",
   UseDailyOrPeriodic: "Daily",
   InsertDateFormat: "Tasks",
   DefaultEditorLocation: "Top",
   UseButtonToShowEditor: false,
   FocusOnEditor: true,
-  OpenDailyMemosWithMemos: true,
   HideDoneTasks: false,
   ShowTaskLabel: false,
   OpenMemosAutomatically: false,
   ShowTime: true,
   ShowDate: true,
   AddBlankLineWhenDate: false,
-  AutoSaveWhenOnMobile: false,
   DeleteFileName: "delete",
-  QueryFileName: "query",
   UseVaultTags: false,
-  DefaultLightBackgroundImage: "",
-  DefaultDarkBackgroundImage: "",
   DefaultMemoComposition: "{TIME} {CONTENT}",
   CommentOnMemos: false,
   CommentsInOriginalNotes: false,
@@ -41961,12 +40156,6 @@ class MemosPlugin extends require$$0.Plugin {
       hotkeys: []
     });
     this.addCommand({
-      id: "show-daily-memo",
-      name: "Show Daily Memo",
-      callback: () => this.openDailyMemo(),
-      hotkeys: []
-    });
-    this.addCommand({
       id: "note-it",
       name: "Note It",
       callback: () => this.noteIt(),
@@ -42015,19 +40204,6 @@ class MemosPlugin extends require$$0.Plugin {
       return;
     }
     this.openMemos();
-  }
-  openDailyMemo() {
-    const workspaceLeaves = this.app.workspace.getLeavesOfType(MEMOS_VIEW_TYPE);
-    if (!OpenDailyMemosWithMemos) {
-      showDailyMemoDiaryDialog();
-      return;
-    }
-    if (workspaceLeaves.length > 0) {
-      showDailyMemoDiaryDialog();
-      return;
-    }
-    this.openMemos();
-    showDailyMemoDiaryDialog();
   }
   async openMemos() {
     const workspace = this.app.workspace;
