@@ -1,5 +1,6 @@
 import { Notice, Platform, Plugin, TFile } from 'obsidian';
-import { FocusOnEditor, Memos, OpenDailyMemosWithMemos } from './memos';
+import { FocusOnEditor, Memos } from './memos';
+// OpenDailyMemosWithMemos removed - was Phase 2 orphaned setting
 import { MEMOS_VIEW_TYPE } from './constants';
 import addIcons from './obComponents/customIcons';
 import { DEFAULT_SETTINGS, MemosSettings, MemosSettingTab } from './setting';

@@ -1,25 +1,12 @@
 // Credits go to Liam's Periodic Notes Plugin: https://github.com/liamcain/obsidian-periodic-notes
 // import { TextInputSuggest } from "./obSuggest";
 import memoService from '../services/memoService';
-import dailyNotesService from '../services/dailyNotesService';
-import { UseVaultTags } from '../memos';
-
-const etTags = (): string[] => {
-  const { app } = dailyNotesService.getState();
-  //@ts-expect-error, private method
-  const tags: any = app.metadataCache.getTags();
-  return [...Object.keys(tags)].map((p) => p.split('#').pop());
-};
+// UseVaultTags removed - hardcoded to false (use memo tags, Phase 3)
 
 export const usedTags = (seletecText: string) => {
-  let allTags;
-
-  if (UseVaultTags) {
-    allTags = etTags();
-  } else {
-    const { tags } = memoService.getState();
-    allTags = tags;
-  }
+  // UseVaultTags hardcoded to false - always use memo tags
+  const { tags } = memoService.getState();
+  const allTags = tags;
   const lowerCaseInputStr = seletecText.toLowerCase();
   const usedTags = [] as any;
 
