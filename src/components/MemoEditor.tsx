@@ -570,15 +570,6 @@ const MemoEditor: React.FC<Props> = () => {
       />
       <div ref={popperRef} className="date-picker">
         {isDatePickerOpen && (
-          // <FocusTrap
-          //   active
-          //   focusTrapOptions={{
-          //     initialFocus: false,
-          //     allowOutsideClick: true,
-          //     clickOutsideDeactivates: true,
-          //     onDeactivate: closePopper,
-          //   }}
-          // >
           <div
             tabIndex={-1}
             style={popper.styles.popper}
@@ -600,7 +591,6 @@ const MemoEditor: React.FC<Props> = () => {
                 onKeyPress={handleKeyPress}
               /> */}
           </div>
-          // </FocusTrap>
         )}
       </div>
     </div>

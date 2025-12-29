@@ -1,21 +1,4 @@
-// import utils from "../helpers/utils";
 import appStore from '../stores/appStore';
-
-// const updateLocationUrl = (method: "replace" | "push" = "replace") => {
-//   const { query, pathname, hash } = appStore.getState().locationState;
-//   let queryString = utils.transformObjectToParamsString(query);
-//   if (queryString) {
-//     queryString = "?" + queryString;
-//   } else {
-//     queryString = "";
-//   }
-
-//   if (method === "replace") {
-//     window.history.replaceState(null, "", pathname + hash + queryString);
-//   } else {
-//     window.history.pushState(null, "", pathname + hash + queryString);
-//   }
-// };
 
 class LocationService {
   constructor() {

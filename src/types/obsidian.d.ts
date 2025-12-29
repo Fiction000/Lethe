@@ -1,5 +1,4 @@
 import 'obsidian';
-import { DataviewAPI } from 'obsidian-dataview';
 
 declare module 'obsidian' {
   interface WorkspaceLeaf {
@@ -13,9 +12,7 @@ declare module 'obsidian' {
   }
 
   interface MetadataCache {
-    on(name: 'dataview:api-ready', callback: (api: DataviewAPI) => any, ctx?: any): EventRef;
-
-    on(name: 'dataview:metadata-change', callback: (op: string, file: TFile) => any, ctx?: any): EventRef;
+    // Dataview integration removed (Phase 4)
   }
 
   interface Workspace {

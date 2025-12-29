@@ -114,24 +114,7 @@ export class Memos extends ItemView {
         this.handleResize();
       }),
     );
-    this.registerEvent(
-      this.app.metadataCache.on('dataview:api-ready', () => {
-        console.log('Dataview API ready');
-      }),
-    );
-    // this.registerEvent(
-    //   this.app.metadataCache.on('dataview:metadata-change', (_, file) => {
-    //     if (!(file instanceof TFile)) {
-    //       return;
-    //     }
-    //     const dataviewAPI = getAPI();
-    //     if (getDateFromFile(file, 'day') === undefined || dataviewAPI.page(file.path) === undefined) {
-    //       return;
-    //     }
-    //     getAPI().index.reload(file);
-    //     memoService.fetchAllMemos();
-    //   }),
-    // );
+    // Dataview event listeners removed (Phase 4)
 
     dailyNotesService.getApp(this.app);
 
