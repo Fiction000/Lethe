@@ -5,7 +5,6 @@ import { MEMOS_VIEW_TYPE } from './constants';
 import addIcons from './obComponents/customIcons';
 import { DEFAULT_SETTINGS, MemosSettings, MemosSettingTab } from './setting';
 import { QuickCaptureModal } from './obComponents/QuickCaptureModal';
-import { t } from './translations/helper';
 import { memoService } from './services';
 import { dailyNotePreCreationService } from './services/dailyNotePreCreationService';
 
@@ -19,7 +18,7 @@ export default class MemosPlugin extends Plugin {
     this.registerView(MEMOS_VIEW_TYPE, (leaf) => new Memos(leaf, this));
 
     this.app.workspace.onLayoutReady(this.onLayoutReady.bind(this));
-    console.log(t('welcome'));
+    console.log('Welcome to Lethe');
   }
 
   public async loadSettings() {
@@ -71,7 +70,7 @@ export default class MemosPlugin extends Plugin {
 
   onunload() {
     this.app.workspace.detachLeavesOfType(MEMOS_VIEW_TYPE);
-    new Notice(t('Close Lethe Successfully'));
+    new Notice('Close Lethe Successfully');
   }
 
   registerMobileEvent() {
@@ -80,7 +79,7 @@ export default class MemosPlugin extends Plugin {
         menu.addItem((item: any) => {
           item
             .setIcon('popup-open')
-            .setTitle(t('Insert as Memo'))
+            .setTitle('Insert as Memo')
             .onClick(async () => {
               const newMemo = await memoService.createMemo(source, false);
               memoService.pushMemo(newMemo);
@@ -94,7 +93,7 @@ export default class MemosPlugin extends Plugin {
         menu.addItem((item) => {
           item
             .setIcon('popup-open')
-            .setTitle(t('Insert file as memo content'))
+            .setTitle('Insert file as memo content')
             .onClick(async () => {
               const fileName = source.map((file: TFile) => {
                 return this.app.fileManager.generateMarkdownLink(file, file.path);
@@ -201,7 +200,7 @@ export default class MemosPlugin extends Plugin {
       this.registerMobileEvent();
     }
 
-    this.addRibbonIcon('Memos', t('ribbonIconTitle'), () => {
+    this.addRibbonIcon('Memos', 'Lethe', () => {
       this.openMemos();
     });
 
@@ -279,7 +278,7 @@ export default class MemosPlugin extends Plugin {
     const workspace = this.app.workspace;
     const leaves = workspace.getLeavesOfType(MEMOS_VIEW_TYPE);
     if (!(leaves.length > 0)) {
-      new Notice(t('Please Open Lethe First'));
+      new Notice('Please Open Lethe First');
       return;
       // this.openMemos();
     }
@@ -293,7 +292,7 @@ export default class MemosPlugin extends Plugin {
     const workspace = this.app.workspace;
     const leaves = workspace.getLeavesOfType(MEMOS_VIEW_TYPE);
     if (!(leaves.length > 0)) {
-      new Notice(t('Please Open Lethe First'));
+      new Notice('Please Open Lethe First');
       return;
       // this.openMemos();
     }

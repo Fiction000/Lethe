@@ -12,7 +12,6 @@ import appStore from '../stores/appStore';
 import { Notice, Platform } from 'obsidian';
 // HideDoneTasks setting removed in Phase 3
 // import {moment} from 'obsidian';
-import { t } from '../translations/helper';
 
 // import { DefaultEditorLocation } from '../memos';
 
@@ -126,7 +125,7 @@ const MemoList: React.FC<Props> = () => {
       })
       .catch((err) => {
         console.error('[Lethe] Failed to fetch memos:', err);
-        new Notice(t('Fetch Error'));
+        new Notice('😭 Fetch Error');
       });
 
     // Also ensure daily notes are loaded
@@ -174,12 +173,12 @@ const MemoList: React.FC<Props> = () => {
       <div className="status-text-container">
         <p className="status-text">
           {isFetching
-            ? t('Fetching data...')
+            ? 'Fetching data...'
             : shownMemos.length === 0
-            ? t('Noooop!')
+            ? 'Noooop!'
             : showMemoFilter
             ? ''
-            : t('All Data is Loaded 🎉')}
+            : 'All Data is Loaded 🎉'}
         </p>
       </div>
     </div>

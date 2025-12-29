@@ -30174,7 +30174,7 @@ const localeMap = {
   "zh-tw": zhTW
 };
 const locale = localeMap[require$$0.moment.locale()];
-function t$1(str) {
+function t(str) {
   return locale && locale[str] || en[str];
 }
 var utils;
@@ -30449,56 +30449,34 @@ var utils;
   utils2.generateUniqueFilename = generateUniqueFilename;
 })(utils || (utils = {}));
 function getDailyNoteFormat() {
-  var _a, _b, _c, _d, _e, _f;
-  let dailyNoteFormat = "";
-  let dailyNoteTempForPeriodicNotes = "";
-  const folderFromPeriodicNotesNew = (_c = (_b = (_a = window.app.plugins.getPlugin("periodic-notes")) == null ? void 0 : _a.calendarSetManager) == null ? void 0 : _b.getActiveConfig("day")) == null ? void 0 : _c.folder;
-  const folderFromPeriodicNotes = (_f = (_e = (_d = window.app.plugins.getPlugin("periodic-notes")) == null ? void 0 : _d.settings) == null ? void 0 : _e.daily) == null ? void 0 : _f.format;
-  if (folderFromPeriodicNotesNew === void 0) {
-    dailyNoteTempForPeriodicNotes = folderFromPeriodicNotes;
+  var _a, _b, _c, _d, _e;
+  const periodicNotesPlugin = window.app.plugins.getPlugin("periodic-notes");
+  if ((_b = (_a = periodicNotesPlugin == null ? void 0 : periodicNotesPlugin.calendarSetManager) == null ? void 0 : _a.getActiveConfig("day")) == null ? void 0 : _b.enabled) {
+    const format = (_c = periodicNotesPlugin.calendarSetManager.getActiveConfig("day")) == null ? void 0 : _c.format;
+    return format || "YYYY-MM-DD";
+  } else if ((_e = (_d = periodicNotesPlugin == null ? void 0 : periodicNotesPlugin.settings) == null ? void 0 : _d.daily) == null ? void 0 : _e.format) {
+    return periodicNotesPlugin.settings.daily.format || "YYYY-MM-DD";
   } else {
-    dailyNoteTempForPeriodicNotes = folderFromPeriodicNotesNew;
+    const dailyNoteFormat = getDailyNoteSettings_1().format || "YYYY-MM-DD";
+    if (!dailyNoteFormat) {
+      new require$$0.Notice(t("You didn't set format for daily notes in both periodic-notes and daily-notes plugins."));
+    }
+    return dailyNoteFormat;
   }
-  switch (UseDailyOrPeriodic) {
-    case "Daily":
-      dailyNoteFormat = getDailyNoteSettings_1().format || "YYYY-MM-DD";
-      break;
-    case "Periodic":
-      dailyNoteFormat = dailyNoteTempForPeriodicNotes || "YYYY-MM-DD";
-      break;
-    default:
-      dailyNoteFormat = getDailyNoteSettings_1().format || "YYYY-MM-DD";
-      break;
-  }
-  if (dailyNoteFormat === "" || dailyNoteFormat === void 0) {
-    new require$$0.Notice(t$1("You didn't set format for daily notes in both periodic-notes and daily-notes plugins."));
-  }
-  return dailyNoteFormat;
 }
 function getDailyNotePath() {
-  var _a, _b, _c, _d, _e, _f;
+  var _a, _b, _c, _d, _e;
+  const periodicNotesPlugin = window.app.plugins.getPlugin("periodic-notes");
   let dailyNotePath = "";
-  let dailyNoteTempForPeriodicNotes = "";
-  const folderFromPeriodicNotesNew = (_c = (_b = (_a = window.app.plugins.getPlugin("periodic-notes")) == null ? void 0 : _a.calendarSetManager) == null ? void 0 : _b.getActiveConfig("day")) == null ? void 0 : _c.folder;
-  const folderFromPeriodicNotes = (_f = (_e = (_d = window.app.plugins.getPlugin("periodic-notes")) == null ? void 0 : _d.settings) == null ? void 0 : _e.daily) == null ? void 0 : _f.folder;
-  if (folderFromPeriodicNotesNew === void 0) {
-    dailyNoteTempForPeriodicNotes = folderFromPeriodicNotes;
+  if ((_b = (_a = periodicNotesPlugin == null ? void 0 : periodicNotesPlugin.calendarSetManager) == null ? void 0 : _a.getActiveConfig("day")) == null ? void 0 : _b.enabled) {
+    dailyNotePath = ((_c = periodicNotesPlugin.calendarSetManager.getActiveConfig("day")) == null ? void 0 : _c.folder) || "";
+  } else if ((_e = (_d = periodicNotesPlugin == null ? void 0 : periodicNotesPlugin.settings) == null ? void 0 : _d.daily) == null ? void 0 : _e.folder) {
+    dailyNotePath = periodicNotesPlugin.settings.daily.folder || "";
   } else {
-    dailyNoteTempForPeriodicNotes = folderFromPeriodicNotesNew;
-  }
-  switch (UseDailyOrPeriodic) {
-    case "Daily":
-      dailyNotePath = getDailyNoteSettings_1().folder || "";
-      break;
-    case "Periodic":
-      dailyNotePath = dailyNoteTempForPeriodicNotes || "";
-      break;
-    default:
-      dailyNotePath = getDailyNoteSettings_1().folder || "";
-      break;
+    dailyNotePath = getDailyNoteSettings_1().folder || "";
   }
   if (dailyNotePath === "" || dailyNotePath === void 0) {
-    new require$$0.Notice(t$1("You didn't set folder for daily notes in both periodic-notes and daily-notes plugins."));
+    new require$$0.Notice(t("You didn't set folder for daily notes in both periodic-notes and daily-notes plugins."));
   }
   return dailyNotePath;
 }
@@ -30997,7 +30975,7 @@ const findQuery = async () => {
   const { metadataCache, vault } = appStore.getState().dailyNotesState.app;
   const queryList = [];
   const filePath = getDailyNotePath();
-  const absolutePath = filePath + "/" + QueryFileName + ".md";
+  const absolutePath = filePath + "/query.md";
   const queryFile = metadataCache.getFirstLinkpathDest("", absolutePath);
   if (queryFile instanceof require$$0.TFile) {
     const fileContents = await vault.read(queryFile);
@@ -31074,7 +31052,7 @@ const getPinnedDateFromLine$1 = (line) => {
 const createObsidianQuery = async (title, querystring) => {
   const { metadataCache, vault } = appStore.getState().dailyNotesState.app;
   const filePath = getDailyNotePath();
-  const absolutePath = filePath + "/" + QueryFileName + ".md";
+  const absolutePath = filePath + "/query.md";
   const queryFile = metadataCache.getFirstLinkpathDest("", absolutePath);
   if (queryFile instanceof require$$0.TFile) {
     const fileContents = await vault.read(queryFile);
@@ -31145,18 +31123,6 @@ const createQueryFile = async (path) => {
   }
 };
 const getAllLinesFromFile$8 = (cache) => cache.split(/\r?\n/);
-var lib = {};
-Object.defineProperty(lib, "__esModule", { value: true });
-const getAPI = (app2) => {
-  var _a;
-  if (app2)
-    return (_a = app2.plugins.plugins.dataview) === null || _a === void 0 ? void 0 : _a.api;
-  else
-    return window.DataviewAPI;
-};
-const isPluginEnabled = (app2) => app2.plugins.enabledPlugins.has("dataview");
-var getAPI_1 = lib.getAPI = getAPI;
-lib.isPluginEnabled = isPluginEnabled;
 class DailyNotesFolderMissingError extends Error {
 }
 const getTaskType = (memoTaskType) => {
@@ -31186,59 +31152,29 @@ async function getRemainingMemos(note) {
   }
   const regexMatchRe = new RegExp(regexMatch, "g");
   const matchLength = (fileContents.match(regexMatchRe) || []).length;
-  const re = new RegExp(ProcessEntriesBelow.replace(/([.?*+^$[\]\\(){}|-])/g, "\\$1"), "g");
-  const processEntriesHeader = (fileContents.match(re) || []).length;
   fileContents = null;
-  if (processEntriesHeader) {
-    return matchLength;
-  }
-  return 0;
+  return matchLength;
 }
 async function getMemosFromDailyNote(dailyNote, allMemos, commentMemos) {
-  var _a, _b, _c, _d, _e, _f, _g;
   if (!dailyNote) {
     return [];
   }
   const { vault } = appStore.getState().dailyNotesState.app;
   const Memos2 = await getRemainingMemos(dailyNote);
-  let underComments;
   if (Memos2 === 0)
     return;
-  if (CommentOnMemos && CommentsInOriginalNotes && getAPI_1().version.compare(">=", "0.5.9") === true) {
-    const dataviewAPI = getAPI_1();
-    if (dataviewAPI !== void 0 && ProcessEntriesBelow !== "") {
-      try {
-        underComments = (_b = (_a = dataviewAPI.page(dailyNote.path)) == null ? void 0 : _a.file.lists.values) == null ? void 0 : _b.filter(
-          (item) => item.header.subpath === (ProcessEntriesBelow == null ? void 0 : ProcessEntriesBelow.replace(/#{1,} /g, "").trim()) && item.children.length > 0
-        );
-      } catch (e) {
-        console.error(e);
-      }
-    } else {
-      try {
-        underComments = (_d = (_c = dataviewAPI.page(dailyNote.path)) == null ? void 0 : _c.file.lists.values) == null ? void 0 : _d.filter((item) => item.children.length > 0);
-      } catch (e) {
-        console.error(e);
-      }
-    }
-  }
   let fileContents = await vault.read(dailyNote);
   let fileLines = getAllLinesFromFile$7(fileContents);
   const startDate = getDateFromFile_1(dailyNote, "day");
   const endDate = getDateFromFile_1(dailyNote, "day");
-  let processHeaderFound = false;
   let memoType;
   for (let i = 0; i < fileLines.length; i++) {
     const line = fileLines[i];
     if (line.length === 0)
       continue;
-    if (processHeaderFound == false && lineContainsParseBelowToken(line)) {
-      processHeaderFound = true;
-    }
-    if (processHeaderFound == true && !lineContainsParseBelowToken(line) && /^#{1,} /g.test(line)) {
-      processHeaderFound = false;
-    }
-    if (lineContainsTime(line) && processHeaderFound) {
+    if (line.contains("comment: "))
+      continue;
+    if (lineContainsTime(line)) {
       const hourText = extractHourFromBulletLine(line);
       const minText = extractMinFromBulletLine(line);
       startDate.hours(parseInt(hourText));
@@ -31256,17 +31192,10 @@ async function getMemosFromDailyNote(dailyNote, allMemos, commentMemos) {
         memoType = "JOURNAL";
       }
       const rawText = extractTextFromTodoLine(line);
-      let originId = "";
       if (rawText !== "") {
         let hasId = Math.random().toString(36).slice(-6);
-        originId = hasId;
-        let linkId = "";
-        if (CommentOnMemos && /comment:(.*)#\^\S{6}]]/g.test(rawText)) {
-          linkId = extractCommentFromLine(rawText);
-        }
         if (/\^\S{6}$/g.test(rawText)) {
           hasId = rawText.slice(-6);
-          originId = hasId;
         }
         allMemos.push({
           id: startDate.format("YYYYMMDDHHmmSS") + i,
@@ -31276,151 +31205,14 @@ async function getMemosFromDailyNote(dailyNote, allMemos, commentMemos) {
           updatedAt: endDate.format("YYYY/MM/DD HH:mm:SS"),
           memoType,
           hasId,
-          linkId,
+          linkId: "",
           path: dailyNote.path
         });
-      }
-      if (/comment:(.*)#\^\S{6}]]/g.test(rawText) && CommentOnMemos && CommentsInOriginalNotes !== true) {
-        const commentId = extractCommentFromLine(rawText);
-        const hasId = "";
-        commentMemos.push({
-          id: startDate.format("YYYYMMDDHHmmSS") + i,
-          content: rawText,
-          user_id: 1,
-          createdAt: startDate.format("YYYY/MM/DD HH:mm:SS"),
-          updatedAt: endDate.format("YYYY/MM/DD HH:mm:SS"),
-          memoType,
-          hasId,
-          linkId: commentId
-        });
-        continue;
-      }
-      if (rawText !== "" && !rawText.contains(" comment") && underComments !== null && underComments !== void 0 && underComments.length > 0) {
-        const originalText = (_e = line.replace(/^[-*]\s(\[(.{1})\]\s?)?/, "")) == null ? void 0 : _e.trim();
-        const commentsInMemos = underComments.filter(
-          (item) => item.text === originalText || item.line === i || item.blockId === originId
-        );
-        if (commentsInMemos.length === 0)
-          continue;
-        if (((_f = commentsInMemos[0].children) == null ? void 0 : _f.length) > 0) {
-          for (let j = 0; j < commentsInMemos[0].children.length; j++) {
-            const hasId = "";
-            let commentTime;
-            if (/^\d{12}/.test(commentsInMemos[0].children[j].text)) {
-              commentTime = (_g = commentsInMemos[0].children[j].text) == null ? void 0 : _g.match(/^\d{14}/)[0];
-            } else {
-              commentTime = startDate.format("YYYYMMDDHHmmSS");
-            }
-            commentMemos.push({
-              id: commentTime + commentsInMemos[0].children[j].line,
-              content: commentsInMemos[0].children[j].text,
-              user_id: 1,
-              createdAt: require$$0.moment(commentTime, "YYYYMMDDHHmmSS").format("YYYY/MM/DD HH:mm:SS"),
-              updatedAt: require$$0.moment(commentTime, "YYYYMMDDHHmmSS").format("YYYY/MM/DD HH:mm:SS"),
-              memoType: commentsInMemos[0].children[j].task ? getTaskType(commentsInMemos[0].children[j].status) : "JOURNAL",
-              hasId,
-              linkId: originId,
-              path: commentsInMemos[0].children[j].path
-            });
-          }
-        }
       }
     }
   }
   fileLines = null;
   fileContents = null;
-}
-async function getMemosFromNote(allMemos, commentMemos) {
-  var _a, _b;
-  const notes = getAPI_1().pages(FetchMemosMark);
-  const dailyNotesPath = getDailyNotePath();
-  let files = notes == null ? void 0 : notes.values;
-  if (files.length === 0)
-    return;
-  files = files.filter(
-    (item) => item.file.name !== QueryFileName && item.file.name !== DeleteFileName && item["excalidraw-plugin"] === void 0 && item["kanban-plugin"] === void 0 && item.file.folder !== dailyNotesPath
-  );
-  for (let i = 0; i < files.length; i++) {
-    const createDate = files[i]["created"];
-    const list = (_a = files[i].file.lists) == null ? void 0 : _a.filter((item) => item.parent === void 0);
-    if (list.length === 0)
-      continue;
-    for (let j = 0; j < list.length; j++) {
-      const content = list.values[j].text;
-      const header = list.values[j].header.subpath;
-      const path = list.values[j].path;
-      const line = list.values[j].line;
-      let memoType = "JOURNAL";
-      let hasId;
-      let realCreateDate = createDate.toFormat("yyyy-MM-dd HH:mm");
-      if (/\^\S{6}$/g.test(content)) {
-        hasId = content.slice(-6);
-      } else {
-        hasId = Math.random().toString(36).slice(-6);
-      }
-      if (list.values[j].task === true) {
-        memoType = getTaskType(list.values[j].status);
-      }
-      if (header !== void 0) {
-        if (require$$0.moment(header).isValid()) {
-          realCreateDate = require$$0.moment(header);
-        }
-      }
-      if (/^\d{2}:\d{2}/g.test(content)) {
-        const time = content.match(/^\d{2}:\d{2}/)[0];
-        const timeArr = time.split(":");
-        const hour = parseInt(timeArr[0], 10);
-        const minute = parseInt(timeArr[1], 10);
-        realCreateDate = require$$0.moment(realCreateDate).hours(hour).minutes(minute);
-      }
-      allMemos.push({
-        id: realCreateDate.format("YYYYMMDDHHmmSS") + line,
-        content,
-        user_id: 1,
-        createdAt: realCreateDate.format("YYYY/MM/DD HH:mm:SS"),
-        updatedAt: realCreateDate.format("YYYY/MM/DD HH:mm:SS"),
-        memoType,
-        hasId,
-        linkId: "",
-        path
-      });
-      if (((_b = list.values[j].children) == null ? void 0 : _b.values.length) > 0) {
-        for (let k = 0; k < list[j].children.length; k++) {
-          const childContent = list[j].children[k].text;
-          const childLine = list[j].children[k].line;
-          let childMemoType = "JOURNAL";
-          let childRealCreateDate = realCreateDate;
-          let commentTime;
-          if (list[j].children[k].task === true) {
-            childMemoType = getTaskType(list[j].children[k].status);
-          }
-          if (/^\d{12}/.test(childContent)) {
-            commentTime = childContent == null ? void 0 : childContent.match(/^\d{14}/)[0];
-            childRealCreateDate = require$$0.moment(commentTime, "YYYYMMDDHHmmSS");
-          }
-          if (/^\d{2}:\d{2}/g.test(childContent)) {
-            const time = childContent.match(/^\d{2}:\d{2}/)[0];
-            const timeArr = time.split(":");
-            const hour = parseInt(timeArr[0], 10);
-            const minute = parseInt(timeArr[1], 10);
-            childRealCreateDate = childRealCreateDate.hours(hour).minutes(minute);
-          }
-          commentMemos.push({
-            id: childRealCreateDate.format("YYYYMMDDHHmmSS") + childLine,
-            content: childContent,
-            user_id: 1,
-            createdAt: childRealCreateDate.format("YYYY/MM/DD HH:mm:SS"),
-            updatedAt: childRealCreateDate.format("YYYY/MM/DD HH:mm:SS"),
-            memoType: childMemoType,
-            hasId: "",
-            linkId: hasId,
-            path
-          });
-        }
-      }
-    }
-  }
-  return;
 }
 async function getMemosFromIndividualFiles(allMemos, _commentMemos) {
   const appState = appStore.getState().dailyNotesState.app;
@@ -31432,7 +31224,7 @@ async function getMemosFromIndividualFiles(allMemos, _commentMemos) {
   const folderPath = require$$0.normalizePath(IndividualMemoFolder);
   const folder = vault.getAbstractFileByPath(folderPath);
   if (!folder) {
-    new require$$0.Notice(t$1("Individual memo folder not found: ") + folderPath);
+    new require$$0.Notice(t("Individual memo folder not found: ") + folderPath);
     return;
   }
   const files = folder.children.filter(
@@ -31490,7 +31282,7 @@ async function getMemos() {
   const folder = getDailyNotePath();
   if (folder === "" || folder === void 0) {
     console.error("[Lethe] Daily notes folder path is empty or undefined");
-    new require$$0.Notice(t$1("Please check your daily note plugin OR periodic notes plugin settings"));
+    new require$$0.Notice(t("Please check your daily note plugin OR periodic notes plugin settings"));
     return { memos: [], commentMemos: [] };
   }
   const dailyNotesFolder = vault.getAbstractFileByPath(require$$0.normalizePath(folder));
@@ -31500,21 +31292,15 @@ async function getMemos() {
   const dailyNotes = getAllDailyNotes_1();
   for (const string in dailyNotes) {
     if (dailyNotes[string] instanceof require$$0.TFile && dailyNotes[string].extension === "md") {
-      await getMemosFromDailyNote(dailyNotes[string], memos, commentMemos);
+      await getMemosFromDailyNote(dailyNotes[string], memos);
     }
-  }
-  if (FetchMemosFromNote) {
-    await getMemosFromNote(memos, commentMemos);
   }
   return { memos, commentMemos };
 }
 const getAllLinesFromFile$7 = (cache) => cache.split(/\r?\n/);
 const lineContainsTime = (line) => {
   let regexMatch;
-  let indent = "\\s*";
-  if (CommentsInOriginalNotes) {
-    indent = "";
-  }
+  const indent = "\\s*";
   if (DefaultMemoComposition != "" && /{TIME}/g.test(DefaultMemoComposition) && /{CONTENT}/g.test(DefaultMemoComposition)) {
     regexMatch = "^" + indent + "(-|\\*)\\s(\\[(.{1})\\]\\s)?" + DefaultMemoComposition.replace(/{TIME}/g, "(\\<time\\>)?\\d{1,2}:\\d{2}(\\<\\/time\\>)?").replace(
       /{CONTENT}/g,
@@ -31525,13 +31311,6 @@ const lineContainsTime = (line) => {
   }
   const regexMatchRe = new RegExp(regexMatch, "");
   return regexMatchRe.test(line);
-};
-const lineContainsParseBelowToken = (line) => {
-  if (ProcessEntriesBelow === "") {
-    return true;
-  }
-  const re = new RegExp(ProcessEntriesBelow.replace(/([.?*+^$[\]\\(){}|-])/g, "\\$1"), "");
-  return re.test(line);
 };
 const extractTextFromTodoLine = (line) => {
   var _a;
@@ -31579,15 +31358,10 @@ const extractMemoTaskTypeFromLine = (line) => {
   var _a;
   return (_a = /^\s*[\-\*]\s(\[(.{1})\])\s(.*)$/.exec(line)) == null ? void 0 : _a[2];
 };
-const extractCommentFromLine = (line) => {
-  const regex = "#\\^(\\S{6})";
-  const regexMatchRe = new RegExp(regex, "");
-  return regexMatchRe.exec(line)[1];
-};
 const updateObsidianQuery = async (queryId, title, queryString) => {
   const { metadataCache, vault } = appStore.getState().dailyNotesState.app;
   const filePath = getDailyNotePath();
-  const absolutePath = filePath + "/" + QueryFileName + ".md";
+  const absolutePath = filePath + "/query.md";
   const queryFile = metadataCache.getFirstLinkpathDest("", absolutePath);
   if (queryFile instanceof require$$0.TFile) {
     const fileContents = await vault.read(queryFile);
@@ -31794,12 +31568,12 @@ async function insertAfterHandler(targetString, formatted, fileContent) {
     }
     if (!endOfSectionIndex)
       endOfSectionIndex = targetPosition;
-    return await insertTextAfterPositionInBody$1(formatted, fileContent, endOfSectionIndex, foundNextHeader);
+    return await insertTextAfterPositionInBody(formatted, fileContent, endOfSectionIndex, foundNextHeader);
   } else {
-    return await insertTextAfterPositionInBody$1(formatted, fileContent, fileContentLines.length - 1, foundNextHeader);
+    return await insertTextAfterPositionInBody(formatted, fileContent, fileContentLines.length - 1, foundNextHeader);
   }
 }
-async function insertTextAfterPositionInBody$1(text, body, pos, found) {
+async function insertTextAfterPositionInBody(text, body, pos, found) {
   if (pos === -1) {
     return {
       content: `${body}
@@ -31853,10 +31627,10 @@ async function createIndividualMemoFile(MemoContent, isTASK, date) {
     console.error("Failed to create memo folder:", error);
     throw new Error(`Failed to create folder: ${folderPath}`);
   }
-  const sanitizedName = utils$1.sanitizeFilename(MemoContent, IndividualMemoFileNameLength);
+  const sanitizedName = utils$1.sanitizeFilename(MemoContent, 30);
   const timestamp = date.format("YYYYMMDDHHmmss");
   const filename = await utils$1.generateUniqueFilename(vault, folderPath, sanitizedName, timestamp);
-  const tags = IndividualMemoTags.split(",").map((t2) => t2.trim()).filter((t2) => t2.length > 0);
+  const tags = [];
   let frontmatter = `---
 created: ${date.format("YYYY-MM-DD HH:mm:ss")}
 type: ${isTASK ? "task" : "memo"}`;
@@ -31900,7 +31674,7 @@ async function restoreDeletedMemo(deletedMemoid) {
   const { vault, metadataCache } = appStore.getState().dailyNotesState.app;
   if (/\d{14,}/.test(deletedMemoid)) {
     const filePath = getDailyNotePath();
-    const absolutePath = filePath + "/" + DeleteFileName + ".md";
+    const absolutePath = filePath + "/delete.md";
     const deleteFile = metadataCache.getFirstLinkpathDest("", absolutePath);
     if (deleteFile instanceof require$$0.TFile) {
       let fileContents = await vault.read(deleteFile);
@@ -31951,7 +31725,7 @@ async function deleteForever(deletedMemoid) {
   const { vault, metadataCache } = appStore.getState().dailyNotesState.app;
   if (/\d{14,}/.test(deletedMemoid)) {
     const filePath = getDailyNotePath();
-    const absolutePath = filePath + "/" + DeleteFileName + ".md";
+    const absolutePath = filePath + "/delete.md";
     const deleteFile = metadataCache.getFirstLinkpathDest("", absolutePath);
     if (deleteFile instanceof require$$0.TFile) {
       let fileContents = await vault.read(deleteFile);
@@ -31974,7 +31748,7 @@ async function deleteForever(deletedMemoid) {
 async function getDeletedMemos() {
   const { vault, metadataCache } = appStore.getState().dailyNotesState.app;
   const filePath = getDailyNotePath();
-  const absolutePath = filePath + "/" + DeleteFileName + ".md";
+  const absolutePath = filePath + "/delete.md";
   const deletedMemos = [];
   const deleteFile = metadataCache.getFirstLinkpathDest("", absolutePath);
   if (deleteFile instanceof require$$0.TFile) {
@@ -32013,7 +31787,7 @@ async function getDeletedMemos() {
 const sendMemoToDelete = async (memoContent) => {
   const { metadataCache, vault } = appStore.getState().dailyNotesState.app;
   const filePath = getDailyNotePath();
-  const absolutePath = filePath + "/" + DeleteFileName + ".md";
+  const absolutePath = filePath + "/delete.md";
   const deleteFile = metadataCache.getFirstLinkpathDest("", absolutePath);
   if (deleteFile instanceof require$$0.TFile) {
     const fileContents = await vault.read(deleteFile);
@@ -32154,7 +31928,7 @@ async function deleteQueryForever(queryID) {
   const { vault, metadataCache } = appStore.getState().dailyNotesState.app;
   if (/\d{14,}/.test(queryID)) {
     const filePath = getDailyNotePath();
-    const absolutePath = filePath + "/" + QueryFileName + ".md";
+    const absolutePath = filePath + "/query.md";
     const queryFile = metadataCache.getFirstLinkpathDest("", absolutePath);
     if (queryFile instanceof require$$0.TFile) {
       let fileContents = await vault.read(queryFile);
@@ -32179,7 +31953,7 @@ const pinQueryInFile = async (queryID) => {
   const { metadataCache, vault } = appStore.getState().dailyNotesState.app;
   if (/\d{14,}/.test(queryID)) {
     const filePath = getDailyNotePath();
-    const absolutePath = filePath + "/" + QueryFileName + ".md";
+    const absolutePath = filePath + "/query.md";
     const queryFile = metadataCache.getFirstLinkpathDest("", absolutePath);
     if (!(queryFile instanceof require$$0.TFile)) {
       return;
@@ -32206,7 +31980,7 @@ const pinQueryInFile = async (queryID) => {
 const unpinQueryInFile = async (queryID) => {
   const { metadataCache, vault } = appStore.getState().dailyNotesState.app;
   const filePath = getDailyNotePath();
-  const absolutePath = filePath + "/" + QueryFileName + ".md";
+  const absolutePath = filePath + "/query.md";
   const queryFile = metadataCache.getFirstLinkpathDest("", absolutePath);
   if (!(queryFile instanceof require$$0.TFile)) {
     return;
@@ -32320,82 +32094,6 @@ async function changeMemo(memoid, originalContent, content, memoType, path) {
   };
 }
 const getAllLinesFromFile = (cache) => cache.split(/\r?\n/);
-async function commentMemo(MemoContent, isList2, path, oriID, hasID) {
-  var _a, _b;
-  const { vault, metadataCache } = appStore.getState().dailyNotesState.app === void 0 ? app : appStore.getState().dailyNotesState.app;
-  const removeEnter = MemoContent.replace(/\n/g, "<br>");
-  if (path === void 0) {
-    return;
-  }
-  const file = metadataCache.getFirstLinkpathDest("", path);
-  const time = require$$0.moment();
-  const formatTime = time.format("YYYYMMDDHHmmss");
-  const ID = oriID.slice(14);
-  const indent = "    ";
-  const newContent = formatTime + " " + removeEnter.trim();
-  const newLineContent = indent + "- " + formatTime + " " + removeEnter.trim();
-  if (file) {
-    let underComments;
-    if (CommentOnMemos && CommentsInOriginalNotes) {
-      const dataviewAPI = getAPI_1();
-      if (dataviewAPI !== void 0) {
-        try {
-          underComments = (_b = (_a = dataviewAPI.page(file.path)) == null ? void 0 : _a.file.lists.values) == null ? void 0 : _b.filter((item) => item.line === parseInt(ID));
-        } catch (e) {
-          console.error(e);
-        }
-      }
-    }
-    const fileContents = await vault.read(file);
-    let endLine = 0;
-    if (underComments[0].children.values.length > 0) {
-      endLine = underComments[0].children.values[underComments[0].children.values.length - 1].line;
-    } else {
-      endLine = underComments[0].line;
-    }
-    const newFileContent = await insertTextAfterPositionInBody(newLineContent, fileContents, endLine);
-    await vault.modify(file, newFileContent.content);
-    if (isList2) {
-      return {
-        id: formatTime + (endLine + 1),
-        content: newContent,
-        deletedAt: "",
-        createdAt: time.format("YYYY/MM/DD HH:mm:ss"),
-        updatedAt: time.format("YYYY/MM/DD HH:mm:ss"),
-        memoType: "JOURNAL",
-        path: file.path,
-        hasId: "",
-        linkId: hasID
-      };
-    }
-  }
-}
-async function insertTextAfterPositionInBody(text, body, pos) {
-  if (pos === -1) {
-    return {
-      content: `${body}
-${text}`,
-      posNum: -1
-    };
-  }
-  const splitContent = body.split("\n");
-  const pre = splitContent.slice(0, pos + 1).join("\n");
-  const post = splitContent.slice(pos + 1).join("\n");
-  if (/^\s*$/g.test(splitContent[pos + 1])) {
-    return {
-      content: `${pre}
-${text}
-${post}`,
-      posNum: pos
-    };
-  }
-  return {
-    content: `${pre}
-${text}
-${post}`,
-    posNum: pos
-  };
-}
 class MemoService {
   constructor() {
     __publicField(this, "initialized", false);
@@ -32580,10 +32278,6 @@ class MemoService {
   }
   async createMemo(text, isTASK) {
     const memo2 = await waitForInsert(text, isTASK);
-    return memo2;
-  }
-  async createCommentMemo(text, isList2, path, ID, hasID) {
-    const memo2 = await commentMemo(text, isList2, path, ID, hasID);
     return memo2;
   }
   async importMemos(text, isList2, date) {
@@ -32842,28 +32536,28 @@ const MenuBtnsPopup = (props) => {
       children: [/* @__PURE__ */ jsx("span", {
         className: "icon",
         children: "\u{1F464}"
-      }), " ", t$1("Settings")]
+      }), " ", t("Settings")]
     }), /* @__PURE__ */ jsxs("button", {
       className: "btn action-btn",
       onClick: handleMemosTrashBtnClick,
       children: [/* @__PURE__ */ jsx("span", {
         className: "icon",
         children: "\u{1F5D1}\uFE0F"
-      }), " ", t$1("Recycle bin")]
+      }), " ", t("Recycle bin")]
     }), /* @__PURE__ */ jsxs("button", {
       className: "btn action-btn",
       onClick: handleImportBtnClick,
       children: [/* @__PURE__ */ jsx("span", {
         className: "icon",
         children: "\u{1F4C2}"
-      }), " ", t$1("Import")]
+      }), " ", t("Import")]
     }), /* @__PURE__ */ jsxs("button", {
       className: "btn action-btn",
       onClick: handleAboutBtnClick,
       children: [/* @__PURE__ */ jsx("span", {
         className: "icon",
         children: "\u{1F920}"
-      }), " ", t$1("About Me")]
+      }), " ", t("About Me")]
     })]
   });
 };
@@ -32933,7 +32627,7 @@ const UserBanner = () => {
           children: tags.length
         }), /* @__PURE__ */ jsx("span", {
           className: "type-text",
-          children: t$1("TAG")
+          children: t("TAG")
         })]
       }), /* @__PURE__ */ jsxs("div", {
         className: "status-text duration-text",
@@ -32942,7 +32636,7 @@ const UserBanner = () => {
           children: createdDays != null ? createdDays : 0
         }), /* @__PURE__ */ jsx("span", {
           className: "type-text",
-          children: t$1("DAY")
+          children: t("DAY")
         })]
       })]
     })]
@@ -33029,7 +32723,7 @@ const TagList = () => {
     className: "tags-wrapper",
     children: [/* @__PURE__ */ jsx("p", {
       className: "title-text",
-      children: t$1("Frequently Used Tags")
+      children: t("Frequently Used Tags")
     }), /* @__PURE__ */ jsxs("div", {
       className: "tags-container",
       children: [tags.map((t2, idx) => /* @__PURE__ */ jsx(TagItemContainer, {
@@ -34611,19 +34305,9 @@ ReactTextareaAutocomplete.defaultProps = {
   textAreaComponent: "textarea",
   renderToBody: false
 };
-const etTags = () => {
-  const { app: app2 } = dailyNotesService.getState();
-  const tags = app2.metadataCache.getTags();
-  return [...Object.keys(tags)].map((p) => p.split("#").pop());
-};
 const usedTags = (seletecText) => {
-  let allTags;
-  if (UseVaultTags) {
-    allTags = etTags();
-  } else {
-    const { tags } = memoService.getState();
-    allTags = tags;
-  }
+  const { tags } = memoService.getState();
+  const allTags = tags;
   const lowerCaseInputStr = seletecText.toLowerCase();
   const usedTags2 = [];
   allTags.forEach((tag) => {
@@ -34987,7 +34671,7 @@ const Editor = react.exports.forwardRef((props, ref) => {
           children: /* @__PURE__ */ jsx("button", {
             className: "action-btn cancel-btn",
             onClick: handleCommonCancelBtnClick,
-            children: t$1("CANCEL EDIT")
+            children: t("CANCEL EDIT")
           })
         }), /* @__PURE__ */ jsx(Only, {
           when: showConfirmBtn,
@@ -34995,9 +34679,9 @@ const Editor = react.exports.forwardRef((props, ref) => {
             className: "action-btn confirm-btn",
             disabled: !((_b = editorRef.current) == null ? void 0 : _b.value),
             onClick: handleCommonConfirmBtnClick,
-            children: [SaveMemoButtonLabel, /* @__PURE__ */ jsxs("span", {
+            children: ["NOTEIT", /* @__PURE__ */ jsx("span", {
               className: "icon-text",
-              children: [SaveMemoButtonIcon, "\uFE0F"]
+              children: "\u270D\uFE0F"
             })]
           })
         })]
@@ -35011,7 +34695,6 @@ const SvgTag = (props) => /* @__PURE__ */ react.exports.createElement("svg", { x
 const SvgImage = (props) => /* @__PURE__ */ react.exports.createElement("svg", { xmlns: "http://www.w3.org/2000/svg", height: "24px", viewBox: "0 0 24 24", width: "24px", fill: "#000000", ...props }, /* @__PURE__ */ react.exports.createElement("path", { d: "M0 0h24v24H0V0z", fill: "none" }), /* @__PURE__ */ react.exports.createElement("path", { d: "M19 5v14H5V5h14m0-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-4.86 8.86l-3 3.87L9 13.14 6 17h12l-3.86-5.14z" }));
 const SvgJournal = (props) => /* @__PURE__ */ react.exports.createElement("svg", { t: 1642406967115, className: "icon", viewBox: "0 0 1024 1024", xmlns: "http://www.w3.org/2000/svg", "p-id": 1652, width: 26, height: 26, fill: "#1296db", ...props }, /* @__PURE__ */ react.exports.createElement("path", { d: "M544 800.128l-320 0.16-0.064-96.32-0.064-160-0.032-64-0.096-160-0.032-96h576.128L800 223.776 800.256 800 544 800.128zM799.84 160H223.712A63.808 63.808 0 0 0 160 223.744v576.544c0 35.136 28.608 63.68 63.744 63.68h576.512A63.808 63.808 0 0 0 864 800.32V223.744A64 64 0 0 0 799.84 160z", "p-id": 1653 }), /* @__PURE__ */ react.exports.createElement("path", { d: "M680.608 320h-224a32 32 0 0 0 0 64h224a32 32 0 0 0 0-64M680.608 480h-224a32 32 0 0 0 0 64h224a32 32 0 0 0 0-64M680.608 640h-224a32 32 0 0 0 0 64h224a32 32 0 0 0 0-64M352 320a32 32 0 1 0 0 64 32 32 0 0 0 0-64M352 480a32 32 0 1 0 0 64 32 32 0 0 0 0-64M352 640a32 32 0 1 0 0 64 32 32 0 0 0 0-64", "p-id": 1654 }));
 const SvgCheckboxActive = (props) => /* @__PURE__ */ react.exports.createElement("svg", { xmlns: "http://www.w3.org/2000/svg", height: "24px", viewBox: "0 0 24 24", width: "24px", fill: "#37352f", ...props }, /* @__PURE__ */ react.exports.createElement("path", { d: "M0 0h24v24H0V0z", fill: "none" }), /* @__PURE__ */ react.exports.createElement("path", { d: "M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V5h14v14zM17.99 9l-1.41-1.42-6.59 6.59-2.58-2.57-1.42 1.41 4 3.99z" }));
-const showEditorSvg = "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIzNiIgaGVpZ2h0PSIzNiIgY2xhc3M9Imljb24iIHAtaWQ9IjYxOTQiIHQ9IjE2NDI1NjQ0NTIyMDgiIHZlcnNpb249IjEuMSIgdmlld0JveD0iMCAwIDEwMjQgMTAyNCI+PHBhdGggZmlsbD0iI0ZGRiIgZD0iTTUxMiAzMkMyNDggMzIgMzIgMjQ4IDMyIDUxMnMyMTYgNDgwIDQ4MCA0ODAgNDgwLTIxNiA0ODAtNDgwUzc3NiAzMiA1MTIgMzJ6IiBwLWlkPSI2MTk1Ii8+PHBhdGggZD0iTTUxMiAwQzIyOC44IDAgMCAyMjguOCAwIDUxMnMyMjguOCA1MTIgNTEyIDUxMiA1MTItMjI4LjggNTEyLTUxMlM3OTUuMiAwIDUxMiAweiBtMCA5OTJDMjQ4IDk5MiAzMiA3NzYgMzIgNTEyUzI0OCAzMiA1MTIgMzJzNDgwIDIxNiA0ODAgNDgwLTIxNiA0ODAtNDgwIDQ4MHoiIHAtaWQ9IjYxOTYiLz48cGF0aCBmaWxsPSIjOURFOEY3IiBkPSJNNTEyIDUxMm0tMzkyIDBhMzkyIDM5MiAwIDEgMCA3ODQgMCAzOTIgMzkyIDAgMSAwLTc4NCAwWiIgcC1pZD0iNjE5NyIvPjxwYXRoIGZpbGw9IiMxQTE3MTgiIGQ9Ik03ODQgNDk2SDUyOFYyNDBoLTMydjI1NkgyNDB2MzJoMjU2djI1NmgzMlY1MjhoMjU2eiIgcC1pZD0iNjE5OCIvPjwvc3ZnPg==";
 var fromEntries = function fromEntries2(entries) {
   return entries.reduce(function(acc, _ref) {
     var key = _ref[0], value = _ref[1];
@@ -36575,7 +36258,7 @@ const DatePicker = (props) => {
         })
       }), /* @__PURE__ */ jsxs("span", {
         className: "normal-text",
-        children: [firstDate.getFullYear(), " ", t$1("year"), " ", (_a = t$1("monthsShort")[firstDate.getMonth()]) != null ? _a : firstDate.getMonth() + 1, " ", (_b = t$1("month")) != null ? _b : ""]
+        children: [firstDate.getFullYear(), " ", t("year"), " ", (_a = t("monthsShort")[firstDate.getMonth()]) != null ? _a : firstDate.getMonth() + 1, " ", (_b = t("month")) != null ? _b : ""]
       }), /* @__PURE__ */ jsx("span", {
         className: "btn-text",
         onClick: () => handleChangeMonthBtnClick(1),
@@ -36589,25 +36272,25 @@ const DatePicker = (props) => {
         className: "date-picker-day-header",
         children: [/* @__PURE__ */ jsx("span", {
           className: "day-item",
-          children: t$1("weekDaysShort")[0]
+          children: t("weekDaysShort")[0]
         }), /* @__PURE__ */ jsx("span", {
           className: "day-item",
-          children: t$1("weekDaysShort")[1]
+          children: t("weekDaysShort")[1]
         }), /* @__PURE__ */ jsx("span", {
           className: "day-item",
-          children: t$1("weekDaysShort")[2]
+          children: t("weekDaysShort")[2]
         }), /* @__PURE__ */ jsx("span", {
           className: "day-item",
-          children: t$1("weekDaysShort")[3]
+          children: t("weekDaysShort")[3]
         }), /* @__PURE__ */ jsx("span", {
           className: "day-item",
-          children: t$1("weekDaysShort")[4]
+          children: t("weekDaysShort")[4]
         }), /* @__PURE__ */ jsx("span", {
           className: "day-item",
-          children: t$1("weekDaysShort")[5]
+          children: t("weekDaysShort")[5]
         }), /* @__PURE__ */ jsx("span", {
           className: "day-item",
-          children: t$1("weekDaysShort")[6]
+          children: t("weekDaysShort")[6]
         })]
       }), dayList.map((d) => {
         if (d.date === 0) {
@@ -36678,8 +36361,6 @@ const getCursorPostion = (input) => {
   };
 };
 let isList;
-let isEditor = false;
-let isEditorGo = false;
 let positionX;
 const MemoEditor = () => {
   const {
@@ -36707,137 +36388,14 @@ const MemoEditor = () => {
       isList = true;
       toggleList(true);
     }
-    isEditor = false;
   }, []);
   react.exports.useEffect(() => {
     var _a;
     if (!editorRef.current) {
       return;
     }
-    const leaves = app2.workspace.getLeavesOfType(MEMOS_VIEW_TYPE);
-    let memosWidth;
-    if (leaves.length > 0) {
-      const leaf = leaves[0];
-      memosWidth = leaf.width > 0 ? leaf.width : window.outerWidth;
-    } else {
-      memosWidth = window.outerWidth;
-    }
-    if ((require$$0.Platform.isMobile === true || memosWidth < 875) && UseButtonToShowEditor) {
-      toggleEditor(true);
-    }
     if (FocusOnEditor) {
       (_a = editorRef.current) == null ? void 0 : _a.focus();
-    }
-  }, []);
-  react.exports.useEffect(() => {
-    var _a, _b;
-    if (!editorRef.current) {
-      return;
-    }
-    if (UseButtonToShowEditor === true && DefaultEditorLocation === "Bottom" && require$$0.Platform.isMobile === true && window.innerWidth < 875) {
-      const leaves = app2.workspace.getLeavesOfType(MEMOS_VIEW_TYPE);
-      let memosHeight;
-      let leafView;
-      if (leaves.length > 0) {
-        const leaf = leaves[0];
-        leafView = leaf.view.containerEl;
-        memosHeight = leafView.offsetHeight;
-      } else {
-        leafView = document;
-        memosHeight = window.innerHeight;
-      }
-      const divThis = document.createElement("img");
-      const memoEditorDiv = leafView.querySelector("div[data-type='memos_view'] .view-content .memo-editor-wrapper");
-      divThis.src = `${showEditorSvg}`;
-      if (isEditorShown) {
-        divThis.className = "memo-show-editor-button hidden";
-      } else {
-        divThis.className = "memo-show-editor-button";
-      }
-      const buttonTop = memosHeight - 200;
-      const buttonLeft = window.innerWidth / 2 - 25;
-      divThis.style.top = buttonTop + "px";
-      divThis.style.left = buttonLeft + "px";
-      divThis.onclick = function() {
-        const scaleElementAni = divThis.animate([
-          {
-            transform: "rotate(0deg) scale(1)"
-          },
-          {
-            transform: "rotate(60deg) scale(1.5)"
-          }
-        ], {
-          duration: 300,
-          iterations: Infinity
-        });
-        setTimeout(() => {
-          var _a2, _b2;
-          divThis.className = "memo-show-editor-button hidden";
-          if (isEditor) {
-            handleShowEditor(false);
-            (_a2 = editorRef.current) == null ? void 0 : _a2.focus();
-            scaleElementAni.reverse();
-          } else {
-            handleShowEditor();
-            (_b2 = editorRef.current) == null ? void 0 : _b2.focus();
-            scaleElementAni.reverse();
-          }
-        }, 300);
-      };
-      leafView.querySelector(".content-wrapper").prepend(divThis);
-      const memolistScroll = leafView.querySelector(".memolist-wrapper");
-      memolistScroll.onscroll = function() {
-        if (isEditor && !isEditorGo) {
-          isEditorGo = true;
-          const scaleEditorElementAni = memoEditorDiv.animate([
-            {
-              transform: "scale(1)",
-              opacity: 1
-            },
-            {
-              transform: "scale(0.4)",
-              opacity: 0
-            }
-          ], {
-            duration: 300,
-            iterations: 1
-          });
-          let scaleOneElementAni;
-          setTimeout(() => {
-            scaleOneElementAni = divThis.animate([
-              {
-                transform: "rotate(20deg) scale(1.5)"
-              },
-              {
-                transform: "rotate(0deg) scale(1)"
-              }
-            ], {
-              duration: 100,
-              iterations: 1
-            });
-          }, 300);
-          setTimeout(() => {
-            handleShowEditor(true);
-            divThis.className = "memo-show-editor-button";
-          }, 300);
-          setTimeout(() => {
-            scaleOneElementAni.cancel();
-            scaleEditorElementAni.reverse();
-          }, 700);
-        }
-      };
-    } else if (UseButtonToShowEditor === false && DefaultEditorLocation === "Bottom" && require$$0.Platform.isMobile === true && window.innerWidth < 875) {
-      handleShowEditor(false);
-      if (FocusOnEditor) {
-        (_a = editorRef.current) == null ? void 0 : _a.focus();
-      }
-    } else {
-      if (!isEditor) {
-        handleShowEditor(false);
-      }
-      if (FocusOnEditor) {
-        (_b = editorRef.current) == null ? void 0 : _b.focus();
-      }
     }
   }, []);
   const setPopper = () => {
@@ -36853,7 +36411,7 @@ const MemoEditor = () => {
           }
         }]
       });
-    } else if (require$$0.Platform.isMobile && DefaultEditorLocation !== "Bottom") {
+    } else if (require$$0.Platform.isMobile) {
       const seletorPopupWidth = 280;
       if (window.innerWidth - positionX > seletorPopupWidth * 1.2) {
         popperTemp = usePopper(popperRef.current, popperElement, {
@@ -36904,57 +36462,6 @@ const MemoEditor = () => {
           }]
         });
       }
-    } else if (require$$0.Platform.isMobile && DefaultEditorLocation === "Bottom") {
-      const seletorPopupWidth = 280;
-      if (window.innerWidth - positionX > seletorPopupWidth * 1.2) {
-        popperTemp = usePopper(popperRef.current, popperElement, {
-          placement: "top-end",
-          modifiers: [{
-            name: "flip",
-            options: {
-              allowedAutoPlacements: ["top-start"],
-              rootBoundary: "document"
-            }
-          }, {
-            name: "preventOverflow",
-            options: {
-              rootBoundary: "document"
-            }
-          }]
-        });
-      } else if (window.innerWidth - positionX < seletorPopupWidth && positionX > seletorPopupWidth) {
-        popperTemp = usePopper(popperRef.current, popperElement, {
-          placement: "top-start",
-          modifiers: [{
-            name: "flip",
-            options: {
-              allowedAutoPlacements: ["top-end"],
-              rootBoundary: "document"
-            }
-          }, {
-            name: "preventOverflow",
-            options: {
-              rootBoundary: "document"
-            }
-          }]
-        });
-      } else {
-        popperTemp = usePopper(popperRef.current, popperElement, {
-          placement: "top",
-          modifiers: [{
-            name: "flip",
-            options: {
-              allowedAutoPlacements: ["top"],
-              rootBoundary: "document"
-            }
-          }, {
-            name: "preventOverflow",
-            options: {
-              rootBoundary: "document"
-            }
-          }]
-        });
-      }
     }
     return popperTemp;
   };
@@ -36966,7 +36473,7 @@ const MemoEditor = () => {
     var _a, _b, _c, _d, _e;
     if (globalState.markMemoId) {
       const editorCurrentValue = (_a = editorRef.current) == null ? void 0 : _a.getContent();
-      const memoLinkText = `${editorCurrentValue ? "\n" : ""}${t$1("MARK")}: [@MEMO](${globalState.markMemoId})`;
+      const memoLinkText = `${editorCurrentValue ? "\n" : ""}${t("MARK")}: [@MEMO](${globalState.markMemoId})`;
       (_b = editorRef.current) == null ? void 0 : _b.insertText(memoLinkText);
       globalStateService.setMarkMemoId("");
     }
@@ -37042,7 +36549,7 @@ const MemoEditor = () => {
   const handleSaveBtnClick = react.exports.useCallback(async (content) => {
     var _a;
     if (content === "") {
-      new require$$0.Notice(t$1("Content cannot be empty"));
+      new require$$0.Notice(t("Content cannot be empty"));
       return;
     }
     const {
@@ -37125,19 +36632,10 @@ const MemoEditor = () => {
       handleContentChange(editorRef.current.element.value);
       return;
     } else {
-      switch (InsertDateFormat) {
-        case "Dataview":
-          editorRef.current.element.value = currentValue.slice(0, editorRef.current.element.selectionStart - 1) + "[due::" + todayMoment.format("YYYY-MM-DD") + "]" + nextString;
-          editorRef.current.element.setSelectionRange(selectionStart + 17, selectionStart + 17);
-          editorRef.current.focus();
-          handleContentChange(editorRef.current.element.value);
-          break;
-        case "Tasks":
-          editorRef.current.element.value = currentValue.slice(0, editorRef.current.element.selectionStart - 1) + "\u{1F4C6}" + todayMoment.format("YYYY-MM-DD") + nextString;
-          editorRef.current.element.setSelectionRange(selectionStart + 11, selectionStart + 11);
-          editorRef.current.focus();
-          handleContentChange(editorRef.current.element.value);
-      }
+      editorRef.current.element.value = currentValue.slice(0, editorRef.current.element.selectionStart - 1) + "\u{1F4C6}" + todayMoment.format("YYYY-MM-DD") + nextString;
+      editorRef.current.element.setSelectionRange(selectionStart + 11, selectionStart + 11);
+      editorRef.current.focus();
+      handleContentChange(editorRef.current.element.value);
     }
   };
   const handleChangeStatus = () => {
@@ -37150,19 +36648,6 @@ const MemoEditor = () => {
     } else {
       isList = true;
       toggleList(true);
-    }
-  };
-  const handleShowEditor = (flag) => {
-    if (!editorRef.current) {
-      return;
-    }
-    if (isEditor || flag === true) {
-      isEditor = false;
-      toggleEditor(true);
-    } else {
-      isEditor = true;
-      isEditorGo = false;
-      toggleEditor(false);
     }
   };
   const handleTagTextBtnClick = react.exports.useCallback(() => {
@@ -37210,12 +36695,10 @@ const MemoEditor = () => {
       } else {
         left2 = editorRef.current.element.clientWidth / 2;
       }
-      if (DefaultEditorLocation === "Bottom" && window.innerWidth > 875) {
-        top2 = y + 4;
-      } else if (DefaultEditorLocation === "Bottom" && window.innerWidth <= 875) {
-        top2 = y + 19;
-      } else if (DefaultEditorLocation === "Top" && window.innerWidth <= 875) {
+      if (window.innerWidth <= 875) {
         top2 = y + 36;
+      } else {
+        top2 = y + 34;
       }
     }
     positionX = x;
@@ -37247,7 +36730,7 @@ const MemoEditor = () => {
     className: "memo-editor",
     inputerType: "memo",
     initialContent: getEditorContentCache(),
-    placeholder: t$1("What do you think now..."),
+    placeholder: t("What do you think now..."),
     showConfirmBtn: true,
     showCancelBtn: showEditStatus,
     showTools: true,
@@ -37308,75 +36791,75 @@ function setEditorContentCache(content) {
 const filterConsts = {
   TAG: {
     value: "TAG",
-    text: t$1("TAG"),
+    text: t("TAG"),
     operators: [
       {
-        text: t$1("INCLUDE"),
+        text: t("INCLUDE"),
         value: "CONTAIN"
       },
       {
-        text: t$1("EXCLUDE"),
+        text: t("EXCLUDE"),
         value: "NOT_CONTAIN"
       }
     ]
   },
   TYPE: {
     value: "TYPE",
-    text: t$1("TYPE"),
+    text: t("TYPE"),
     operators: [
       {
         value: "IS",
-        text: t$1("IS")
+        text: t("IS")
       },
       {
         value: "IS_NOT",
-        text: t$1("ISNOT")
+        text: t("ISNOT")
       }
     ],
     values: [
       {
         value: "CONNECTED",
-        text: t$1("LINKED")
+        text: t("LINKED")
       },
       {
         value: "NOT_TAGGED",
-        text: t$1("NO TAGS")
+        text: t("NO TAGS")
       },
       {
         value: "LINKED",
-        text: t$1("HAS LINKS")
+        text: t("HAS LINKS")
       },
       {
         value: "IMAGED",
-        text: t$1("HAS IMAGES")
+        text: t("HAS IMAGES")
       }
     ]
   },
   TEXT: {
     value: "TEXT",
-    text: t$1("TEXT"),
+    text: t("TEXT"),
     operators: [
       {
         value: "CONTAIN",
-        text: t$1("INCLUDE")
+        text: t("INCLUDE")
       },
       {
         value: "NOT_CONTAIN",
-        text: t$1("EXCLUDE")
+        text: t("EXCLUDE")
       }
     ]
   },
   DATE: {
     value: "DATE",
-    text: t$1("DATE"),
+    text: t("DATE"),
     operators: [
       {
         value: "NOT_CONTAIN",
-        text: t$1("BEFORE")
+        text: t("BEFORE")
       },
       {
         value: "CONTAIN",
-        text: t$1("AFTER")
+        text: t("AFTER")
       }
     ]
   }
@@ -37465,12 +36948,12 @@ const SearchBar = () => {
         className: "quickly-action-container",
         children: [/* @__PURE__ */ jsx("p", {
           className: "title-text",
-          children: t$1("Quick filter")
+          children: t("Quick filter")
         }), /* @__PURE__ */ jsxs("div", {
           className: "section-container types-container",
           children: [/* @__PURE__ */ jsxs("span", {
             className: "section-text",
-            children: [t$1("TYPE"), ":"]
+            children: [t("TYPE"), ":"]
           }), /* @__PURE__ */ jsx("div", {
             className: "values-container",
             children: memoSpecialTypes.map((t2, idx) => {
@@ -37702,10 +37185,10 @@ const PreviewImageDialog = ({
         src: imgUrl
       }), /* @__PURE__ */ jsx("span", {
         className: "loading-text " + (imgWidth === -1 ? "" : "hidden"),
-        children: t$1("Image is loading...")
+        children: t("Image is loading...")
       }), /* @__PURE__ */ jsx("span", {
         className: "loading-text " + (imgWidth === 0 ? "" : "hidden"),
-        children: t$1("\u{1F61F} Cannot load image, image link maybe broken")
+        children: t("\u{1F61F} Cannot load image, image link maybe broken")
       })]
     }), /* @__PURE__ */ jsxs("div", {
       className: "action-btns-container",
@@ -38035,7 +37518,7 @@ const MemoCardDialog = (props) => {
       className: "linked-memos-wrapper",
       children: [/* @__PURE__ */ jsxs("p", {
         className: "normal-text",
-        children: [t$1("LINKED"), " ", linkMemos.length, " MEMO", " "]
+        children: [t("LINKED"), " ", linkMemos.length, " MEMO", " "]
       }), linkMemos.map((m) => {
         const rawtext = parseHtmlToRawText(formatMemoContent(m.content)).replaceAll("\n", " ");
         return /* @__PURE__ */ jsxs("div", {
@@ -38051,7 +37534,7 @@ const MemoCardDialog = (props) => {
       className: "linked-memos-wrapper",
       children: [/* @__PURE__ */ jsxs("p", {
         className: "normal-text",
-        children: [linkedMemos.length, " MEMO ", t$1("LINK TO THE"), " MEMO"]
+        children: [linkedMemos.length, " MEMO ", t("LINK TO THE"), " MEMO"]
       }), linkedMemos.map((m) => {
         const rawtext = parseHtmlToRawText(formatMemoContent(m.content)).replaceAll("\n", " ");
         return /* @__PURE__ */ jsxs("div", {
@@ -38090,177 +37573,13 @@ const showMemoInDailyNotes = async (memoId, memoPath) => {
   }
   return;
 };
-const SvgComment = (props) => /* @__PURE__ */ react.exports.createElement("svg", { t: 1650249616615, className: "icon", viewBox: "0 0 1024 1024", xmlns: "http://www.w3.org/2000/svg", "p-id": 2597, width: 20, height: 20, fill: "#37352f", ...props }, /* @__PURE__ */ react.exports.createElement("path", { d: "M853.333333 768c35.413333 0 64-20.650667 64-55.978667V170.581333A63.978667 63.978667 0 0 0 853.333333 106.666667H170.666667C135.253333 106.666667 106.666667 135.253333 106.666667 170.581333v541.44C106.666667 747.285333 135.338667 768 170.666667 768h201.173333l110.016 117.44a42.752 42.752 0 0 0 60.586667 0.042667L651.904 768H853.333333z m-219.029333-42.666667h-6.250667l-115.797333 129.962667c-0.106667 0.106667-116.010667-129.962667-116.010667-129.962667H170.666667c-11.776 0-21.333333-1.621333-21.333334-13.312V170.581333A21.205333 21.205333 0 0 1 170.666667 149.333333h682.666666c11.776 0 21.333333 9.536 21.333334 21.248v541.44c0 11.754667-9.472 13.312-21.333334 13.312H634.304zM341.333333 490.666667a42.666667 42.666667 0 1 0 0-85.333334 42.666667 42.666667 0 0 0 0 85.333334z m170.666667 0a42.666667 42.666667 0 1 0 0-85.333334 42.666667 42.666667 0 0 0 0 85.333334z m170.666667 0a42.666667 42.666667 0 1 0 0-85.333334 42.666667 42.666667 0 0 0 0 85.333334z", fill: "#3D3D3D", "p-id": 2598 }));
-const SvgTaskBlank = (props) => /* @__PURE__ */ react.exports.createElement("svg", { xmlns: "http://www.w3.org/2000/svg", height: "20px", viewBox: "0 0 24 24", width: "20px", fill: "#37352f", ...props }, /* @__PURE__ */ react.exports.createElement("path", { d: "M0 0h24v24H0V0z", fill: "none" }), /* @__PURE__ */ react.exports.createElement("path", { d: "M19 5v14H5V5h14m0-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2z" }));
-const SvgTask = (props) => /* @__PURE__ */ react.exports.createElement("svg", { xmlns: "http://www.w3.org/2000/svg", height: "20px", viewBox: "0 0 24 24", width: "20px", fill: "#37352f", ...props }, /* @__PURE__ */ react.exports.createElement("path", { d: "M0 0h24v24H0V0z", fill: "none" }), /* @__PURE__ */ react.exports.createElement("path", { d: "M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V5h14v14zM17.99 9l-1.41-1.42-6.59 6.59-2.58-2.57-1.42 1.41 4 3.99z" }));
 const Memo = (props) => {
-  var _a;
-  const {
-    globalState
-  } = react.exports.useContext(appContext);
+  react.exports.useContext(appContext);
   const {
     memo: propsMemo
   } = props;
   const [showConfirmDeleteBtn, toggleConfirmDeleteBtn] = useToggle(false);
-  const memoCommentRef = react.exports.useRef(null);
-  const [isCommentShown, toggleComment] = useToggle(false);
-  const [isCommentListShown, toggleCommentList] = useToggle(ShowCommentOnMemos);
-  const [commentMemos, setCommentMemos, commentMemosRef] = dist([]);
-  const [, setAddRandomIDflag, RandomIDRef] = dist(false);
-  react.exports.useEffect(() => {
-    if (!memoCommentRef.current) {
-      return;
-    }
-    if (!CommentOnMemos) {
-      return;
-    }
-    const fetchCommentMemos = async () => {
-      const allCommentMemos = memoService.getState().commentMemos.filter((m) => m.linkId === propsMemo.hasId).sort((a, b) => utils$1.getTimeStampByDate(b.createdAt) - utils$1.getTimeStampByDate(a.createdAt));
-      setCommentMemos(allCommentMemos);
-    };
-    fetchCommentMemos();
-  }, [propsMemo.content, propsMemo.id]);
-  react.exports.useEffect(() => {
-    if (!memoCommentRef.current) {
-      return;
-    }
-    const handlePasteEvent = async (event) => {
-      var _a2;
-      if (event.clipboardData && event.clipboardData.files.length > 0) {
-        event.preventDefault();
-        const file = event.clipboardData.files[0];
-        const url = await handleUploadFile(file);
-        if (url) {
-          (_a2 = memoCommentRef.current) == null ? void 0 : _a2.insertText(url);
-        }
-      }
-    };
-    const handleDropEvent = async (event) => {
-      var _a2;
-      if (event.dataTransfer && event.dataTransfer.files.length > 0) {
-        event.preventDefault();
-        const file = event.dataTransfer.files[0];
-        const url = await handleUploadFile(file);
-        if (url) {
-          (_a2 = memoCommentRef.current) == null ? void 0 : _a2.insertText(url);
-        }
-      }
-    };
-    const handleClickEvent = () => {
-      var _a2, _b;
-      handleContentChange((_b = (_a2 = memoCommentRef.current) == null ? void 0 : _a2.element.value) != null ? _b : "");
-    };
-    const handleKeyDownEvent = () => {
-      setTimeout(() => {
-        var _a2, _b;
-        handleContentChange((_b = (_a2 = memoCommentRef.current) == null ? void 0 : _a2.element.value) != null ? _b : "");
-      });
-    };
-    memoCommentRef.current.element.addEventListener("paste", handlePasteEvent);
-    memoCommentRef.current.element.addEventListener("drop", handleDropEvent);
-    memoCommentRef.current.element.addEventListener("click", handleClickEvent);
-    memoCommentRef.current.element.addEventListener("keydown", handleKeyDownEvent);
-    return () => {
-      var _a2, _b;
-      (_a2 = memoCommentRef.current) == null ? void 0 : _a2.element.removeEventListener("paste", handlePasteEvent);
-      (_b = memoCommentRef.current) == null ? void 0 : _b.element.removeEventListener("drop", handleDropEvent);
-    };
-  }, []);
-  const handleCancelBtnClick = react.exports.useCallback(() => {
-    var _a2;
-    globalStateService.setCommentMemoId("");
-    (_a2 = memoCommentRef.current) == null ? void 0 : _a2.setContent("");
-    toggleComment(false);
-  }, []);
-  const handleContentChange = react.exports.useCallback((content) => {
-    const tempDiv = document.createElement("div");
-    tempDiv.innerHTML = content;
-    if (tempDiv.innerText.trim() === "") {
-      content = "";
-    }
-    setTimeout(() => {
-      var _a2;
-      (_a2 = memoCommentRef.current) == null ? void 0 : _a2.focus();
-    });
-  }, []);
-  const handleSaveBtnClick = react.exports.useCallback(async (content) => {
-    var _a2, _b;
-    if (content === "") {
-      new require$$0.Notice(t$1("Content cannot be empty"));
-      return;
-    }
-    const {
-      commentMemoId
-    } = globalStateService.getState();
-    content = content.replaceAll("&nbsp;", " ");
-    globalStateService.setChangedByMemos(true);
-    try {
-      if (commentMemoId) {
-        (_a2 = memoCommentRef.current) == null ? void 0 : _a2.setContent("");
-        let prevMemo;
-        if (CommentOnMemos && CommentsInOriginalNotes) {
-          prevMemo = memoService.getCommentMemoById(commentMemoId);
-          content = require$$0.moment().format("YYYYMMDDHHmmss") + " " + content;
-        } else {
-          prevMemo = memoService.getMemoById(commentMemoId);
-          content = prevMemo.content.replace(/^(.*) comment:/g, content + " comment:");
-        }
-        if (prevMemo && prevMemo.content !== content) {
-          let editedMemo;
-          if (CommentOnMemos && CommentsInOriginalNotes) {
-            editedMemo = await memoService.updateMemo(prevMemo.id, prevMemo.content, content, prevMemo.memoType, prevMemo.path);
-          } else {
-            editedMemo = await memoService.updateMemo(prevMemo.id, prevMemo.content, content, prevMemo.memoType);
-          }
-          if (CommentOnMemos && CommentsInOriginalNotes) {
-            memoService.editCommentMemo(editedMemo);
-          } else {
-            editedMemo.updatedAt = utils$1.getDateTimeString(Date.now());
-            memoService.editMemo(editedMemo);
-          }
-          setCommentMemos(commentMemosRef.current.map((m) => {
-            if (m.id.slice(14) === commentMemoId.slice(14) && m.path === prevMemo.path) {
-              return editedMemo;
-            }
-            return m;
-          }));
-        }
-        globalStateService.setCommentMemoId("");
-        toggleComment(false);
-      } else {
-        const dailyFormat = getDailyNoteFormat();
-        let randomId;
-        if (propsMemo.hasId.length > 0) {
-          randomId = propsMemo.hasId;
-        } else if (!CommentsInOriginalNotes) {
-          randomId = Math.random().toString(36).slice(-6);
-          setAddRandomIDflag(true);
-        }
-        if (!CommentsInOriginalNotes) {
-          content = content + " comment: [[" + require$$0.moment(propsMemo.id.slice(0, 8)).format(dailyFormat) + "#^" + randomId + "]]";
-        }
-        (_b = memoCommentRef.current) == null ? void 0 : _b.setContent("");
-        let newMemo;
-        if (CommentsInOriginalNotes) {
-          newMemo = await memoService.createCommentMemo(content, true, propsMemo.path, propsMemo.id, randomId);
-          memoService.pushCommentMemo(newMemo);
-        } else {
-          newMemo = await memoService.createMemo(content, true);
-          memoService.pushMemo(newMemo);
-        }
-        setCommentMemos([...commentMemosRef.current, newMemo].sort((a, b) => utils$1.getTimeStampByDate(b.createdAt) - utils$1.getTimeStampByDate(a.createdAt)));
-        if (RandomIDRef.current) {
-          const editedMemo = await memoService.updateMemo(propsMemo.id, propsMemo.content, propsMemo.content + " ^" + randomId, propsMemo.memoType);
-          editedMemo.updatedAt = utils$1.getDateTimeString(Date.now());
-          memoService.editMemo(editedMemo);
-          setAddRandomIDflag(false);
-        }
-      }
-    } catch (error) {
-      new require$$0.Notice(error.message);
-    }
-  }, []);
-  const handleUploadFile = react.exports.useCallback(async (file) => {
+  react.exports.useCallback(async (file) => {
     const {
       type
     } = file;
@@ -38279,21 +37598,9 @@ const Memo = (props) => {
     showMemoCardDialog(propsMemo);
   };
   const handleMarkMemoClick = () => {
-    if (UseButtonToShowEditor && DefaultEditorLocation === "Bottom") {
-      const elem = document.querySelector("div[data-type='memos_view'] .view-content .memo-show-editor-button");
-      if (typeof (elem == null ? void 0 : elem.onclick) == "function") {
-        elem.onclick.apply(elem);
-      }
-    }
     globalStateService.setMarkMemoId(propsMemo.id);
   };
   const handleEditMemoClick = () => {
-    if (UseButtonToShowEditor && DefaultEditorLocation === "Bottom" && require$$0.Platform.isMobile) {
-      const elem = document.querySelector("div[data-type='memos_view'] .view-content .memo-show-editor-button");
-      if (typeof elem.onclick == "function") {
-        elem.onclick.apply(elem);
-      }
-    }
     globalStateService.setEditMemoId(propsMemo.id);
   };
   const handleSourceMemoClick = (m) => {
@@ -38318,29 +37625,19 @@ const Memo = (props) => {
       toggleConfirmDeleteBtn(false);
     }
   };
-  const handleMemoTypeShow = () => {
-    if (!ShowTaskLabel) {
-      return;
-    }
-    if (propsMemo.memoType === "TASK-TODO") {
-      return /* @__PURE__ */ jsx(SvgTaskBlank, {});
-    } else if (propsMemo.memoType === "TASK-DONE") {
-      return /* @__PURE__ */ jsx(SvgTask, {});
-    }
-  };
   const handleMemoDoubleClick = react.exports.useCallback((event) => {
     if (event) {
       handleEditMemoClick();
     }
   }, []);
   const handleMemoContentClick = async (e, m) => {
-    var _a2;
+    var _a;
     const targetEl = e.target;
     if (e.ctrlKey || e.metaKey) {
       handleSourceMemoClick(m);
     }
     if (targetEl.className === "memo-link-text") {
-      const memoId = (_a2 = targetEl.dataset) == null ? void 0 : _a2.value;
+      const memoId = (_a = targetEl.dataset) == null ? void 0 : _a.value;
       const memoTemp = memoService.getMemoById(memoId != null ? memoId : "");
       if (memoTemp) {
         showMemoCardDialog(memoTemp);
@@ -38351,43 +37648,6 @@ const Memo = (props) => {
     } else if (targetEl.className === "todo-block")
       ;
   };
-  const handleCommentBlock = () => {
-    if (!isCommentShown) {
-      toggleComment(true);
-    } else {
-      toggleComment(false);
-    }
-    if (!isCommentListShown) {
-      toggleCommentList(true);
-    } else if (!ShowCommentOnMemos && isCommentListShown) {
-      toggleCommentList(false);
-    }
-  };
-  const handleEditCommentClick = react.exports.useCallback((memo2) => {
-    var _a2, _b;
-    if (!CommentOnMemos) {
-      return;
-    }
-    globalStateService.setCommentMemoId(memo2.id);
-    if (!isCommentShown) {
-      toggleComment(true);
-    }
-    (_a2 = memoCommentRef.current) == null ? void 0 : _a2.focus();
-    (_b = memoCommentRef.current) == null ? void 0 : _b.setContent(memo2.content.replace(/ comment: (.*)$/g, "").replace(/^\d{14} /g, ""));
-  }, []);
-  const showEditStatus = Boolean(globalState.commentMemoId);
-  const editorConfig = react.exports.useMemo(() => ({
-    className: "memo-editor",
-    inputerType: "commentMemo",
-    initialContent: "",
-    placeholder: t$1("Comment it..."),
-    showConfirmBtn: true,
-    showCancelBtn: showEditStatus,
-    showTools: true,
-    onConfirmBtnClick: handleSaveBtnClick,
-    onCancelBtnClick: handleCancelBtnClick,
-    onContentChange: handleContentChange
-  }), [globalState.commentMemoId]);
   const imageProps = {
     memo: propsMemo.content
   };
@@ -38400,28 +37660,16 @@ const Memo = (props) => {
     },
     children: [/* @__PURE__ */ jsxs("div", {
       className: "memo-top-wrapper",
-      children: [/* @__PURE__ */ jsxs("div", {
+      children: [/* @__PURE__ */ jsx("div", {
         className: "memo-top-left-wrapper",
-        children: [/* @__PURE__ */ jsx("span", {
+        children: /* @__PURE__ */ jsx("span", {
           className: "time-text",
           onClick: handleShowMemoStoryDialog,
           children: propsMemo.createdAt
-        }), /* @__PURE__ */ jsx("div", {
-          className: `memo-type-img ${(propsMemo.memoType === "TASK-TODO" || propsMemo.memoType === "TASK-DONE") && ShowTaskLabel ? "" : "hidden"}`,
-          children: (_a = handleMemoTypeShow()) != null ? _a : ""
-        })]
-      }), /* @__PURE__ */ jsxs("div", {
+        })
+      }), /* @__PURE__ */ jsx("div", {
         className: "memo-top-right-wrapper",
-        children: [CommentOnMemos ? /* @__PURE__ */ jsxs("div", {
-          className: "comment-button-wrapper",
-          children: [/* @__PURE__ */ jsx(SvgComment, {
-            className: "icon-img",
-            onClick: handleCommentBlock
-          }), commentMemos.length > 0 ? /* @__PURE__ */ jsx("div", {
-            className: "comment-text-count",
-            children: commentMemos.length
-          }) : null]
-        }) : "", /* @__PURE__ */ jsxs("div", {
+        children: /* @__PURE__ */ jsxs("div", {
           className: "btns-container",
           children: [/* @__PURE__ */ jsx("span", {
             className: "btn more-action-btn",
@@ -38435,27 +37683,27 @@ const Memo = (props) => {
               children: [/* @__PURE__ */ jsx("span", {
                 className: "btn",
                 onClick: handleShowMemoStoryDialog,
-                children: t$1("READ")
+                children: t("READ")
               }), /* @__PURE__ */ jsx("span", {
                 className: "btn",
                 onClick: handleMarkMemoClick,
-                children: t$1("MARK")
+                children: t("MARK")
               }), /* @__PURE__ */ jsx("span", {
                 className: "btn",
                 onClick: handleEditMemoClick,
-                children: t$1("EDIT")
+                children: t("EDIT")
               }), /* @__PURE__ */ jsx("span", {
                 className: "btn",
                 onClick: () => handleSourceMemoClick(propsMemo),
-                children: t$1("SOURCE")
+                children: t("SOURCE")
               }), /* @__PURE__ */ jsx("span", {
                 className: `btn delete-btn ${showConfirmDeleteBtn ? "final-confirm" : ""}`,
                 onClick: handleDeleteMemoClick,
-                children: showConfirmDeleteBtn ? t$1("CONFIRM\uFF01") : t$1("DELETE")
+                children: showConfirmDeleteBtn ? t("CONFIRM\uFF01") : t("DELETE")
               })]
             })
           })]
-        })]
+        })
       })]
     }), /* @__PURE__ */ jsx("div", {
       className: "memo-content-text",
@@ -38466,32 +37714,7 @@ const Memo = (props) => {
       }
     }), /* @__PURE__ */ jsx(MemoImage, {
       ...imageProps
-    }), CommentOnMemos ? /* @__PURE__ */ jsxs("div", {
-      className: `memo-comment-wrapper`,
-      children: [commentMemos.length > 0 && isCommentListShown ? /* @__PURE__ */ jsx("div", {
-        className: `memo-comment-list`,
-        children: commentMemos.map((m, idx) => /* @__PURE__ */ jsxs("div", {
-          className: "memo-comment",
-          children: [/* @__PURE__ */ jsx("div", {
-            className: "memo-comment-time",
-            children: m.createdAt
-          }), /* @__PURE__ */ jsx("div", {
-            className: "memo-comment-text",
-            onClick: (e) => handleMemoContentClick(e, m),
-            onDoubleClick: () => handleEditCommentClick(m),
-            dangerouslySetInnerHTML: {
-              __html: formatMemoContent(m.content.replace(/comment:(.*)]]/g, "").replace(/^\d{14} /g, "").trim(), m.id)
-            }
-          })]
-        }, idx))
-      }) : null, /* @__PURE__ */ jsx("div", {
-        className: `memo-comment-inputer ${isCommentShown ? "" : "hidden"}`,
-        children: /* @__PURE__ */ jsx(Editor, {
-          ref: memoCommentRef,
-          ...editorConfig
-        })
-      })]
-    }) : ""]
+    })]
   });
 };
 function formatMemoContent(content, memoid) {
@@ -38544,14 +37767,9 @@ const MemoList = () => {
     text: textQuery
   } = query;
   const showMemoFilter = Boolean(tagQuery || duration && duration.from < duration.to || memoContentType || textQuery);
-  const shownMemos = showMemoFilter || HideDoneTasks ? memos.filter((memo2) => {
+  const shownMemos = showMemoFilter ? memos.filter((memo2) => {
     var _a, _b, _c;
     let shouldShow = true;
-    if (memo2.memoType !== void 0) {
-      if (HideDoneTasks && memo2.memoType === "TASK-DONE") {
-        shouldShow = false;
-      }
-    }
     if (memo2.content.contains("comment:")) {
       shouldShow = false;
     }
@@ -38618,7 +37836,7 @@ const MemoList = () => {
       setFetchStatus(false);
     }).catch((err) => {
       console.error("[Lethe] Failed to fetch memos:", err);
-      new require$$0.Notice(t$1("Fetch Error"));
+      new require$$0.Notice(t("Fetch Error"));
     });
     dailyNotesService.getMyAllDailyNotes().catch((err) => {
       console.error("[Lethe] Failed to fetch daily notes:", err);
@@ -38663,7 +37881,7 @@ const MemoList = () => {
       className: "status-text-container",
       children: /* @__PURE__ */ jsx("p", {
         className: "status-text",
-        children: isFetching ? t$1("Fetching data...") : shownMemos.length === 0 ? t$1("Noooop!") : showMemoFilter ? "" : t$1("All Data is Loaded \u{1F389}")
+        children: isFetching ? t("Fetching data...") : shownMemos.length === 0 ? t("Noooop!") : showMemoFilter ? "" : t("All Data is Loaded \u{1F389}")
       })
     })]
   });
@@ -38687,102 +37905,32 @@ const getMemosByDate = (memos) => {
   });
   return dataArr;
 };
-const getCommentMemos = (memos) => {
-  return memoService.getState().commentMemos.filter((m) => m.linkId === memos.hasId).sort((a, b) => utils$1.getTimeStampByDate(a.createdAt) - utils$1.getTimeStampByDate(b.createdAt)).map((m) => ({
-    ...m,
-    createdAtStr: utils$1.getDateTimeString(m.createdAt),
-    dateStr: utils$1.getDateString(m.createdAt)
-  }));
-};
 const transferMemosIntoText = (memosArray) => {
   let outputText = "";
-  let dataArr = [];
-  let indent = "";
   const dailyNotesformat = getDailyNoteFormat();
   memosArray.map((mapItem) => {
-    dataArr = mapItem.have;
-    if (ShowDate) {
-      outputText = outputText + "- [[" + require$$0.moment(mapItem.date, "YYYY-MM-DD").format(dailyNotesformat) + "]]\n";
-      indent = "    ";
-    }
-    if (ShowTime) {
-      for (let i = 0; i < dataArr.length; i++) {
-        const time = require$$0.moment(dataArr[i].createdAt, "YYYY/MM/DD HH:mm:ss").format("HH:mm");
-        let formatContent;
-        if (DefaultMemoComposition != "" && /{TIME}/g.test(DefaultMemoComposition) && /{CONTENT}/g.test(DefaultMemoComposition)) {
-          formatContent = DefaultMemoComposition.replace(/{TIME}/g, time).replace(/{CONTENT}/g, dataArr[i].content);
-        } else {
-          formatContent = time + " " + dataArr[i].content;
-        }
-        if (dataArr[i].memoType === "JOURNAL") {
-          outputText = outputText + indent + "- " + formatContent + "\n";
-        } else {
-          if (dataArr[i].memoType === "TASK-TODO") {
-            outputText = outputText + indent + "- [ ] " + formatContent + "\n";
-          } else if (dataArr[i].memoType === "TASK-DONE") {
-            outputText = outputText + indent + "- [x] " + formatContent + "\n";
-          } else {
-            const taskMark = dataArr[i].memoType.match(/TASK-(.*)?/g)[1];
-            outputText = outputText + indent + "- [" + taskMark + "] " + formatContent + "\n";
-          }
-        }
-        outputText = outputText.replace(/ \^\S{6}/g, "");
-        if (CommentOnMemos) {
-          if (dataArr[i].hasId !== void 0) {
-            const commentMemos = getCommentMemos(dataArr[i]);
-            if (commentMemos.length > 0) {
-              commentMemos.map((cm) => {
-                let memoType = "- ";
-                if (cm.memoType === "TASK-TODO") {
-                  memoType = "- [ ] ";
-                } else if (cm.memoType === "TASK-DONE") {
-                  memoType = "- [x] ";
-                } else if (cm.memoType.match(/TASK-(.*)?/g)) {
-                  memoType = "- [" + cm.memoType.match(/TASK-(.*)?/g)[1] + "] ";
-                }
-                outputText = outputText + indent + (ShowDate ? "    " + memoType + "[[" + require$$0.moment(cm.createdAt).format(dailyNotesformat) + "]] " : "    " + memoType) + require$$0.moment(cm.createdAt).format("HH:mm") + " " + cm.content.replace(/comment:(.*)$/g, "").replace(/^\d{14}/g, "") + "\n";
-              });
-            }
-          }
-        }
+    const dataArr = mapItem.have;
+    outputText = outputText + "- [[" + require$$0.moment(mapItem.date, "YYYY-MM-DD").format(dailyNotesformat) + "]]\n";
+    const indent = "    ";
+    for (let i = 0; i < dataArr.length; i++) {
+      const time = require$$0.moment(dataArr[i].createdAt, "YYYY/MM/DD HH:mm:ss").format("HH:mm");
+      let formatContent;
+      if (DefaultMemoComposition != "" && /{TIME}/g.test(DefaultMemoComposition) && /{CONTENT}/g.test(DefaultMemoComposition)) {
+        formatContent = DefaultMemoComposition.replace(/{TIME}/g, time).replace(/{CONTENT}/g, dataArr[i].content);
+      } else {
+        formatContent = time + " " + dataArr[i].content;
       }
-    } else {
-      for (let i = 0; i < dataArr.length; i++) {
-        if (dataArr[i].memoType === "JOURNAL") {
-          outputText = outputText + indent + "- " + dataArr[i].content + "\n";
-        } else {
-          if (dataArr[i].memoType === "TASK-TODO") {
-            outputText = outputText + indent + "- [ ] " + dataArr[i].content + "\n";
-          } else if (dataArr[i].memoType === "TASK-DONE") {
-            outputText = outputText + indent + "- [x] " + dataArr[i].content + "\n";
-          } else {
-            const taskMark = dataArr[i].memoType.match(/TASK-(.*)?/g)[1];
-            outputText = outputText + indent + "- [" + taskMark + "] " + dataArr[i].content + "\n";
-          }
-        }
-        outputText = outputText.replace(/ \^\S{6}/g, "");
-        if (CommentOnMemos) {
-          if (dataArr[i].hasId !== void 0) {
-            const commentMemos = getCommentMemos(dataArr[i]);
-            if (commentMemos.length > 0) {
-              commentMemos.map((cm) => {
-                let memoType = "- ";
-                if (cm.memoType === "TASK-TODO") {
-                  memoType = "- [ ] ";
-                } else if (cm.memoType === "TASK-DONE") {
-                  memoType = "- [x] ";
-                } else if (cm.memoType.match(/TASK-(.*)?/g)) {
-                  memoType = "- [" + cm.memoType.match(/TASK-(.*)?/g)[1] + "] ";
-                }
-                outputText = outputText + indent + "    " + memoType + cm.content.replace(/comment:(.*)$/g, "").replace(/^\d{14}/g, "") + "\n";
-              });
-            }
-          }
-        }
+      if (dataArr[i].memoType === "JOURNAL") {
+        outputText = outputText + indent + "- " + formatContent + "\n";
+      } else if (dataArr[i].memoType === "TASK-TODO") {
+        outputText = outputText + indent + "- [ ] " + formatContent + "\n";
+      } else if (dataArr[i].memoType === "TASK-DONE") {
+        outputText = outputText + indent + "- [x] " + formatContent + "\n";
+      } else {
+        const taskMark = dataArr[i].memoType.match(/TASK-(.*)?/g)[1];
+        outputText = outputText + indent + "- [" + taskMark + "] " + formatContent + "\n";
       }
-    }
-    if (ShowDate && AddBlankLineWhenDate && !CommentOnMemos) {
-      outputText = outputText + "\n";
+      outputText = outputText.replace(/ \^\S{6}/g, "");
     }
   });
   return outputText.replace(/<br>/g, "\n    ");
@@ -38807,7 +37955,7 @@ const MemoFilter = () => {
     const memosByDate = getMemosByDate(copyShownMemos);
     const queryDailyMemos = transferMemosIntoText(memosByDate);
     await utils$1.copyTextToClipboard(queryDailyMemos);
-    new require$$0.Notice(t$1("Copied to clipboard Successfully"));
+    new require$$0.Notice(t("Copied to clipboard Successfully"));
   };
   return /* @__PURE__ */ jsxs("div", {
     className: `filter-query-container ${showFilter ? "" : "hidden"}`,
@@ -38842,7 +37990,7 @@ const MemoFilter = () => {
         children: [/* @__PURE__ */ jsx("span", {
           className: "icon-text",
           children: "\u{1F5D3}\uFE0F"
-        }), " ", require$$0.moment(duration.from, "x").format("YYYY/MM/DD"), " ", t$1("to"), " ", require$$0.moment(duration.to, "x").add(1, "days").format("YYYY/MM/DD")]
+        }), " ", require$$0.moment(duration.from, "x").format("YYYY/MM/DD"), " ", t("to"), " ", require$$0.moment(duration.to, "x").add(1, "days").format("YYYY/MM/DD")]
       }) : null, /* @__PURE__ */ jsxs("div", {
         className: "filter-item-container " + (textQuery ? "" : "hidden"),
         onClick: () => {
@@ -38863,15 +38011,9 @@ const MemoFilter = () => {
   });
 };
 function Memos$1() {
-  if (require$$0.Platform.isMobile && DefaultEditorLocation === "Bottom") {
-    return /* @__PURE__ */ jsxs(Fragment, {
-      children: [/* @__PURE__ */ jsx(MemosHeader, {}), /* @__PURE__ */ jsx(MemoFilter, {}), /* @__PURE__ */ jsx(MemoList, {}), /* @__PURE__ */ jsx(MemoEditor, {})]
-    });
-  } else {
-    return /* @__PURE__ */ jsxs(Fragment, {
-      children: [/* @__PURE__ */ jsx(MemosHeader, {}), /* @__PURE__ */ jsx(MemoEditor, {}), /* @__PURE__ */ jsx(MemoFilter, {}), /* @__PURE__ */ jsx(MemoList, {})]
-    });
-  }
+  return /* @__PURE__ */ jsxs(Fragment, {
+    children: [/* @__PURE__ */ jsx(MemosHeader, {}), /* @__PURE__ */ jsx(MemoEditor, {}), /* @__PURE__ */ jsx(MemoFilter, {}), /* @__PURE__ */ jsx(MemoList, {})]
+  });
 }
 const DeletedMemo = (props) => {
   var _a;
@@ -38901,7 +38043,7 @@ const DeletedMemo = (props) => {
     try {
       await memoService.restoreMemoById(memo2.id);
       handleDeletedMemoAction(memo2.id);
-      new require$$0.Notice(t$1("RESTORE SUCCEED"));
+      new require$$0.Notice(t("RESTORE SUCCEED"));
     } catch (error) {
       new require$$0.Notice(error.message);
     }
@@ -38918,7 +38060,7 @@ const DeletedMemo = (props) => {
       className: "memo-top-wrapper",
       children: [/* @__PURE__ */ jsxs("span", {
         className: "time-text",
-        children: [t$1("DELETE AT"), " ", memo2.deletedAtStr]
+        children: [t("DELETE AT"), " ", memo2.deletedAtStr]
       }), /* @__PURE__ */ jsxs("div", {
         className: "btns-container",
         children: [/* @__PURE__ */ jsx("span", {
@@ -38933,11 +38075,11 @@ const DeletedMemo = (props) => {
             children: [/* @__PURE__ */ jsx("span", {
               className: "btn restore-btn",
               onClick: handleRestoreMemoClick,
-              children: t$1("RESTORE")
+              children: t("RESTORE")
             }), /* @__PURE__ */ jsx("span", {
               className: `btn delete-btn ${showConfirmDeleteBtn ? "final-confirm" : ""}`,
               onClick: handleDeleteMemoClick,
-              children: showConfirmDeleteBtn ? t$1("CONFIRM\uFF01") : t$1("DELETE")
+              children: showConfirmDeleteBtn ? t("CONFIRM\uFF01") : t("DELETE")
             })]
           })
         })]
@@ -39026,7 +38168,7 @@ const MemoTrash = () => {
         setDeletedMemos(result);
       }
     }).catch((error) => {
-      new require$$0.Notice(t$1("Failed to fetch deleted memos: ") + error);
+      new require$$0.Notice(t("Failed to fetch deleted memos: ") + error);
     }).finally(() => {
       loadingState.setFinish();
     });
@@ -39055,20 +38197,20 @@ const MemoTrash = () => {
           })
         }), /* @__PURE__ */ jsx("span", {
           className: "normal-text",
-          children: t$1("Recycle bin")
+          children: t("Recycle bin")
         })]
       })
     }), /* @__PURE__ */ jsx(MemoFilter, {}), loadingState.isLoading ? /* @__PURE__ */ jsx("div", {
       className: "tip-text-container",
       children: /* @__PURE__ */ jsx("p", {
         className: "tip-text",
-        children: t$1("Fetching data...")
+        children: t("Fetching data...")
       })
     }) : deletedMemos.length === 0 ? /* @__PURE__ */ jsx("div", {
       className: "tip-text-container",
       children: /* @__PURE__ */ jsx("p", {
         className: "tip-text",
-        children: t$1("Here is No Zettels.")
+        children: t("Here is No Zettels.")
       })
     }) : /* @__PURE__ */ jsx("div", {
       className: "deleted-memos-container",
@@ -39278,7 +38420,7 @@ function App() {
     }
   } = react.exports.useContext(appContext);
   if (!appHasDailyNotesPluginLoaded_1() && !window.app.plugins.getPlugin("periodic-notes")) {
-    new require$$0.Notice(t$1("Check if you opened Daily Notes Plugin Or Periodic Notes Plugin"));
+    new require$$0.Notice(t("Check if you opened Daily Notes Plugin Or Periodic Notes Plugin"));
   }
   return /* @__PURE__ */ jsx(Fragment, {
     children: appRouterSwitch(pathname)
@@ -39302,45 +38444,15 @@ class Memos extends require$$0.ItemView {
     return MEMOS_VIEW_TYPE;
   }
   onMemosSettingsUpdate() {
-    InsertAfter = this.plugin.settings.InsertAfter;
-    UserName = this.plugin.settings.UserName;
-    ProcessEntriesBelow = this.plugin.settings.ProcessEntriesBelow;
-    SaveMemoButtonLabel = this.plugin.settings.SaveMemoButtonLabel;
-    SaveMemoButtonIcon = this.plugin.settings.SaveMemoButtonIcon;
-    DefaultPrefix = this.plugin.settings.DefaultPrefix;
-    InsertDateFormat = this.plugin.settings.InsertDateFormat;
-    DefaultEditorLocation = this.plugin.settings.DefaultEditorLocation;
-    UseButtonToShowEditor = this.plugin.settings.UseButtonToShowEditor;
-    FocusOnEditor = this.plugin.settings.FocusOnEditor;
-    this.plugin.settings.OpenDailyMemosWithMemos;
-    HideDoneTasks = this.plugin.settings.HideDoneTasks;
-    this.plugin.settings.ShareFooterStart;
-    this.plugin.settings.ShareFooterEnd;
-    this.plugin.settings.OpenMemosAutomatically;
-    ShowTime = this.plugin.settings.ShowTime;
-    ShowDate = this.plugin.settings.ShowDate;
-    AddBlankLineWhenDate = this.plugin.settings.AddBlankLineWhenDate;
-    this.plugin.settings.AutoSaveWhenOnMobile;
-    QueryFileName = this.plugin.settings.QueryFileName;
-    DeleteFileName = this.plugin.settings.DeleteFileName;
-    UseVaultTags = this.plugin.settings.UseVaultTags;
-    this.plugin.settings.DefaultDarkBackgroundImage;
-    this.plugin.settings.DefaultLightBackgroundImage;
-    DefaultMemoComposition = this.plugin.settings.DefaultMemoComposition;
-    ShowTaskLabel = this.plugin.settings.ShowTaskLabel;
-    CommentOnMemos = this.plugin.settings.CommentOnMemos;
-    CommentsInOriginalNotes = this.plugin.settings.CommentsInOriginalNotes;
-    FetchMemosMark = this.plugin.settings.FetchMemosMark;
-    FetchMemosFromNote = this.plugin.settings.FetchMemosFromNote;
-    ShowCommentOnMemos = this.plugin.settings.ShowCommentOnMemos;
-    UseDailyOrPeriodic = this.plugin.settings.UseDailyOrPeriodic;
-    ShowLeftSideBar = this.plugin.settings.ShowLeftSideBar;
     MemoStorageMode = this.plugin.settings.MemoStorageMode;
+    InsertAfter = this.plugin.settings.InsertAfter;
     IndividualMemoFolder = this.plugin.settings.IndividualMemoFolder;
-    IndividualMemoFileNameLength = this.plugin.settings.IndividualMemoFileNameLength;
-    IndividualMemoTags = this.plugin.settings.IndividualMemoTags;
+    DefaultPrefix = this.plugin.settings.DefaultPrefix;
+    DefaultMemoComposition = this.plugin.settings.DefaultMemoComposition;
+    UserName = this.plugin.settings.UserName;
     this.plugin.settings.ShowInSidebar;
     this.plugin.settings.SidebarLocation;
+    FocusOnEditor = this.plugin.settings.FocusOnEditor;
     memoService.clearMemos();
     memoService.fetchAllMemos(true);
   }
@@ -39379,9 +38491,6 @@ class Memos extends require$$0.ItemView {
         globalStateService.setIsMobileView(leaf.width <= 875);
         return;
       }
-      if (ShowLeftSideBar && !require$$0.Platform.isMobile) {
-        return;
-      }
       globalStateService.setIsMobileView(true);
       leaf.view.containerEl.classList.add("mobile-view");
       globalStateService.setIsMobileView(leaf.width <= 875);
@@ -39409,45 +38518,15 @@ class Memos extends require$$0.ItemView {
       })
     );
     dailyNotesService.getApp(this.app);
-    InsertAfter = this.plugin.settings.InsertAfter;
-    UserName = this.plugin.settings.UserName;
-    ProcessEntriesBelow = this.plugin.settings.ProcessEntriesBelow;
-    SaveMemoButtonLabel = this.plugin.settings.SaveMemoButtonLabel;
-    SaveMemoButtonIcon = this.plugin.settings.SaveMemoButtonIcon;
-    DefaultPrefix = this.plugin.settings.DefaultPrefix;
-    InsertDateFormat = this.plugin.settings.InsertDateFormat;
-    DefaultEditorLocation = this.plugin.settings.DefaultEditorLocation;
-    UseButtonToShowEditor = this.plugin.settings.UseButtonToShowEditor;
-    FocusOnEditor = this.plugin.settings.FocusOnEditor;
-    this.plugin.settings.OpenDailyMemosWithMemos;
-    HideDoneTasks = this.plugin.settings.HideDoneTasks;
-    this.plugin.settings.ShareFooterStart;
-    this.plugin.settings.ShareFooterEnd;
-    this.plugin.settings.OpenMemosAutomatically;
-    ShowTime = this.plugin.settings.ShowTime;
-    ShowDate = this.plugin.settings.ShowDate;
-    AddBlankLineWhenDate = this.plugin.settings.AddBlankLineWhenDate;
-    this.plugin.settings.AutoSaveWhenOnMobile;
-    QueryFileName = this.plugin.settings.QueryFileName;
-    DeleteFileName = this.plugin.settings.DeleteFileName;
-    UseVaultTags = this.plugin.settings.UseVaultTags;
-    this.plugin.settings.DefaultDarkBackgroundImage;
-    this.plugin.settings.DefaultLightBackgroundImage;
-    DefaultMemoComposition = this.plugin.settings.DefaultMemoComposition;
-    ShowTaskLabel = this.plugin.settings.ShowTaskLabel;
-    CommentOnMemos = this.plugin.settings.CommentOnMemos;
-    CommentsInOriginalNotes = this.plugin.settings.CommentsInOriginalNotes;
-    FetchMemosMark = this.plugin.settings.FetchMemosMark;
-    FetchMemosFromNote = this.plugin.settings.FetchMemosFromNote;
-    ShowCommentOnMemos = this.plugin.settings.ShowCommentOnMemos;
-    UseDailyOrPeriodic = this.plugin.settings.UseDailyOrPeriodic;
-    ShowLeftSideBar = this.plugin.settings.ShowLeftSideBar;
     MemoStorageMode = this.plugin.settings.MemoStorageMode;
+    InsertAfter = this.plugin.settings.InsertAfter;
     IndividualMemoFolder = this.plugin.settings.IndividualMemoFolder;
-    IndividualMemoFileNameLength = this.plugin.settings.IndividualMemoFileNameLength;
-    IndividualMemoTags = this.plugin.settings.IndividualMemoTags;
+    DefaultPrefix = this.plugin.settings.DefaultPrefix;
+    DefaultMemoComposition = this.plugin.settings.DefaultMemoComposition;
+    UserName = this.plugin.settings.UserName;
     this.plugin.settings.ShowInSidebar;
     this.plugin.settings.SidebarLocation;
+    FocusOnEditor = this.plugin.settings.FocusOnEditor;
     this.memosComponent = React.createElement(StrictApp);
     ReactDOM.render(this.memosComponent, this.contentEl);
     memoService.fetchAllMemos().catch((err) => {
@@ -39457,36 +38536,13 @@ class Memos extends require$$0.ItemView {
   async onClose() {
   }
 }
-let InsertAfter;
-let UserName;
-let ProcessEntriesBelow;
-let SaveMemoButtonLabel;
-let SaveMemoButtonIcon;
-let DefaultPrefix;
-let InsertDateFormat;
-let DefaultEditorLocation;
-let UseButtonToShowEditor;
-let FocusOnEditor;
-let HideDoneTasks;
-let ShowTime;
-let ShowDate;
-let AddBlankLineWhenDate;
-let QueryFileName;
-let DeleteFileName;
-let UseVaultTags;
-let DefaultMemoComposition;
-let ShowTaskLabel;
-let CommentOnMemos;
-let CommentsInOriginalNotes;
-let FetchMemosMark;
-let FetchMemosFromNote;
-let ShowCommentOnMemos;
-let UseDailyOrPeriodic;
-let ShowLeftSideBar;
 let MemoStorageMode;
+let InsertAfter;
 let IndividualMemoFolder;
-let IndividualMemoFileNameLength;
-let IndividualMemoTags;
+let DefaultPrefix;
+let DefaultMemoComposition;
+let UserName;
+let FocusOnEditor;
 const icons = {
   Memos: `<svg t="1641348507339" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="2120" width="100" height="100"><path d="M126.692653 478.099639l-90.757281 0c-19.019408 0-34.437336 15.423923-34.437336 34.417356 0 18.992434 15.416929 34.477297 34.437336 34.477297l90.757281 0c19.013414 0 34.42335-15.484863 34.42335-34.477297C161.116003 493.523561 145.706067 478.099639 126.692653 478.099639zM244.662333 243.526943c13.742566-13.110184 14.310011-34.948836 1.185841-48.706388l-62.644762-65.668806c-13.128167-13.762547-34.974811-14.229091-48.717377-1.118906s-14.261059 34.911872-1.132893 48.674419l62.644762 65.668806C209.123074 256.13262 230.919767 256.637127 244.662333 243.526943zM543.066631 957.422083l-60.603757 0c-18.654764 0-33.794964 15.147193-33.794964 33.862898 0 18.661757 15.1402 32.71502 33.794964 32.71502l60.603757 0c18.654764 0 33.794964-14.053262 33.794964-32.71502C576.861595 972.568277 561.721395 957.422083 543.066631 957.422083zM988.076617 479.050709l-90.757281 0c-19.019408 0-34.437336 15.423923-34.437336 34.417356s15.416929 34.477297 34.437336 34.477297l90.757281 0c19.013414 0 34.42335-15.484863 34.42335-34.477297S1007.09003 479.050709 988.076617 479.050709zM512.268737 192.765564c-172.737143 0-312.75527 150.079292-312.75527 322.746503 0 125.630192 74.080583 233.957298 180.936128 283.703669l0 84.51838c0 16.762614 15.410935 31.35435 34.42335 31.35435 0.598415 0 1.193833-0.014985 1.785255-0.042958 0.618395 0.026974 1.239788 0.042958 1.867175 0.042958l187.479731 0c5.905227 0 11.455802-1.220807 16.288078-3.477601 12.231044-4.657447 20.795671-15.383962 20.795671-27.87575l0-84.052835c107.391021-49.534578 181.935151-158.147405 181.935151-284.168214C825.024007 342.843857 684.997888 192.765564 512.268737 192.765564zM574.863548 742.713968l0 80.17063c0 3.159911-0.221783 5.976158-0.642372 8.496694l0 19.092336-124.910895 0 0-17.71768c-0.423586-2.856208-0.642372-6.123015-0.642372-9.870351l0-80.443363c-99.204024-27.75387-171.970892-118.821847-171.970892-226.930167 0-130.094827 105.4689-245.507007 235.571719-245.507007s235.563727 115.41218 235.563727 245.507007C747.832465 623.984031 674.578074 715.293772 574.863548 742.713968zM895.407204 129.328576c-13.429872-13.429872-35.233558-13.439862-48.677416 0.004995l-64.174267 64.175266c-13.448853 13.448853-13.443858 35.257534-0.013986 48.687406 13.429872 13.429872 35.281511 13.477825 48.730364 0.028972l64.175266-64.175266C908.889025 164.605092 908.837076 142.758448 895.407204 129.328576zM511.796199 159.617967c18.992434 0 34.417356-15.410935 34.417356-34.42335l0-90.757281c0-19.019408-15.423923-34.437336-34.417356-34.437336-18.992434 0-34.477297 15.416929-34.477297 34.437336l0 90.757281C477.317903 144.208031 492.802766 159.617967 511.796199 159.617967z" fill="currentColor" p-id="2121"></path></svg>`
 };
@@ -39496,40 +38552,16 @@ function addIcons() {
   });
 }
 const DEFAULT_SETTINGS = {
-  InsertAfter: "# Journal",
-  UserName: "MEMO \u{1F609}",
-  ProcessEntriesBelow: "",
-  Language: "en",
-  SaveMemoButtonLabel: "NOTEIT",
-  SaveMemoButtonIcon: "\u270D\uFE0F",
-  DefaultPrefix: "List",
-  UseDailyOrPeriodic: "Daily",
-  InsertDateFormat: "Tasks",
-  DefaultEditorLocation: "Top",
-  UseButtonToShowEditor: false,
-  FocusOnEditor: true,
-  HideDoneTasks: false,
-  ShowTaskLabel: false,
-  OpenMemosAutomatically: false,
-  ShowTime: true,
-  ShowDate: true,
-  AddBlankLineWhenDate: false,
-  DeleteFileName: "delete",
-  UseVaultTags: false,
-  DefaultMemoComposition: "{TIME} {CONTENT}",
-  CommentOnMemos: false,
-  CommentsInOriginalNotes: false,
-  FetchMemosMark: "#memo",
-  FetchMemosFromNote: false,
-  ShowCommentOnMemos: false,
-  ShowLeftSideBar: false,
   MemoStorageMode: "daily-notes",
+  InsertAfter: "# Journal",
   IndividualMemoFolder: "Thino/Memos",
-  IndividualMemoFileNameLength: 30,
-  IndividualMemoTags: "",
-  PreCreateDailyNotes: false,
+  DefaultPrefix: "List",
+  DefaultMemoComposition: "{TIME} {CONTENT}",
+  UserName: "MEMO \u{1F609}",
   ShowInSidebar: false,
-  SidebarLocation: "right"
+  SidebarLocation: "right",
+  FocusOnEditor: true,
+  PreCreateDailyNotes: false
 };
 class MemosSettingTab extends require$$0.PluginSettingTab {
   constructor(app2, plugin) {
@@ -39560,215 +38592,44 @@ class MemosSettingTab extends require$$0.PluginSettingTab {
     const { containerEl } = this;
     this.containerEl.empty();
     let dropdown;
-    this.containerEl.createEl("h1", { text: t$1("Basic Options") });
-    new require$$0.Setting(containerEl).setName(t$1("User name in Lethe")).setDesc(t$1("Set your user name here. 'MEMO \u{1F609}' By default")).addText(
-      (text) => text.setPlaceholder(DEFAULT_SETTINGS.UserName).setValue(this.plugin.settings.UserName).onChange(async (value) => {
-        this.plugin.settings.UserName = value;
+    this.containerEl.createEl("h2", { text: t("Storage & Content") });
+    containerEl.createEl("p", {
+      text: t("Configure where and how your memos are stored"),
+      cls: "setting-item-description"
+    });
+    new require$$0.Setting(containerEl).setName(t("Memo storage mode")).setDesc(
+      t(
+        "Choose where to store memos: in daily notes (one file per day) or as individual files (one file per memo)."
+      )
+    ).addDropdown((dropdownComponent) => {
+      dropdown = dropdownComponent;
+      dropdown.addOption("daily-notes", t("Daily Notes")).addOption("individual-files", t("Individual Files")).setValue(this.plugin.settings.MemoStorageMode).onChange(async (value) => {
+        this.plugin.settings.MemoStorageMode = value;
         this.applySettingsUpdate();
-      })
-    );
-    new require$$0.Setting(containerEl).setName(t$1("Insert after heading")).setDesc(
-      t$1("You should set the same heading below if you want to insert and process memos below the same heading.")
-    ).addText(
+      });
+    });
+    new require$$0.Setting(containerEl).setName(t("Insert after heading")).setDesc(t('Heading in daily notes where memos will be inserted (e.g., "# Journal"). Only used in daily notes mode.')).addText(
       (text) => text.setPlaceholder(DEFAULT_SETTINGS.InsertAfter).setValue(this.plugin.settings.InsertAfter).onChange(async (value) => {
         this.plugin.settings.InsertAfter = value;
         this.applySettingsUpdate();
       })
     );
-    new require$$0.Setting(containerEl).setName(t$1("Process Memos below")).setDesc(
-      t$1(
-        "Only entries below this string/section in your notes will be processed. If it does not exist no notes will be processed for that file."
-      )
-    ).addText(
-      (text) => text.setPlaceholder(DEFAULT_SETTINGS.ProcessEntriesBelow).setValue(this.plugin.settings.ProcessEntriesBelow).onChange(async (value) => {
-        this.plugin.settings.ProcessEntriesBelow = value;
+    new require$$0.Setting(containerEl).setName(t("Individual memo folder")).setDesc(t("Folder path for individual memo files. Only used in individual files mode.")).addText(
+      (text) => text.setPlaceholder(DEFAULT_SETTINGS.IndividualMemoFolder).setValue(this.plugin.settings.IndividualMemoFolder).onChange(async (value) => {
+        this.plugin.settings.IndividualMemoFolder = value;
         this.applySettingsUpdate();
       })
     );
-    new require$$0.Setting(containerEl).setName(t$1("Save Memo button label")).setDesc(t$1("The text shown on the save Memo button in the UI. 'NOTEIT' by default.")).addText(
-      (text) => text.setPlaceholder(DEFAULT_SETTINGS.SaveMemoButtonLabel).setValue(this.plugin.settings.SaveMemoButtonLabel).onChange(async (value) => {
-        this.plugin.settings.SaveMemoButtonLabel = value;
-        this.applySettingsUpdate();
-      })
-    );
-    new require$$0.Setting(containerEl).setName(t$1("Save Memo button icon")).setDesc(t$1("The icon shown on the save Memo button in the UI.")).addText(
-      (text) => text.setPlaceholder(DEFAULT_SETTINGS.SaveMemoButtonIcon).setValue(this.plugin.settings.SaveMemoButtonIcon).onChange(async (value) => {
-        this.plugin.settings.SaveMemoButtonIcon = value;
-        this.applySettingsUpdate();
-      })
-    );
-    new require$$0.Setting(containerEl).setName(t$1("Focus on editor when open Lethe")).setDesc(t$1("Focus on editor when opening Lethe. Focus by default.")).addToggle(
-      (toggle) => toggle.setValue(this.plugin.settings.FocusOnEditor).onChange(async (value) => {
-        this.plugin.settings.FocusOnEditor = value;
-        this.applySettingsUpdate();
-      })
-    );
-    new require$$0.Setting(containerEl).setName(t$1("Open daily memos with Lethe")).setDesc(t$1("Open daily memos when opening Lethe. Open by default.")).addToggle(
-      (toggle) => toggle.setValue(this.plugin.settings.OpenDailyMemosWithMemos).onChange(async (value) => {
-        this.plugin.settings.OpenDailyMemosWithMemos = value;
-        this.applySettingsUpdate();
-      })
-    );
-    new require$$0.Setting(containerEl).setName(t$1("Open Lethe when obsidian opens")).setDesc(t$1("When enabled, Lethe will open when Obsidian opens. False by default.")).addToggle(
-      (toggle) => toggle.setValue(this.plugin.settings.OpenMemosAutomatically).onChange(async (value) => {
-        this.plugin.settings.OpenMemosAutomatically = value;
-        this.applySettingsUpdate();
-      })
-    );
-    new require$$0.Setting(containerEl).setName(t$1("Hide done tasks in Memo list")).setDesc(t$1("Hide all done tasks in Memo list. Show done tasks by default.")).addToggle(
-      (toggle) => toggle.setValue(this.plugin.settings.HideDoneTasks).onChange(async (value) => {
-        this.plugin.settings.HideDoneTasks = value;
-        this.applySettingsUpdate();
-      })
-    );
-    new require$$0.Setting(containerEl).setName(t$1("Show Tasks Label")).setDesc(t$1("Show tasks label near the time text. False by default")).addToggle(
-      (toggle) => toggle.setValue(this.plugin.settings.ShowTaskLabel).onChange(async (value) => {
-        this.plugin.settings.ShowTaskLabel = value;
-        this.applySettingsUpdate();
-      })
-    );
-    new require$$0.Setting(containerEl).setName(t$1("Use Tags In Vault")).setDesc(t$1("Use tags in vault rather than only in Memos. False by default.")).addToggle(
-      (toggle) => toggle.setValue(this.plugin.settings.UseVaultTags).onChange(async (value) => {
-        this.plugin.settings.UseVaultTags = value;
-        this.applySettingsUpdate();
-      })
-    );
-    new require$$0.Setting(containerEl).setName(t$1("Always Show Leaf Sidebar on PC")).setDesc(t$1("Show left sidebar on PC even when the leaf width is less than 875px. False by default.")).addToggle(
-      (toggle) => toggle.setValue(this.plugin.settings.ShowLeftSideBar).onChange(async (value) => {
-        this.plugin.settings.ShowLeftSideBar = value;
-        this.applySettingsUpdate();
-      })
-    );
-    new require$$0.Setting(containerEl).setName(t$1("Show Lethe in Sidebar")).setDesc(t$1("Open Lethe in the sidebar instead of a tab. Requires restart of Lethe to take effect.")).addToggle(
-      (toggle) => toggle.setValue(this.plugin.settings.ShowInSidebar).onChange(async (value) => {
-        this.plugin.settings.ShowInSidebar = value;
-        this.applySettingsUpdate();
-      })
-    );
-    new require$$0.Setting(containerEl).setName(t$1("Sidebar Location")).setDesc(t$1("Choose which sidebar to open Lethe in.")).addDropdown(async (d) => {
-      dropdown = d;
-      dropdown.addOption("left", t$1("Left"));
-      dropdown.addOption("right", t$1("Right"));
-      dropdown.setValue(this.plugin.settings.SidebarLocation).onChange(async (value) => {
-        this.plugin.settings.SidebarLocation = value;
-        this.applySettingsUpdate();
-      });
-    });
-    this.containerEl.createEl("h1", { text: t$1("Advanced Options") });
-    new require$$0.Setting(containerEl).setName(t$1("Default prefix")).setDesc(t$1("Set the default prefix when create memo, 'List' by default.")).addDropdown(async (d) => {
-      dropdown = d;
-      dropdown.addOption("List", t$1("List"));
-      dropdown.addOption("Task", t$1("Task"));
-      dropdown.setValue(this.plugin.settings.DefaultPrefix).onChange(async (value) => {
+    new require$$0.Setting(containerEl).setName(t("Default memo type")).setDesc(t("Choose whether new memos are list items or tasks (with checkbox).")).addDropdown((dropdownComponent) => {
+      dropdown = dropdownComponent;
+      dropdown.addOption("List", t("List")).addOption("Task", t("Task")).setValue(this.plugin.settings.DefaultPrefix).onChange(async (value) => {
         this.plugin.settings.DefaultPrefix = value;
         this.applySettingsUpdate();
       });
     });
-    new require$$0.Setting(containerEl).setName(t$1("Default insert date format")).setDesc(t$1("Set the default date format when insert date by @, 'Tasks' by default.")).addDropdown(async (d) => {
-      dropdown = d;
-      dropdown.addOption("Tasks", "Tasks");
-      dropdown.addOption("Dataview", "Dataview");
-      dropdown.setValue(this.plugin.settings.InsertDateFormat).onChange(async (value) => {
-        this.plugin.settings.InsertDateFormat = value;
-        this.applySettingsUpdate();
-      });
-    });
-    new require$$0.Setting(containerEl).setName(t$1("Show Time When Copy Results")).setDesc(t$1("Show time when you copy results, like 12:00. Copy time by default.")).addToggle(
-      (toggle) => toggle.setValue(this.plugin.settings.ShowTime).onChange(async (value) => {
-        this.plugin.settings.ShowTime = value;
-        this.applySettingsUpdate();
-      })
-    );
-    new require$$0.Setting(containerEl).setName(t$1("Show Date When Copy Results")).setDesc(t$1("Show date when you copy results, like [[2022-01-01]]. Copy date by default.")).addToggle(
-      (toggle) => toggle.setValue(this.plugin.settings.ShowDate).onChange(async (value) => {
-        this.plugin.settings.ShowDate = value;
-        this.applySettingsUpdate();
-      })
-    );
-    new require$$0.Setting(containerEl).setName(t$1("Add Blank Line Between Different Date")).setDesc(t$1("Add blank line when copy result with date. No blank line by default.")).addToggle(
-      (toggle) => toggle.setValue(this.plugin.settings.AddBlankLineWhenDate).onChange(async (value) => {
-        this.plugin.settings.AddBlankLineWhenDate = value;
-        this.applySettingsUpdate();
-      })
-    );
-    new require$$0.Setting(containerEl).setName(t$1("File Name of Recycle Bin")).setDesc(t$1("Set the filename for recycle bin. 'delete' By default")).addText(
-      (text) => text.setPlaceholder(DEFAULT_SETTINGS.DeleteFileName).setValue(this.plugin.settings.DeleteFileName).onChange(async (value) => {
-        await this.changeFileName(this.plugin.settings.DeleteFileName, value);
-        this.plugin.settings.DeleteFileName = value;
-        this.applySettingsUpdate();
-      })
-    );
-    new require$$0.Setting(containerEl).setName(t$1("File Name of Query File")).setDesc(t$1("Set the filename for query file. 'query' By default")).addText(
-      (text) => text.setPlaceholder(DEFAULT_SETTINGS.QueryFileName).setValue(this.plugin.settings.QueryFileName).onChange(async (value) => {
-        await this.changeFileName(this.plugin.settings.QueryFileName, value);
-        this.plugin.settings.QueryFileName = value;
-        this.applySettingsUpdate();
-      })
-    );
-    this.containerEl.createEl("h1", { text: t$1("Mobile Options") });
-    new require$$0.Setting(containerEl).setName(t$1("Default editor position on mobile")).setDesc(t$1("Set the default editor position on Mobile, 'Top' by default.")).addDropdown(async (d) => {
-      dropdown = d;
-      dropdown.addOption("Top", t$1("Top"));
-      dropdown.addOption("Bottom", t$1("Bottom"));
-      dropdown.setValue(this.plugin.settings.DefaultEditorLocation).onChange(async (value) => {
-        this.plugin.settings.DefaultEditorLocation = value;
-        this.applySettingsUpdate();
-      });
-    });
-    new require$$0.Setting(containerEl).setName(t$1("Use button to show editor on mobile")).setDesc(t$1("Set a float button to call editor on mobile. Only when editor located at the bottom works.")).addToggle(
-      (toggle) => toggle.setValue(this.plugin.settings.UseButtonToShowEditor).onChange(async (value) => {
-        this.plugin.settings.UseButtonToShowEditor = value;
-        this.applySettingsUpdate();
-      })
-    );
-    this.containerEl.createEl("h1", { text: t$1("Share Options") });
-    new require$$0.Setting(containerEl).setName(t$1("Share Memos Image Footer Start")).setDesc(
-      t$1(
-        "Set anything you want here, use {MemosNum} to display Number of memos, {UsedDay} for days. '{MemosNum} Memos {UsedDay} Days' By default"
-      )
-    ).addText(
-      (text) => text.setPlaceholder(DEFAULT_SETTINGS.ShareFooterStart).setValue(this.plugin.settings.ShareFooterStart).onChange(async (value) => {
-        this.plugin.settings.ShareFooterStart = value;
-        this.applySettingsUpdate();
-      })
-    );
-    new require$$0.Setting(containerEl).setName(t$1("Share Memos Image Footer End")).setDesc(t$1("Set anything you want here, use {UserName} as your username. '\u270D\uFE0F By {UserName}' By default")).addText(
-      (text) => text.setPlaceholder(DEFAULT_SETTINGS.ShareFooterEnd).setValue(this.plugin.settings.ShareFooterEnd).onChange(async (value) => {
-        this.plugin.settings.ShareFooterEnd = value;
-        this.applySettingsUpdate();
-      })
-    );
-    new require$$0.Setting(containerEl).setName(t$1("Background Image in Light Theme")).setDesc(t$1('Set background image in light theme. Set something like "Daily/one.png"')).addText(
-      (text) => text.setPlaceholder(DEFAULT_SETTINGS.DefaultLightBackgroundImage).setValue(this.plugin.settings.DefaultLightBackgroundImage).onChange(async (value) => {
-        this.plugin.settings.DefaultLightBackgroundImage = value;
-        this.applySettingsUpdate();
-      })
-    );
-    new require$$0.Setting(containerEl).setName(t$1("Background Image in Dark Theme")).setDesc(t$1('Set background image in dark theme. Set something like "Daily/one.png"')).addText(
-      (text) => text.setPlaceholder(DEFAULT_SETTINGS.DefaultDarkBackgroundImage).setValue(this.plugin.settings.DefaultDarkBackgroundImage).onChange(async (value) => {
-        this.plugin.settings.DefaultDarkBackgroundImage = value;
-        this.applySettingsUpdate();
-      })
-    );
-    new require$$0.Setting(containerEl).setName(t$1("Save Shared Image To Folder For Mobile")).setDesc(t$1("Save image to folder for mobile. False by Default")).addToggle(
-      (toggle) => toggle.setValue(this.plugin.settings.AutoSaveWhenOnMobile).onChange(async (value) => {
-        this.plugin.settings.AutoSaveWhenOnMobile = value;
-        this.applySettingsUpdate();
-      })
-    );
-    this.containerEl.createEl("h1", { text: t$1("Experimental Options") });
-    new require$$0.Setting(containerEl).setName(t$1("Use Which Plugin's Default Configuration")).setDesc(t$1("Lethe uses the plugin's default configuration to fetch memos from daily notes, 'Daily' by default.")).addDropdown(async (d) => {
-      dropdown = d;
-      dropdown.addOption("Daily", t$1("Daily"));
-      dropdown.addOption("Periodic", "Periodic");
-      dropdown.setValue(this.plugin.settings.UseDailyOrPeriodic).onChange(async (value) => {
-        this.plugin.settings.UseDailyOrPeriodic = value;
-        this.applySettingsUpdate();
-      });
-    });
-    new require$$0.Setting(containerEl).setName(t$1("Default Memo Composition")).setDesc(
-      t$1(
-        'Set default memo composition, you should use {TIME} as "HH:mm" and {CONTENT} as content. "{TIME} {CONTENT}" by default'
+    new require$$0.Setting(containerEl).setName(t("Memo format template")).setDesc(
+      t(
+        'Template for how memos are formatted. Use {TIME} for timestamp and {CONTENT} for memo text. Example: "{TIME} {CONTENT}"'
       )
     ).addText(
       (text) => text.setPlaceholder(DEFAULT_SETTINGS.DefaultMemoComposition).setValue(this.plugin.settings.DefaultMemoComposition).onChange(async (value) => {
@@ -39776,74 +38637,45 @@ class MemosSettingTab extends require$$0.PluginSettingTab {
         this.applySettingsUpdate();
       })
     );
-    new require$$0.Setting(containerEl).setName(t$1("Allow Comments On Memos")).setDesc(t$1("You can comment on memos. False by default")).addToggle(
-      (toggle) => toggle.setValue(this.plugin.settings.CommentOnMemos).onChange(async (value) => {
-        this.plugin.settings.CommentOnMemos = value;
+    this.containerEl.createEl("h2", { text: t("User Interface") });
+    containerEl.createEl("p", {
+      text: t("Configure how Lethe looks and behaves"),
+      cls: "setting-item-description"
+    });
+    new require$$0.Setting(containerEl).setName(t("User name")).setDesc(t('Your display name in memos. Default: "MEMO \u{1F609}"')).addText(
+      (text) => text.setPlaceholder(DEFAULT_SETTINGS.UserName).setValue(this.plugin.settings.UserName).onChange(async (value) => {
+        this.plugin.settings.UserName = value;
         this.applySettingsUpdate();
       })
     );
-    new require$$0.Setting(containerEl).setName(t$1("Always Show Memo Comments")).setDesc(t$1("Always show memo comments on memos. False by default")).addToggle(
-      (toggle) => toggle.setValue(this.plugin.settings.ShowCommentOnMemos).onChange(async (value) => {
-        this.plugin.settings.ShowCommentOnMemos = value;
+    new require$$0.Setting(containerEl).setName(t("Show in sidebar")).setDesc(t("Open Lethe in the sidebar instead of as a tab.")).addToggle(
+      (toggle) => toggle.setValue(this.plugin.settings.ShowInSidebar).onChange(async (value) => {
+        this.plugin.settings.ShowInSidebar = value;
         this.applySettingsUpdate();
       })
     );
-    new require$$0.Setting(containerEl).setName(t$1("Comments In Original DailyNotes/Notes")).setDesc(t$1("You should install Dataview Plugin ver 0.5.9 or later to use this feature.")).addToggle(
-      (toggle) => toggle.setValue(this.plugin.settings.CommentsInOriginalNotes).onChange(async (value) => {
-        this.plugin.settings.CommentsInOriginalNotes = value;
-        this.applySettingsUpdate();
-      })
-    );
-    new require$$0.Setting(containerEl).setName(t$1("Allow Lethe to Fetch Memos from All Notes")).setDesc(t$1("Use Lethe to manage all memos in your notes, not only in daily notes. False by default")).addToggle(
-      (toggle) => toggle.setValue(this.plugin.settings.FetchMemosFromNote).onChange(async (value) => {
-        this.plugin.settings.FetchMemosFromNote = value;
-        this.applySettingsUpdate();
-      })
-    );
-    new require$$0.Setting(containerEl).setName(t$1("Fetch Memos From Particular Notes")).setDesc(
-      t$1(
-        'You can set any Dataview Query for memos to fetch it. All memos in those notes will show on list. "#memo" by default'
-      )
-    ).addText(
-      (text) => text.setPlaceholder(DEFAULT_SETTINGS.FetchMemosMark).setValue(this.plugin.settings.FetchMemosMark).onChange(async (value) => {
-        this.plugin.settings.FetchMemosMark = value;
-        if (value === "") {
-          this.plugin.settings.FetchMemosMark = DEFAULT_SETTINGS.FetchMemosMark;
-        }
-        this.applySettingsUpdate();
-      })
-    );
-    this.containerEl.createEl("h1", { text: t$1("Storage Options") });
-    new require$$0.Setting(containerEl).setName(t$1("Memo Storage Mode")).setDesc(t$1("Choose how memos are stored: in daily notes or as individual files.")).addDropdown(async (d) => {
-      dropdown = d;
-      dropdown.addOption("daily-notes", t$1("Daily Notes"));
-      dropdown.addOption("individual-files", t$1("Individual Files"));
-      dropdown.setValue(this.plugin.settings.MemoStorageMode).onChange(async (value) => {
-        this.plugin.settings.MemoStorageMode = value;
+    new require$$0.Setting(containerEl).setName(t("Sidebar location")).setDesc(t('Which sidebar to use when "Show in sidebar" is enabled.')).addDropdown((dropdownComponent) => {
+      dropdown = dropdownComponent;
+      dropdown.addOption("left", t("Left")).addOption("right", t("Right")).setValue(this.plugin.settings.SidebarLocation).onChange(async (value) => {
+        this.plugin.settings.SidebarLocation = value;
         this.applySettingsUpdate();
       });
     });
-    new require$$0.Setting(containerEl).setName(t$1("Individual Memo Folder")).setDesc(t$1('Folder path for individual memo files. Only used when storage mode is "Individual Files".')).addText(
-      (text) => text.setPlaceholder(DEFAULT_SETTINGS.IndividualMemoFolder).setValue(this.plugin.settings.IndividualMemoFolder).onChange(async (value) => {
-        this.plugin.settings.IndividualMemoFolder = value || DEFAULT_SETTINGS.IndividualMemoFolder;
+    new require$$0.Setting(containerEl).setName(t("Focus on editor when opening")).setDesc(t("Automatically focus the editor when Lethe opens for quick memo capture.")).addToggle(
+      (toggle) => toggle.setValue(this.plugin.settings.FocusOnEditor).onChange(async (value) => {
+        this.plugin.settings.FocusOnEditor = value;
         this.applySettingsUpdate();
       })
     );
-    new require$$0.Setting(containerEl).setName(t$1("Filename Length Limit")).setDesc(t$1("Maximum characters from memo content to use for filename.")).addText(
-      (text) => text.setPlaceholder("30").setValue(String(this.plugin.settings.IndividualMemoFileNameLength)).onChange(async (value) => {
-        const num = parseInt(value) || 30;
-        this.plugin.settings.IndividualMemoFileNameLength = Math.min(Math.max(num, 10), 100);
-        this.applySettingsUpdate();
-      })
-    );
-    new require$$0.Setting(containerEl).setName(t$1("Default Tags")).setDesc(t$1('Comma-separated tags to add to individual memo files (e.g., "memo, note").')).addText(
-      (text) => text.setPlaceholder("memo, note").setValue(this.plugin.settings.IndividualMemoTags).onChange(async (value) => {
-        this.plugin.settings.IndividualMemoTags = value;
-        this.applySettingsUpdate();
-      })
-    );
-    new require$$0.Setting(containerEl).setName(t$1("Pre-create daily notes")).setDesc(
-      t$1("Automatically create today and tomorrow's daily notes in the background for faster memo saves.")
+    this.containerEl.createEl("h2", { text: t("Performance") });
+    containerEl.createEl("p", {
+      text: t("Optional optimizations for faster memo capture"),
+      cls: "setting-item-description"
+    });
+    new require$$0.Setting(containerEl).setName(t("Pre-create daily notes")).setDesc(
+      t(
+        "Automatically create today and tomorrow's daily notes in the background. Eliminates 200-500ms delay on first memo save of the day. Only affects daily notes mode."
+      )
     ).addToggle(
       (toggle) => toggle.setValue(this.plugin.settings.PreCreateDailyNotes).onChange(async (value) => {
         this.plugin.settings.PreCreateDailyNotes = value;
@@ -40077,23 +38909,56 @@ class MemosPlugin extends require$$0.Plugin {
     await this.loadSettings();
     this.registerView(MEMOS_VIEW_TYPE, (leaf) => new Memos(leaf, this));
     this.app.workspace.onLayoutReady(this.onLayoutReady.bind(this));
-    console.log(t$1("welcome"));
+    console.log(t("welcome"));
   }
   async loadSettings() {
-    this.settings = Object.assign({}, DEFAULT_SETTINGS, await this.loadData());
+    const loadedData = await this.loadData();
+    if (loadedData) {
+      delete loadedData.OpenDailyMemosWithMemos;
+      delete loadedData.ShareFooterStart;
+      delete loadedData.ShareFooterEnd;
+      delete loadedData.AutoSaveWhenOnMobile;
+      delete loadedData.QueryFileName;
+      delete loadedData.DefaultDarkBackgroundImage;
+      delete loadedData.DefaultLightBackgroundImage;
+      delete loadedData.SaveMemoButtonLabel;
+      delete loadedData.SaveMemoButtonIcon;
+      delete loadedData.ShowTaskLabel;
+      delete loadedData.ShowLeftSideBar;
+      delete loadedData.UseButtonToShowEditor;
+      delete loadedData.DefaultEditorLocation;
+      delete loadedData.UseDailyOrPeriodic;
+      delete loadedData.CommentOnMemos;
+      delete loadedData.ShowCommentOnMemos;
+      delete loadedData.CommentsInOriginalNotes;
+      delete loadedData.OpenMemosAutomatically;
+      delete loadedData.IndividualMemoFileNameLength;
+      delete loadedData.ProcessEntriesBelow;
+      delete loadedData.Language;
+      delete loadedData.UseVaultTags;
+      delete loadedData.InsertDateFormat;
+      delete loadedData.DeleteFileName;
+      delete loadedData.FetchMemosMark;
+      delete loadedData.FetchMemosFromNote;
+      delete loadedData.AddBlankLineWhenDate;
+      delete loadedData.HideDoneTasks;
+      delete loadedData.ShowTime;
+      delete loadedData.ShowDate;
+    }
+    this.settings = Object.assign({}, DEFAULT_SETTINGS, loadedData);
   }
   async saveSettings() {
     await this.saveData(this.settings);
   }
   onunload() {
     this.app.workspace.detachLeavesOfType(MEMOS_VIEW_TYPE);
-    new require$$0.Notice(t$1("Close Lethe Successfully"));
+    new require$$0.Notice(t("Close Lethe Successfully"));
   }
   registerMobileEvent() {
     this.registerEvent(
       this.app.workspace.on("receive-text-menu", (menu, source) => {
         menu.addItem((item) => {
-          item.setIcon("popup-open").setTitle(t$1("Insert as Memo")).onClick(async () => {
+          item.setIcon("popup-open").setTitle(t("Insert as Memo")).onClick(async () => {
             const newMemo = await memoService.createMemo(source, false);
             memoService.pushMemo(newMemo);
           });
@@ -40103,7 +38968,7 @@ class MemosPlugin extends require$$0.Plugin {
     this.registerEvent(
       this.app.workspace.on("receive-files-menu", (menu, source) => {
         menu.addItem((item) => {
-          item.setIcon("popup-open").setTitle(t$1("Insert file as memo content")).onClick(async () => {
+          item.setIcon("popup-open").setTitle(t("Insert file as memo content")).onClick(async () => {
             const fileName = source.map((file) => {
               return this.app.fileManager.generateMarkdownLink(file, file.path);
             });
@@ -40188,7 +39053,7 @@ class MemosPlugin extends require$$0.Plugin {
     if (require$$0.Platform.isMobile) {
       this.registerMobileEvent();
     }
-    this.addRibbonIcon("Memos", t$1("ribbonIconTitle"), () => {
+    this.addRibbonIcon("Memos", t("ribbonIconTitle"), () => {
       this.openMemos();
     });
     const leaves = this.app.workspace.getLeavesOfType(MEMOS_VIEW_TYPE);
@@ -40200,10 +39065,7 @@ class MemosPlugin extends require$$0.Plugin {
       leaf.view.containerEl.querySelector("textarea").focus();
       return;
     }
-    if (!this.settings.OpenMemosAutomatically) {
-      return;
-    }
-    this.openMemos();
+    return;
   }
   async openMemos() {
     const workspace = this.app.workspace;
@@ -40250,7 +39112,7 @@ class MemosPlugin extends require$$0.Plugin {
     const workspace = this.app.workspace;
     const leaves = workspace.getLeavesOfType(MEMOS_VIEW_TYPE);
     if (!(leaves.length > 0)) {
-      new require$$0.Notice(t$1("Please Open Lethe First"));
+      new require$$0.Notice(t("Please Open Lethe First"));
       return;
     }
     const leaf = leaves[0];
@@ -40261,7 +39123,7 @@ class MemosPlugin extends require$$0.Plugin {
     const workspace = this.app.workspace;
     const leaves = workspace.getLeavesOfType(MEMOS_VIEW_TYPE);
     if (!(leaves.length > 0)) {
-      new require$$0.Notice(t$1("Please Open Lethe First"));
+      new require$$0.Notice(t("Please Open Lethe First"));
       return;
     }
     const leaf = leaves[0];

@@ -6,7 +6,6 @@ import '../less/memo.less';
 import React from 'react';
 import { Notice } from 'obsidian';
 import More from '../icons/more.svg?react';
-import { t } from '../translations/helper';
 import MemoImage from './MemoImage';
 
 interface Props {
@@ -43,7 +42,7 @@ const DeletedMemo: React.FC<Props> = (props: Props) => {
     try {
       await memoService.restoreMemoById(memo.id);
       handleDeletedMemoAction(memo.id);
-      new Notice(t('RESTORE SUCCEED'));
+      new Notice('RESTORE SUCCEED');
     } catch (error: any) {
       new Notice(error.message);
     }
@@ -59,7 +58,7 @@ const DeletedMemo: React.FC<Props> = (props: Props) => {
     <div className={`memo-wrapper ${'memos-' + memo.id}`} onMouseLeave={handleMouseLeaveMemoWrapper}>
       <div className="memo-top-wrapper">
         <span className="time-text">
-          {t('DELETE AT')} {memo.deletedAtStr}
+          DELETE AT {memo.deletedAtStr}
         </span>
         <div className="btns-container">
           <span className="btn more-action-btn">
@@ -69,13 +68,13 @@ const DeletedMemo: React.FC<Props> = (props: Props) => {
           <div className="more-action-btns-wrapper">
             <div className="more-action-btns-container">
               <span className="btn restore-btn" onClick={handleRestoreMemoClick}>
-                {t('RESTORE')}
+                RESTORE
               </span>
               <span
                 className={`btn delete-btn ${showConfirmDeleteBtn ? 'final-confirm' : ''}`}
                 onClick={handleDeleteMemoClick}
               >
-                {showConfirmDeleteBtn ? t('CONFIRM！') : t('DELETE')}
+                {showConfirmDeleteBtn ? 'CONFIRM！' : 'DELETE'}
               </span>
             </div>
           </div>

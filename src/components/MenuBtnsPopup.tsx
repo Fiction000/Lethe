@@ -3,7 +3,6 @@ import { locationService, resourceService } from '../services';
 import showAboutSiteDialog from './AboutSiteDialog';
 import '../less/menu-btns-popup.less';
 import dailyNotesService from '../services/dailyNotesService';
-import { t } from '../translations/helper';
 import { Notice } from 'obsidian';
 
 interface Props {
@@ -87,16 +86,16 @@ const MenuBtnsPopup: React.FC<Props> = (props: Props) => {
   return (
     <div className={`menu-btns-popup ${shownStatus ? '' : 'hidden'}`} ref={popupElRef}>
       <button className="btn action-btn" onClick={handleMyAccountBtnClick}>
-        <span className="icon">👤</span> {t('Settings')}
+        <span className="icon">👤</span> Settings
       </button>
       <button className="btn action-btn" onClick={handleMemosTrashBtnClick}>
-        <span className="icon">🗑️</span> {t('Recycle bin')}
+        <span className="icon">🗑️</span> Recycle bin
       </button>
       <button className="btn action-btn" onClick={handleImportBtnClick}>
-        <span className="icon">📂</span> {t('Import')}
+        <span className="icon">📂</span> Import
       </button>
       <button className="btn action-btn" onClick={handleAboutBtnClick}>
-        <span className="icon">🤠</span> {t('About Me')}
+        <span className="icon">🤠</span> About Me
       </button>
       {/*<button className="btn action-btn" onClick={handleHomeBoardBtnClick}>*/}
       {/*  <span className="icon">👋</span> Memos Board(Beta)*/}

@@ -5,7 +5,6 @@ import '../less/preview-image-dialog.less';
 import appStore from '../stores/appStore';
 import Close from '../icons/close.svg?react';
 import { Notice } from 'obsidian';
-import { t } from '../translations/helper';
 
 interface Props extends DialogProps {
   imgUrl: string;
@@ -78,9 +77,9 @@ const PreviewImageDialog: React.FC<Props> = ({ destroy, imgUrl, filepath }: Prop
 
       <div className="img-container internal-embed image-embed is-loaded">
         <img className={imgWidth <= 0 ? 'hidden' : ''} ref={imgRef} width={imgWidth + '%'} src={imgUrl} />
-        <span className={'loading-text ' + (imgWidth === -1 ? '' : 'hidden')}>{t('Image is loading...')}</span>
+        <span className={'loading-text ' + (imgWidth === -1 ? '' : 'hidden')}>Image is loading...</span>
         <span className={'loading-text ' + (imgWidth === 0 ? '' : 'hidden')}>
-          {t('😟 Cannot load image, image link maybe broken')}
+          😟 Cannot load image, image link maybe broken
         </span>
       </div>
 

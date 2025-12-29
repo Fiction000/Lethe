@@ -1,7 +1,6 @@
 import { App, DropdownComponent, PluginSettingTab, Setting } from 'obsidian';
 import type MemosPlugin from './index';
 import memoService from './services/memoService';
-import { t } from './translations/helper';
 import { getDailyNotePath } from './helpers/utils';
 
 export interface MemosSettings {
@@ -77,25 +76,23 @@ export class MemosSettingTab extends PluginSettingTab {
     // ====================
     // SECTION 1: STORAGE & CONTENT
     // ====================
-    this.containerEl.createEl('h2', { text: t('Storage & Content') });
+    this.containerEl.createEl('h2', { text: 'Storage & Content' });
     containerEl.createEl('p', {
-      text: t('Configure where and how your memos are stored'),
+      text: 'Configure where and how your memos are stored',
       cls: 'setting-item-description',
     });
 
     // Memo Storage Mode
     new Setting(containerEl)
-      .setName(t('Memo storage mode'))
+      .setName('Memo storage mode')
       .setDesc(
-        t(
-          'Choose where to store memos: in daily notes (one file per day) or as individual files (one file per memo).',
-        ),
+        'Choose where to store memos: in daily notes (one file per day) or as individual files (one file per memo).',
       )
       .addDropdown((dropdownComponent) => {
         dropdown = dropdownComponent;
         dropdown
-          .addOption('daily-notes', t('Daily Notes'))
-          .addOption('individual-files', t('Individual Files'))
+          .addOption('daily-notes', 'Daily Notes')
+          .addOption('individual-files', 'Individual Files')
           .setValue(this.plugin.settings.MemoStorageMode)
           .onChange(async (value: 'daily-notes' | 'individual-files') => {
             this.plugin.settings.MemoStorageMode = value;
@@ -105,8 +102,8 @@ export class MemosSettingTab extends PluginSettingTab {
 
     // Insert After (for daily notes mode)
     new Setting(containerEl)
-      .setName(t('Insert after heading'))
-      .setDesc(t('Heading in daily notes where memos will be inserted (e.g., "# Journal"). Only used in daily notes mode.'))
+      .setName('Insert after heading')
+      .setDesc('Heading in daily notes where memos will be inserted (e.g., "# Journal"). Only used in daily notes mode.')
       .addText((text) =>
         text
           .setPlaceholder(DEFAULT_SETTINGS.InsertAfter)
@@ -119,8 +116,8 @@ export class MemosSettingTab extends PluginSettingTab {
 
     // Individual Memo Folder (for individual files mode)
     new Setting(containerEl)
-      .setName(t('Individual memo folder'))
-      .setDesc(t('Folder path for individual memo files. Only used in individual files mode.'))
+      .setName('Individual memo folder')
+      .setDesc('Folder path for individual memo files. Only used in individual files mode.')
       .addText((text) =>
         text
           .setPlaceholder(DEFAULT_SETTINGS.IndividualMemoFolder)
@@ -133,13 +130,13 @@ export class MemosSettingTab extends PluginSettingTab {
 
     // Default Prefix
     new Setting(containerEl)
-      .setName(t('Default memo type'))
-      .setDesc(t('Choose whether new memos are list items or tasks (with checkbox).'))
+      .setName('Default memo type')
+      .setDesc('Choose whether new memos are list items or tasks (with checkbox).')
       .addDropdown((dropdownComponent) => {
         dropdown = dropdownComponent;
         dropdown
-          .addOption('List', t('List'))
-          .addOption('Task', t('Task'))
+          .addOption('List', 'List')
+          .addOption('Task', 'Task')
           .setValue(this.plugin.settings.DefaultPrefix)
           .onChange(async (value) => {
             this.plugin.settings.DefaultPrefix = value;
@@ -149,11 +146,9 @@ export class MemosSettingTab extends PluginSettingTab {
 
     // Default Memo Composition
     new Setting(containerEl)
-      .setName(t('Memo format template'))
+      .setName('Memo format template')
       .setDesc(
-        t(
-          'Template for how memos are formatted. Use {TIME} for timestamp and {CONTENT} for memo text. Example: "{TIME} {CONTENT}"',
-        ),
+        'Template for how memos are formatted. Use {TIME} for timestamp and {CONTENT} for memo text. Example: "{TIME} {CONTENT}"',
       )
       .addText((text) =>
         text
@@ -168,16 +163,16 @@ export class MemosSettingTab extends PluginSettingTab {
     // ====================
     // SECTION 2: USER INTERFACE
     // ====================
-    this.containerEl.createEl('h2', { text: t('User Interface') });
+    this.containerEl.createEl('h2', { text: 'User Interface' });
     containerEl.createEl('p', {
-      text: t('Configure how Lethe looks and behaves'),
+      text: 'Configure how Lethe looks and behaves',
       cls: 'setting-item-description',
     });
 
     // User Name
     new Setting(containerEl)
-      .setName(t('User name'))
-      .setDesc(t('Your display name in memos. Default: "MEMO 😉"'))
+      .setName('User name')
+      .setDesc('Your display name in memos. Default: "MEMO 😉"')
       .addText((text) =>
         text
           .setPlaceholder(DEFAULT_SETTINGS.UserName)
@@ -190,8 +185,8 @@ export class MemosSettingTab extends PluginSettingTab {
 
     // Show in Sidebar
     new Setting(containerEl)
-      .setName(t('Show in sidebar'))
-      .setDesc(t('Open Lethe in the sidebar instead of as a tab.'))
+      .setName('Show in sidebar')
+      .setDesc('Open Lethe in the sidebar instead of as a tab.')
       .addToggle((toggle) =>
         toggle.setValue(this.plugin.settings.ShowInSidebar).onChange(async (value) => {
           this.plugin.settings.ShowInSidebar = value;
@@ -201,13 +196,13 @@ export class MemosSettingTab extends PluginSettingTab {
 
     // Sidebar Location
     new Setting(containerEl)
-      .setName(t('Sidebar location'))
-      .setDesc(t('Which sidebar to use when "Show in sidebar" is enabled.'))
+      .setName('Sidebar location')
+      .setDesc('Which sidebar to use when "Show in sidebar" is enabled.')
       .addDropdown((dropdownComponent) => {
         dropdown = dropdownComponent;
         dropdown
-          .addOption('left', t('Left'))
-          .addOption('right', t('Right'))
+          .addOption('left', 'Left')
+          .addOption('right', 'Right')
           .setValue(this.plugin.settings.SidebarLocation)
           .onChange(async (value: 'left' | 'right') => {
             this.plugin.settings.SidebarLocation = value;
@@ -217,8 +212,8 @@ export class MemosSettingTab extends PluginSettingTab {
 
     // Focus on Editor
     new Setting(containerEl)
-      .setName(t('Focus on editor when opening'))
-      .setDesc(t('Automatically focus the editor when Lethe opens for quick memo capture.'))
+      .setName('Focus on editor when opening')
+      .setDesc('Automatically focus the editor when Lethe opens for quick memo capture.')
       .addToggle((toggle) =>
         toggle.setValue(this.plugin.settings.FocusOnEditor).onChange(async (value) => {
           this.plugin.settings.FocusOnEditor = value;
@@ -229,19 +224,17 @@ export class MemosSettingTab extends PluginSettingTab {
     // ====================
     // SECTION 3: PERFORMANCE
     // ====================
-    this.containerEl.createEl('h2', { text: t('Performance') });
+    this.containerEl.createEl('h2', { text: 'Performance' });
     containerEl.createEl('p', {
-      text: t('Optional optimizations for faster memo capture'),
+      text: 'Optional optimizations for faster memo capture',
       cls: 'setting-item-description',
     });
 
     // Pre-create Daily Notes
     new Setting(containerEl)
-      .setName(t('Pre-create daily notes'))
+      .setName('Pre-create daily notes')
       .setDesc(
-        t(
-          'Automatically create today and tomorrow\'s daily notes in the background. Eliminates 200-500ms delay on first memo save of the day. Only affects daily notes mode.',
-        ),
+        "Automatically create today and tomorrow's daily notes in the background. Eliminates 200-500ms delay on first memo save of the day. Only affects daily notes mode.",
       )
       .addToggle((toggle) =>
         toggle.setValue(this.plugin.settings.PreCreateDailyNotes).onChange(async (value) => {

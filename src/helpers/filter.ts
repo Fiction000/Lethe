@@ -1,4 +1,3 @@
-import { t } from '../translations/helper';
 import { IMAGE_URL_REG, LINK_REG, MEMO_LINK_REG, NOP_FIRST_TAG_REG, TAG_REG } from './consts';
 import { moment, Notice } from 'obsidian';
 
@@ -10,75 +9,75 @@ export const relationConsts = [
 export const filterConsts = {
   TAG: {
     value: 'TAG',
-    text: t('TAG'),
+    text: 'TAG',
     operators: [
       {
-        text: t('INCLUDE'),
+        text: 'INCLUDE',
         value: 'CONTAIN',
       },
       {
-        text: t('EXCLUDE'),
+        text: 'EXCLUDE',
         value: 'NOT_CONTAIN',
       },
     ],
   },
   TYPE: {
     value: 'TYPE',
-    text: t('TYPE'),
+    text: 'TYPE',
     operators: [
       {
         value: 'IS',
-        text: t('IS'),
+        text: 'IS',
       },
       {
         value: 'IS_NOT',
-        text: t('ISNOT'),
+        text: 'ISNOT',
       },
     ],
     values: [
       {
         value: 'CONNECTED',
-        text: t('LINKED'),
+        text: 'LINKED',
       },
       {
         value: 'NOT_TAGGED',
-        text: t('NO TAGS'),
+        text: 'NO TAGS',
       },
       {
         value: 'LINKED',
-        text: t('HAS LINKS'),
+        text: 'HAS LINKS',
       },
       {
         value: 'IMAGED',
-        text: t('HAS IMAGES'),
+        text: 'HAS IMAGES',
       },
     ],
   },
   TEXT: {
     value: 'TEXT',
-    text: t('TEXT'),
+    text: 'TEXT',
     operators: [
       {
         value: 'CONTAIN',
-        text: t('INCLUDE'),
+        text: 'INCLUDE',
       },
       {
         value: 'NOT_CONTAIN',
-        text: t('EXCLUDE'),
+        text: 'EXCLUDE',
       },
     ],
   },
   DATE: {
     value: 'DATE',
-    text: t('DATE'),
+    text: 'DATE',
     operators: [
       {
         value: 'NOT_CONTAIN',
-        text: t('BEFORE'),
+        text: 'BEFORE',
       },
       {
         value: 'CONTAIN',
-        text: t('AFTER'),
+        text: 'AFTER',
       },
     ],
   },
@@ -187,7 +186,7 @@ export const checkShouldShowMemo = (memo: Model.Memo, filter: Filter) => {
     shouldShow = contained;
   } else if (type === 'DATE') {
     if (!(app as any).plugins.enabledPlugins.has('nldates-obsidian')) {
-      new Notice(t('OBSIDIAN_NLDATES_PLUGIN_NOT_ENABLED'));
+      new Notice('OBSIDIAN_NLDATES_PLUGIN_NOT_ENABLED');
     } else {
       const nldatesPlugin = (app as any).plugins.getPlugin('nldates-obsidian');
       const parsedResult = nldatesPlugin.parseDate(value);

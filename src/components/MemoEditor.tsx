@@ -17,7 +17,6 @@ import { moment, Notice, Platform } from 'obsidian';
 import { DefaultPrefix, FocusOnEditor } from '../memos';
 import useToggle from '../hooks/useToggle';
 import { MEMOS_VIEW_TYPE } from '../constants';
-import { t } from '../translations/helper';
 
 const getCursorPostion = (input: HTMLTextAreaElement) => {
   const {
@@ -204,7 +203,7 @@ const MemoEditor: React.FC<Props> = () => {
   useEffect(() => {
     if (globalState.markMemoId) {
       const editorCurrentValue = editorRef.current?.getContent();
-      const memoLinkText = `${editorCurrentValue ? '\n' : ''}${t('MARK')}: [@MEMO](${globalState.markMemoId})`;
+      const memoLinkText = `${editorCurrentValue ? '\n' : ''}MARK: [@MEMO](${globalState.markMemoId})`;
       editorRef.current?.insertText(memoLinkText);
       globalStateService.setMarkMemoId('');
     }
@@ -287,7 +286,7 @@ const MemoEditor: React.FC<Props> = () => {
 
   const handleSaveBtnClick = useCallback(async (content: string) => {
     if (content === '') {
-      new Notice(t('Content cannot be empty'));
+      new Notice('Content cannot be empty');
       return;
     }
 
@@ -532,7 +531,7 @@ const MemoEditor: React.FC<Props> = () => {
       className: 'memo-editor',
       inputerType: 'memo',
       initialContent: getEditorContentCache(),
-      placeholder: t('What do you think now...'),
+      placeholder: 'What do you think now...',
       showConfirmBtn: true,
       showCancelBtn: showEditStatus,
       showTools: true,

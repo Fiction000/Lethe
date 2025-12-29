@@ -2,7 +2,6 @@ import { moment, normalizePath, Notice, TFile } from 'obsidian';
 import appStore from '../stores/appStore';
 // QueryFileName removed - hardcoded to 'query' (Phase 3)
 import { getDailyNotePath } from '../helpers/utils';
-import { t } from '../translations/helper';
 
 export const createObsidianQuery = async (title: string, querystring: string): Promise<any> => {
   const { metadataCache, vault } = appStore.getState().dailyNotesState.app;
@@ -94,7 +93,7 @@ export const createQueryFile = async (path: string): Promise<TFile> => {
     return createdFile;
   } catch (err) {
     console.error(`Failed to create file: '${path}'`, err);
-    new Notice(t('Unable to create new file.'));
+    new Notice('Unable to create new file.');
   }
 };
 

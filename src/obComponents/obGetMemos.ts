@@ -9,7 +9,6 @@ import {
 // Removed in Phase 3: CommentOnMemos, CommentsInOriginalNotes, FetchMemosFromNote,
 // FetchMemosMark, ProcessEntriesBelow, QueryFileName, DeleteFileName (now hardcoded)
 // Dataview import removed - global fetch feature removed
-import { t } from '../translations/helper';
 import { getDailyNotePath } from '../helpers/utils';
 
 export class DailyNotesFolderMissingError extends Error {}
@@ -148,7 +147,7 @@ export async function getMemosFromIndividualFiles(allMemos: any[], _commentMemos
   const folder = vault.getAbstractFileByPath(folderPath) as TFolder;
 
   if (!folder) {
-    new Notice(t('Individual memo folder not found: ') + folderPath);
+    new Notice('Individual memo folder not found: ' + folderPath);
     return;
   }
 
@@ -226,7 +225,7 @@ export async function getMemos(): Promise<allKindsofMemos> {
 
   if (folder === '' || folder === undefined) {
     console.error('[Lethe] Daily notes folder path is empty or undefined');
-    new Notice(t('Please check your daily note plugin OR periodic notes plugin settings'));
+    new Notice('Please check your daily note plugin OR periodic notes plugin settings');
     return { memos: [], commentMemos: [] };
   }
   const dailyNotesFolder = vault.getAbstractFileByPath(normalizePath(folder)) as TFolder;

@@ -1,7 +1,6 @@
 import { moment, normalizePath, Notice, TFile, Vault } from 'obsidian';
 import { createDailyNote } from 'obsidian-daily-notes-interface';
 import { getDailyNoteSettings } from 'obsidian-daily-notes-interface';
-import { t } from '../translations/helper';
 // UseDailyOrPeriodic setting removed - auto-detect which plugin is installed
 
 namespace utils {
@@ -356,7 +355,7 @@ export function getDailyNoteFormat(): string {
     // Fall back to Daily Notes plugin
     const dailyNoteFormat = getDailyNoteSettings().format || 'YYYY-MM-DD';
     if (!dailyNoteFormat) {
-      new Notice(t("You didn't set format for daily notes in both periodic-notes and daily-notes plugins."));
+      new Notice("You didn't set format for daily notes in both periodic-notes and daily-notes plugins.");
     }
     return dailyNoteFormat;
   }
@@ -406,7 +405,7 @@ export function getDailyNotePath(): string {
   // const dailyNotesSetting = getDailyNoteSettings();
   // dailyNotePath = dailyNotesSetting.folder;
   if (dailyNotePath === '' || dailyNotePath === undefined) {
-    new Notice(t("You didn't set folder for daily notes in both periodic-notes and daily-notes plugins."));
+    new Notice("You didn't set folder for daily notes in both periodic-notes and daily-notes plugins.");
   }
   return dailyNotePath;
 }

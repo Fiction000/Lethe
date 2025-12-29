@@ -3,7 +3,6 @@ import { DAILY_TIMESTAMP } from '../../helpers/consts';
 import '../../less/common/date-picker.less';
 import ArrowLeft from '../../icons/arrow-left.svg?react';
 import ArrowRight from '../../icons/arrow-right.svg?react';
-import { t } from '../../translations/helper';
 
 interface DatePickerProps {
   className?: string;
@@ -62,8 +61,7 @@ const DatePicker: React.FC<DatePickerProps> = (props: DatePickerProps) => {
           <ArrowLeft className="icon-img" />
         </span>
         <span className="normal-text">
-          {firstDate.getFullYear()} {t('year')} {t('monthsShort')[firstDate.getMonth()] ?? firstDate.getMonth() + 1}{' '}
-          {t('month') ?? ''}
+          {firstDate.getFullYear()}  {['Jan.', 'Feb.', 'Mar.', 'Apr.', 'May', 'June', 'July', 'Aug.', 'Sept.', 'Oct.', 'Nov.', 'Dec.'][firstDate.getMonth()] ?? firstDate.getMonth() + 1}{' '}
         </span>
         <span className="btn-text" onClick={() => handleChangeMonthBtnClick(1)}>
           {/*<img className="icon-img" src={arrowRight} />*/}
@@ -72,13 +70,13 @@ const DatePicker: React.FC<DatePickerProps> = (props: DatePickerProps) => {
       </div>
       <div className="date-picker-day-container">
         <div className="date-picker-day-header">
-          <span className="day-item">{t('weekDaysShort')[0]}</span>
-          <span className="day-item">{t('weekDaysShort')[1]}</span>
-          <span className="day-item">{t('weekDaysShort')[2]}</span>
-          <span className="day-item">{t('weekDaysShort')[3]}</span>
-          <span className="day-item">{t('weekDaysShort')[4]}</span>
-          <span className="day-item">{t('weekDaysShort')[5]}</span>
-          <span className="day-item">{t('weekDaysShort')[6]}</span>
+          <span className="day-item">Sun</span>
+          <span className="day-item">Mon</span>
+          <span className="day-item">Tue</span>
+          <span className="day-item">Wed</span>
+          <span className="day-item">Thu</span>
+          <span className="day-item">Fri</span>
+          <span className="day-item">Sat</span>
         </div>
 
         {dayList.map((d) => {

@@ -11,7 +11,6 @@ import MemoFilter from '../components/MemoFilter';
 import '../less/memo-trash.less';
 import MenuSvg from '../icons/menu.svg?react';
 import { Notice } from 'obsidian';
-import { t } from '../translations/helper';
 
 interface Props {}
 
@@ -96,7 +95,7 @@ const MemoTrash: React.FC<Props> = () => {
         }
       })
       .catch((error) => {
-        new Notice(t('Failed to fetch deleted memos: ') + error);
+        new Notice('Failed to fetch deleted memos: ' + error);
       })
       .finally(() => {
         loadingState.setFinish();
@@ -122,17 +121,17 @@ const MemoTrash: React.FC<Props> = () => {
               <MenuSvg className="icon-img" />
             </button>
           </Only>
-          <span className="normal-text">{t('Recycle bin')}</span>
+          <span className="normal-text">Recycle bin</span>
         </div>
       </div>
       <MemoFilter />
       {loadingState.isLoading ? (
         <div className="tip-text-container">
-          <p className="tip-text">{t('Fetching data...')}</p>
+          <p className="tip-text">Fetching data...</p>
         </div>
       ) : deletedMemos.length === 0 ? (
         <div className="tip-text-container">
-          <p className="tip-text">{t('Here is No Zettels.')}</p>
+          <p className="tip-text">Here is No Zettels.</p>
         </div>
       ) : (
         <div className="deleted-memos-container">

@@ -20,7 +20,6 @@ import { showMemoInDailyNotes } from '../obComponents/obShowMemo';
 import More from '../icons/more.svg?react';
 // Removed comment system and task label settings (Phase 3)
 // Removed: useEffect, useMemo, useRef, useState, getDailyNoteFormat, Platform, Editor
-import { t } from '../translations/helper';
 import MemoImage from './MemoImage';
 import appContext from '../stores/appContext';
 
@@ -161,22 +160,22 @@ const Memo: React.FC<Props> = (props: Props) => {
             <div className="more-action-btns-wrapper">
               <div className="more-action-btns-container">
                 <span className="btn" onClick={handleShowMemoStoryDialog}>
-                  {t('READ')}
+                  READ
                 </span>
                 <span className="btn" onClick={handleMarkMemoClick}>
-                  {t('MARK')}
+                  MARK
                 </span>
                 <span className="btn" onClick={handleEditMemoClick}>
-                  {t('EDIT')}
+                  EDIT
                 </span>
                 <span className="btn" onClick={() => handleSourceMemoClick(propsMemo)}>
-                  {t('SOURCE')}
+                  SOURCE
                 </span>
                 <span
                   className={`btn delete-btn ${showConfirmDeleteBtn ? 'final-confirm' : ''}`}
                   onClick={handleDeleteMemoClick}
                 >
-                  {showConfirmDeleteBtn ? t('CONFIRM！') : t('DELETE')}
+                  {showConfirmDeleteBtn ? 'CONFIRM！' : 'DELETE'}
                 </span>
               </div>
             </div>
