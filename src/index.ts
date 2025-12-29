@@ -22,7 +22,46 @@ export default class MemosPlugin extends Plugin {
   }
 
   public async loadSettings() {
-    this.settings = Object.assign({}, DEFAULT_SETTINGS, await this.loadData());
+    const loadedData = await this.loadData();
+
+    // Clean up removed settings from old versions (Phase 2 + Phase 3)
+    if (loadedData) {
+      // Phase 2 orphaned settings
+      delete loadedData.OpenDailyMemosWithMemos;
+      delete loadedData.ShareFooterStart;
+      delete loadedData.ShareFooterEnd;
+      delete loadedData.AutoSaveWhenOnMobile;
+      delete loadedData.QueryFileName;
+      delete loadedData.DefaultDarkBackgroundImage;
+      delete loadedData.DefaultLightBackgroundImage;
+
+      // Phase 3 settings to be removed
+      delete loadedData.SaveMemoButtonLabel;
+      delete loadedData.SaveMemoButtonIcon;
+      delete loadedData.ShowTaskLabel;
+      delete loadedData.ShowLeftSideBar;
+      delete loadedData.UseButtonToShowEditor;
+      delete loadedData.DefaultEditorLocation;
+      delete loadedData.UseDailyOrPeriodic;
+      delete loadedData.CommentOnMemos;
+      delete loadedData.ShowCommentOnMemos;
+      delete loadedData.CommentsInOriginalNotes;
+      delete loadedData.OpenMemosAutomatically;
+      delete loadedData.IndividualMemoFileNameLength;
+      delete loadedData.ProcessEntriesBelow;
+      delete loadedData.Language;
+      delete loadedData.UseVaultTags;
+      delete loadedData.InsertDateFormat;
+      delete loadedData.DeleteFileName;
+      delete loadedData.FetchMemosMark;
+      delete loadedData.FetchMemosFromNote;
+      delete loadedData.AddBlankLineWhenDate;
+      delete loadedData.HideDoneTasks;
+      delete loadedData.ShowTime;
+      delete loadedData.ShowDate;
+    }
+
+    this.settings = Object.assign({}, DEFAULT_SETTINGS, loadedData);
   }
 
   async saveSettings() {
