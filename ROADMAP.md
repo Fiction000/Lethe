@@ -69,7 +69,7 @@ Core principles:
 ### 2.2 Simplify Memo Display
 - Cleaner memo cards
 - Remove inline editing complexity
-- Single-click actions only
+- Single-click actions and keyboard shortcuts (ctr+enter to submit)
 
 ### 2.3 Mobile-First Editor
 - Always show editor at top

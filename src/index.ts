@@ -3,7 +3,6 @@ import { FocusOnEditor, Memos, OpenDailyMemosWithMemos } from './memos';
 import { MEMOS_VIEW_TYPE } from './constants';
 import addIcons from './obComponents/customIcons';
 import { DEFAULT_SETTINGS, MemosSettings, MemosSettingTab } from './setting';
-import showDailyMemoDiaryDialog from './components/DailyMemoDiaryDialog';
 import { QuickCaptureModal } from './obComponents/QuickCaptureModal';
 import { t } from './translations/helper';
 import { memoService } from './services';
@@ -124,13 +123,6 @@ export default class MemosPlugin extends Plugin {
     });
 
     this.addCommand({
-      id: 'show-daily-memo',
-      name: 'Show Daily Memo',
-      callback: () => this.openDailyMemo(),
-      hotkeys: [],
-    });
-
-    this.addCommand({
       id: 'note-it',
       name: 'Note It',
       callback: () => this.noteIt(),
@@ -186,22 +178,6 @@ export default class MemosPlugin extends Plugin {
       return;
     }
     this.openMemos();
-  }
-
-  openDailyMemo() {
-    const workspaceLeaves = this.app.workspace.getLeavesOfType(MEMOS_VIEW_TYPE);
-    if (!OpenDailyMemosWithMemos) {
-      showDailyMemoDiaryDialog();
-      return;
-    }
-
-    if (workspaceLeaves.length > 0) {
-      showDailyMemoDiaryDialog();
-      return;
-    }
-
-    this.openMemos();
-    showDailyMemoDiaryDialog();
   }
 
   async openMemos() {

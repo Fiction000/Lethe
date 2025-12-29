@@ -196,8 +196,16 @@ export const createdeleteFile = async (path: string): Promise<TFile> => {
     const createdFile = await vault.create(path, '');
     return createdFile;
   } catch (err) {
+    // If file already exists, get and return it instead of failing
+    const existingFile = vault.getAbstractFileByPath(path);
+    if (existingFile instanceof TFile) {
+      console.log(`Delete file already exists: '${path}', using existing file`);
+      return existingFile;
+    }
+
     console.error(`Failed to create file: '${path}'`, err);
     new Notice('Unable to create new file.');
+    throw err;
   }
 };
 

@@ -3,7 +3,6 @@ import appContext from '../stores/appContext';
 import { locationService } from '../services';
 import utils from '../helpers/utils';
 import MenuBtnsPopup from './MenuBtnsPopup';
-import showDailyMemoDiaryDialog from './DailyMemoDiaryDialog';
 import '../less/user-banner.less';
 import { UserName } from '../memos';
 import More from '../icons/more.svg?react';
@@ -62,7 +61,7 @@ const UserBanner: React.FC<Props> = () => {
           <span className="amount-text">{tags.length}</span>
           <span className="type-text">{t('TAG')}</span>
         </div>
-        <div className="status-text duration-text" onClick={() => showDailyMemoDiaryDialog()}>
+        <div className="status-text duration-text">
           <span className="amount-text">{createdDays ?? 0}</span>
           <span className="type-text">{t('DAY')}</span>
         </div>

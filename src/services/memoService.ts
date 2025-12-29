@@ -168,7 +168,11 @@ class MemoService {
   }
 
   public async hideMemoById(id: string) {
-    await api.hideMemo(id);
+    const memo = this.getMemoById(id);
+    if (!memo) {
+      throw new Error('Memo not found');
+    }
+    await api.hideMemo(memo);
     appStore.dispatch({
       type: 'DELETE_MEMO_BY_ID',
       payload: {

@@ -1,6 +1,6 @@
 import React, { useContext } from 'react';
 import appContext from '../stores/appContext';
-import { locationService, queryService } from '../services';
+import { locationService } from '../services';
 import utils from '../helpers/utils';
 import { getTextWithMemoType } from '../helpers/filter';
 import '../less/memo-filter.less';
@@ -17,11 +17,10 @@ const MemoFilter: React.FC<FilterProps> = () => {
     locationState: { query },
   } = useContext(appContext);
 
-  const { tag: tagQuery, duration, type: memoType, text: textQuery, filter } = query;
+  const { tag: tagQuery, duration, type: memoType, text: textQuery } = query;
 
-  const queryFilter = queryService.getQueryById(filter);
   const showFilter = Boolean(
-    tagQuery || (duration && duration.from < duration.to) || memoType || textQuery || queryFilter,
+    tagQuery || (duration && duration.from < duration.to) || memoType || textQuery,
   );
 
   const handleCopyClick = async () => {
@@ -39,14 +38,6 @@ const MemoFilter: React.FC<FilterProps> = () => {
     <div className={`filter-query-container ${showFilter ? '' : 'hidden'}`}>
       <div className="filter-query">
         <span className="tip-text">FILTER: </span>
-        <div
-          className={'filter-item-container ' + (queryFilter ? '' : 'hidden')}
-          onClick={() => {
-            locationService.setMemoFilter('');
-          }}
-        >
-          <span className="icon-text">🔖</span> {queryFilter?.title}
-        </div>
         <div
           className={'filter-item-container ' + (tagQuery ? '' : 'hidden')}
           onClick={() => {

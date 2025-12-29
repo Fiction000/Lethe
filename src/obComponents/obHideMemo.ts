@@ -1,30 +1,88 @@
-import { moment } from 'obsidian';
+import { moment, TFile } from 'obsidian';
 import { getDailyNote } from 'obsidian-daily-notes-interface';
 import { DefaultMemoComposition } from '../memos';
-// import appStore from "../stores/appStore";
 import dailyNotesService from '../services/dailyNotesService';
-// import { TFile } from "obsidian";
 import appStore from '../stores/appStore';
 import { sendMemoToDelete } from './obDeleteMemo';
 
-export async function obHideMemo(memoid: string): Promise<Model.Memo> {
-  const { dailyNotes } = dailyNotesService.getState();
-  if (/\d{14,}/.test(memoid)) {
-    const { vault } = appStore.getState().dailyNotesState.app;
-    const timeString = memoid.slice(0, 13);
-    const idString = parseInt(memoid.slice(14));
-    const changeDate = moment(timeString, 'YYYYMMDDHHmmSS');
-    const dailyNote = getDailyNote(changeDate, dailyNotes);
-    const fileContent = await vault.read(dailyNote);
-    const fileLines = getAllLinesFromFile(fileContent);
-    const content = extractContentfromText(fileLines[idString]);
-    const originalLine = '- ' + memoid + ' ' + content;
-    const newLine = fileLines[idString];
-    const newFileContent = fileContent.replace(newLine, '');
-    await vault.modify(dailyNote, newFileContent);
-    const deleteDate = await sendMemoToDelete(originalLine);
-    return deleteDate;
+export async function obHideMemo(memo: Model.Memo): Promise<Model.Memo> {
+  // Check if this is an individual file memo
+  if (memo.path) {
+    return await deleteIndividualFileMemo(memo);
+  } else {
+    return await deleteDailyNoteMemo(memo);
   }
+}
+
+async function deleteIndividualFileMemo(memo: Model.Memo): Promise<Model.Memo> {
+  const { vault } = appStore.getState().dailyNotesState.app;
+
+  // Get the file to delete
+  const file = vault.getAbstractFileByPath(memo.path);
+
+  if (!(file instanceof TFile)) {
+    throw new Error(`File not found: ${memo.path}`);
+  }
+
+  // Create the memo content for the delete.md trash file
+  // Format: "- YYYYMMDDHHmmss001 content"
+  const originalLine = `- ${memo.id} ${memo.content}`;
+
+  // Delete the actual file
+  await vault.delete(file);
+
+  // Send to delete.md for restoration capability
+  const deleteDate = await sendMemoToDelete(originalLine);
+
+  return deleteDate;
+}
+
+async function deleteDailyNoteMemo(memo: Model.Memo): Promise<Model.Memo> {
+  const memoid = memo.id;
+  const { dailyNotes } = dailyNotesService.getState();
+
+  if (!/\d{14,}/.test(memoid)) {
+    throw new Error('Invalid memo ID format');
+  }
+
+  const { vault } = appStore.getState().dailyNotesState.app;
+  const timeString = memoid.slice(0, 13);
+  const idString = parseInt(memoid.slice(14));
+  const changeDate = moment(timeString, 'YYYYMMDDHHmmSS');
+  const dailyNote = getDailyNote(changeDate, dailyNotes);
+
+  if (!dailyNote) {
+    throw new Error(`Daily note not found for date: ${changeDate.format('YYYY-MM-DD')}`);
+  }
+
+  const fileContent = await vault.read(dailyNote);
+  const fileLines = getAllLinesFromFile(fileContent);
+  const content = extractContentfromText(fileLines[idString]);
+  const originalLine = '- ' + memoid + ' ' + content;
+  const lineToRemove = fileLines[idString];
+
+  // Remove the line and its newline character
+  // Handle both \n and \r\n line endings
+  const lineWithNewline = new RegExp(
+    lineToRemove.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + '\\r?\\n?',
+    ''
+  );
+  let newFileContent = fileContent.replace(lineWithNewline, '');
+
+  // If the regex replacement didn't work, try simple string replacement
+  if (newFileContent === fileContent) {
+    newFileContent = fileContent.replace(lineToRemove + '\n', '');
+    if (newFileContent === fileContent) {
+      newFileContent = fileContent.replace(lineToRemove + '\r\n', '');
+    }
+    if (newFileContent === fileContent) {
+      newFileContent = fileContent.replace(lineToRemove, '');
+    }
+  }
+
+  await vault.modify(dailyNote, newFileContent);
+  const deleteDate = await sendMemoToDelete(originalLine);
+  return deleteDate;
 }
 
 const getAllLinesFromFile = (cache: string) => cache.split(/\r?\n/);

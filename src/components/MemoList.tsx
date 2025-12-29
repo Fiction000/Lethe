@@ -1,6 +1,6 @@
 import React, { useCallback, useContext, useEffect, useRef, useState } from 'react';
 import appContext from '../stores/appContext';
-import { locationService, memoService, queryService } from '../services';
+import { locationService, memoService } from '../services';
 import { FIRST_TAG_REG, IMAGE_URL_REG, LINK_REG, MEMO_LINK_REG, NOP_FIRST_TAG_REG, TAG_REG } from '../helpers/consts';
 import utils from '../helpers/utils';
 import { checkShouldShowMemoWithFilters } from '../helpers/filter';
@@ -31,15 +31,13 @@ const MemoList: React.FC<Props> = () => {
   // }
   const [isFetching, setFetchStatus] = useState(true);
   const wrapperElement = useRef<HTMLDivElement>(null);
-  const { tag: tagQuery, duration, type: memoContentType, text: textQuery, filter: queryId } = query;
-  // const showMemoFilter = Boolean(tagQuery || (duration && duration.from < duration.to) || memoType || textQuery || queryId);
-  const queryFilter = queryService.getQueryById(queryId);
+  const { tag: tagQuery, duration, type: memoContentType, text: textQuery } = query;
   const showMemoFilter = Boolean(
-    tagQuery || (duration && duration.from < duration.to) || memoContentType || textQuery || queryFilter,
+    tagQuery || (duration && duration.from < duration.to) || memoContentType || textQuery,
   );
 
   const shownMemos =
-    showMemoFilter || queryFilter || HideDoneTasks
+    showMemoFilter || HideDoneTasks
       ? memos.filter((memo) => {
           let shouldShow = true;
 
@@ -51,13 +49,6 @@ const MemoList: React.FC<Props> = () => {
 
           if (memo.content.contains('comment:')) {
             shouldShow = false;
-          }
-
-          if (queryFilter) {
-            const filters = JSON.parse(queryFilter.querystring) as Filter[];
-            if (Array.isArray(filters)) {
-              shouldShow = checkShouldShowMemoWithFilters(memo, filters);
-            }
           }
 
           if (tagQuery) {

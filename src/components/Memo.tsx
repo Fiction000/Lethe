@@ -15,7 +15,6 @@ import utils, { getDailyNoteFormat } from '../helpers/utils';
 import useToggle from '../hooks/useToggle';
 import { globalStateService, memoService, resourceService } from '../services';
 import showMemoCardDialog from './MemoCardDialog';
-import showShareMemoImageDialog from './ShareMemoImageDialog';
 import '../less/memo.less';
 import { moment, Notice, Platform } from 'obsidian';
 import { showMemoInDailyNotes } from '../obComponents/obShowMemo';
@@ -345,10 +344,6 @@ const Memo: React.FC<Props> = (props: Props) => {
     }
   };
 
-  const handleGenMemoImageBtnClick = () => {
-    showShareMemoImageDialog(propsMemo);
-  };
-
   const handleMemoTypeShow = () => {
     if (!ShowTaskLabel) {
       return;
@@ -492,9 +487,6 @@ const Memo: React.FC<Props> = (props: Props) => {
                 </span>
                 <span className="btn" onClick={handleMarkMemoClick}>
                   {t('MARK')}
-                </span>
-                <span className="btn" onClick={handleGenMemoImageBtnClick}>
-                  {t('SHARE')}
                 </span>
                 <span className="btn" onClick={handleEditMemoClick}>
                   {t('EDIT')}
