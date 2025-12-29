@@ -4,7 +4,7 @@ import utils from '../helpers/utils';
 import appStore from '../stores/appStore';
 import { waitForInsert } from '../obComponents/obCreateMemo';
 import { changeMemo } from '../obComponents/obUpdateMemo';
-import { commentMemo } from '../obComponents/obCommentMemo';
+// commentMemo import removed - comment system removed in Phase 3
 // import { TFile } from 'obsidian';
 
 // import userService from "./userService";
@@ -267,16 +267,7 @@ class MemoService {
     return memo;
   }
 
-  public async createCommentMemo(
-    text: string,
-    isList: boolean,
-    path: string,
-    ID: string,
-    hasID: string,
-  ): Promise<Model.Memo> {
-    const memo = await commentMemo(text, isList, path, ID, hasID);
-    return memo;
-  }
+  // createCommentMemo removed - comment system removed in Phase 3
 
   public async importMemos(text: string, isList: boolean, date: any): Promise<Model.Memo> {
     const memo = await waitForInsert(text, isList, date);

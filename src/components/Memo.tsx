@@ -1,4 +1,4 @@
-import React, { memo, useCallback, useContext, useEffect, useMemo, useRef } from 'react';
+import React, { memo, useCallback, useContext } from 'react';
 import {
   FIRST_TAG_REG,
   IMAGE_URL_REG,
@@ -9,19 +9,18 @@ import {
   TAG_REG,
   WIKI_IMAGE_URL_REG,
 } from '../helpers/consts';
-import useState from 'react-usestateref';
 import { encodeHtml, parseMarkedToHtml, parseRawTextToHtml } from '../helpers/marked';
-import utils, { getDailyNoteFormat } from '../helpers/utils';
+import utils from '../helpers/utils';
 import useToggle from '../hooks/useToggle';
 import { globalStateService, memoService, resourceService } from '../services';
 import showMemoCardDialog from './MemoCardDialog';
 import '../less/memo.less';
-import { moment, Notice, Platform } from 'obsidian';
+import { Notice } from 'obsidian';
 import { showMemoInDailyNotes } from '../obComponents/obShowMemo';
 import More from '../icons/more.svg?react';
 // Removed comment system and task label settings (Phase 3)
+// Removed: useEffect, useMemo, useRef, useState, getDailyNoteFormat, Platform, Editor
 import { t } from '../translations/helper';
-import Editor, { EditorRefActions } from './Editor/Editor';
 import MemoImage from './MemoImage';
 import appContext from '../stores/appContext';
 
@@ -39,223 +38,7 @@ const Memo: React.FC<Props> = (props: Props) => {
   const { globalState } = useContext(appContext);
   const { memo: propsMemo } = props;
   const [showConfirmDeleteBtn, toggleConfirmDeleteBtn] = useToggle(false);
-  const memoCommentRef = useRef<EditorRefActions>(null);
-  const [isCommentShown, toggleComment] = useToggle(false);
-  const [isCommentListShown, toggleCommentList] = useToggle(ShowCommentOnMemos);
-  const [commentMemos, setCommentMemos, commentMemosRef] = useState<Model.Memo[]>([]);
-  const [, setAddRandomIDflag, RandomIDRef] = useState(false);
-  // const imageUrls = Array.from(memo.content.match(IMAGE_URL_REG) ?? []);
-
-  useEffect(() => {
-    if (!memoCommentRef.current) {
-      return;
-    }
-    if (!CommentOnMemos) {
-      return;
-    }
-
-    const fetchCommentMemos = async () => {
-      // console.log(memoService.getState().commentMemos);
-      const allCommentMemos = memoService
-        .getState()
-        .commentMemos.filter((m) => m.linkId === propsMemo.hasId)
-        .sort((a, b) => utils.getTimeStampByDate(b.createdAt) - utils.getTimeStampByDate(a.createdAt));
-      // if (allCommentMemos !== memoState.commentMemos) {
-      setCommentMemos(allCommentMemos);
-      // }
-    };
-
-    fetchCommentMemos();
-  }, [propsMemo.content, propsMemo.id]);
-
-  useEffect(() => {
-    if (!memoCommentRef.current) {
-      return;
-    }
-
-    // new TagsSuggest(app, memoCommentRef.current.element);
-
-    const handlePasteEvent = async (event: ClipboardEvent) => {
-      if (event.clipboardData && event.clipboardData.files.length > 0) {
-        event.preventDefault();
-        const file = event.clipboardData.files[0];
-        const url = await handleUploadFile(file);
-        if (url) {
-          memoCommentRef.current?.insertText(url);
-        }
-      }
-    };
-
-    const handleDropEvent = async (event: DragEvent) => {
-      if (event.dataTransfer && event.dataTransfer.files.length > 0) {
-        event.preventDefault();
-        const file = event.dataTransfer.files[0];
-        const url = await handleUploadFile(file);
-        if (url) {
-          memoCommentRef.current?.insertText(url);
-        }
-      }
-    };
-
-    const handleClickEvent = () => {
-      handleContentChange(memoCommentRef.current?.element.value ?? '');
-    };
-
-    const handleKeyDownEvent = () => {
-      setTimeout(() => {
-        handleContentChange(memoCommentRef.current?.element.value ?? '');
-      });
-    };
-
-    memoCommentRef.current.element.addEventListener('paste', handlePasteEvent);
-    memoCommentRef.current.element.addEventListener('drop', handleDropEvent);
-    memoCommentRef.current.element.addEventListener('click', handleClickEvent);
-    memoCommentRef.current.element.addEventListener('keydown', handleKeyDownEvent);
-
-    return () => {
-      memoCommentRef.current?.element.removeEventListener('paste', handlePasteEvent);
-      memoCommentRef.current?.element.removeEventListener('drop', handleDropEvent);
-    };
-  }, []);
-
-  const handleCancelBtnClick = useCallback(() => {
-    globalStateService.setCommentMemoId('');
-    memoCommentRef.current?.setContent('');
-    toggleComment(false);
-    // setEditorContentCache('');
-  }, []);
-
-  const handleContentChange = useCallback((content: string) => {
-    const tempDiv = document.createElement('div');
-    tempDiv.innerHTML = content;
-    if (tempDiv.innerText.trim() === '') {
-      content = '';
-    }
-    // setEditorContentCache(content);
-
-    setTimeout(() => {
-      memoCommentRef.current?.focus();
-    });
-  }, []);
-
-  const handleSaveBtnClick = useCallback(async (content: string) => {
-    if (content === '') {
-      new Notice(t('Content cannot be empty'));
-      return;
-    }
-
-    const { commentMemoId } = globalStateService.getState();
-    content = content.replaceAll('&nbsp;', ' ');
-    globalStateService.setChangedByMemos(true);
-    try {
-      if (commentMemoId) {
-        memoCommentRef.current?.setContent('');
-        let prevMemo: Model.Memo;
-        if (CommentOnMemos && CommentsInOriginalNotes) {
-          prevMemo = memoService.getCommentMemoById(commentMemoId);
-          // console.log(prevMemo);
-          content = moment().format('YYYYMMDDHHmmss') + ' ' + content;
-        } else {
-          prevMemo = memoService.getMemoById(commentMemoId);
-          // console.log(prevMemo);
-          content = prevMemo.content.replace(/^(.*) comment:/g, content + ' comment:');
-        }
-
-        // console.log(content);
-
-        // console.log(m);
-
-        if (prevMemo && prevMemo.content !== content) {
-          let editedMemo: Model.Memo;
-          if (CommentOnMemos && CommentsInOriginalNotes) {
-            editedMemo = await memoService.updateMemo(
-              prevMemo.id,
-              prevMemo.content,
-              content,
-              prevMemo.memoType,
-              prevMemo.path,
-            );
-          } else {
-            editedMemo = await memoService.updateMemo(prevMemo.id, prevMemo.content, content, prevMemo.memoType);
-          }
-          if (CommentOnMemos && CommentsInOriginalNotes) {
-            memoService.editCommentMemo(editedMemo);
-          } else {
-            editedMemo.updatedAt = utils.getDateTimeString(Date.now());
-            memoService.editMemo(editedMemo);
-          }
-
-          setCommentMemos(
-            commentMemosRef.current.map((m) => {
-              // console.log(m);
-              if (m.id.slice(14) === commentMemoId.slice(14) && m.path === prevMemo.path) {
-                return editedMemo;
-              }
-              return m;
-            }),
-          );
-        }
-
-        globalStateService.setCommentMemoId('');
-        toggleComment(false);
-      } else {
-        const dailyFormat = getDailyNoteFormat();
-        let randomId: string;
-        if (propsMemo.hasId.length > 0) {
-          randomId = propsMemo.hasId;
-        } else if (!CommentsInOriginalNotes) {
-          randomId = Math.random().toString(36).slice(-6);
-          setAddRandomIDflag(true);
-        }
-
-        if (!CommentsInOriginalNotes) {
-          content =
-            content + ' comment: [[' + moment(propsMemo.id.slice(0, 8)).format(dailyFormat) + '#^' + randomId + ']]';
-        }
-
-        // setEditorContentCache('');
-        memoCommentRef.current?.setContent('');
-
-        let newMemo: Model.Memo;
-        if (CommentsInOriginalNotes) {
-          newMemo = await memoService.createCommentMemo(content, true, propsMemo.path, propsMemo.id, randomId);
-          memoService.pushCommentMemo(newMemo);
-        } else {
-          newMemo = await memoService.createMemo(content, true);
-          memoService.pushMemo(newMemo);
-        }
-        // const newCommentMemos = commentMemosRef.current;
-        // newCommentMemos.push(newMemo);
-        // console.log(newCommentMemos.current);
-        setCommentMemos(
-          [...commentMemosRef.current, newMemo].sort(
-            (a, b) => utils.getTimeStampByDate(b.createdAt) - utils.getTimeStampByDate(a.createdAt),
-          ),
-        );
-        // setCommentMemos(
-        //   newCommentMemos.current.sort(
-        //     (a, b) => utils.getTimeStampByDate(b.createdAt) - utils.getTimeStampByDate(a.createdAt),
-        //   ),
-        // );
-        if (RandomIDRef.current) {
-          const editedMemo = await memoService.updateMemo(
-            propsMemo.id,
-            propsMemo.content,
-            propsMemo.content + ' ^' + randomId,
-            propsMemo.memoType,
-          );
-          editedMemo.updatedAt = utils.getDateTimeString(Date.now());
-          memoService.editMemo(editedMemo);
-          setAddRandomIDflag(false);
-        }
-      }
-    } catch (error: any) {
-      new Notice(error.message);
-    }
-
-    // globalStateService.setChangedByMemos(false);
-    // setEditorContentCache('');
-  }, []);
+  // Comment system removed in Phase 3
 
   const handleUploadFile = useCallback(async (file: File) => {
     const { type } = file;
@@ -279,28 +62,12 @@ const Memo: React.FC<Props> = (props: Props) => {
   };
 
   const handleMarkMemoClick = () => {
-    if (UseButtonToShowEditor && DefaultEditorLocation === 'Bottom') {
-      const elem = document.querySelector(
-        "div[data-type='memos_view'] .view-content .memo-show-editor-button",
-      ) as HTMLElement;
-      if (typeof elem?.onclick == 'function') {
-        elem.onclick.apply(elem);
-      }
-    }
-
+    // UseButtonToShowEditor and DefaultEditorLocation removed - simplified
     globalStateService.setMarkMemoId(propsMemo.id);
   };
 
   const handleEditMemoClick = () => {
-    if (UseButtonToShowEditor && DefaultEditorLocation === 'Bottom' && Platform.isMobile) {
-      const elem = document.querySelector(
-        "div[data-type='memos_view'] .view-content .memo-show-editor-button",
-      ) as HTMLElement;
-      if (typeof elem.onclick == 'function') {
-        elem.onclick.apply(elem);
-      }
-    }
-
+    // UseButtonToShowEditor and DefaultEditorLocation removed - simplified
     globalStateService.setEditMemoId(propsMemo.id);
   };
 
@@ -334,23 +101,7 @@ const Memo: React.FC<Props> = (props: Props) => {
     }
   };
 
-  const handleMemoTypeShow = () => {
-    if (!ShowTaskLabel) {
-      return;
-    }
-
-    if (propsMemo.memoType === 'TASK-TODO') {
-      return <TaskBlank />;
-    } else if (propsMemo.memoType === 'TASK-DONE') {
-      return <Task />;
-    }
-  };
-
-  // const handleMemoKeyDown = useCallback((event: React.MouseEvent, m) => {
-  //   if (event.ctrlKey || event.metaKey) {
-  //     handleSourceMemoClick(m);
-  //   }
-  // }, []);
+  // handleMemoTypeShow removed - ShowTaskLabel setting removed
 
   const handleMemoDoubleClick = useCallback((event: React.MouseEvent) => {
     if (event) {
@@ -380,52 +131,7 @@ const Memo: React.FC<Props> = (props: Props) => {
     }
   };
 
-  const handleCommentBlock = () => {
-    if (!isCommentShown) {
-      toggleComment(true);
-    } else {
-      toggleComment(false);
-    }
-    if (!isCommentListShown) {
-      toggleCommentList(true);
-    } else if (!ShowCommentOnMemos && isCommentListShown) {
-      toggleCommentList(false);
-    }
-  };
-
-  const handleEditCommentClick = useCallback((memo: Model.Memo) => {
-    if (!CommentOnMemos) {
-      return;
-    }
-
-    globalStateService.setCommentMemoId(memo.id);
-    // console.log(Boolean(globalStateService.getState().commentMemoId));
-    // console.log(globalStateService.getState().commentMemoId);
-
-    if (!isCommentShown) {
-      toggleComment(true);
-    }
-    memoCommentRef.current?.focus();
-    memoCommentRef.current?.setContent(memo.content.replace(/ comment: (.*)$/g, '').replace(/^\d{14} /g, ''));
-  }, []);
-
-  const showEditStatus = Boolean(globalState.commentMemoId);
-
-  const editorConfig = useMemo(
-    () => ({
-      className: 'memo-editor',
-      inputerType: 'commentMemo',
-      initialContent: '',
-      placeholder: t('Comment it...'),
-      showConfirmBtn: true,
-      showCancelBtn: showEditStatus,
-      showTools: true,
-      onConfirmBtnClick: handleSaveBtnClick,
-      onCancelBtnClick: handleCancelBtnClick,
-      onContentChange: handleContentChange,
-    }),
-    [globalState.commentMemoId],
-  );
+  // Comment handlers and editor config removed - comment system removed in Phase 3
 
   const imageProps = {
     memo: propsMemo.content,
@@ -445,26 +151,8 @@ const Memo: React.FC<Props> = (props: Props) => {
           <span className="time-text" onClick={handleShowMemoStoryDialog}>
             {propsMemo.createdAt}
           </span>
-          <div
-            className={`memo-type-img ${
-              (propsMemo.memoType === 'TASK-TODO' || propsMemo.memoType === 'TASK-DONE') && ShowTaskLabel
-                ? ''
-                : 'hidden'
-            }`}
-          >
-            {handleMemoTypeShow() ?? ''}
-          </div>
         </div>
         <div className="memo-top-right-wrapper">
-          {CommentOnMemos ? (
-            <div className="comment-button-wrapper">
-              {/*<img className="comment-logo" onClick={handleCommentBlock} src={} alt="memo-comment" />*/}
-              <Comment className="icon-img" onClick={handleCommentBlock} />
-              {commentMemos.length > 0 ? <div className="comment-text-count">{commentMemos.length}</div> : null}
-            </div>
-          ) : (
-            ''
-          )}
           <div className="btns-container">
             <span className="btn more-action-btn">
               {/*<img className="icon-img" src={more} />*/}
@@ -502,69 +190,6 @@ const Memo: React.FC<Props> = (props: Props) => {
         dangerouslySetInnerHTML={{ __html: formatMemoContent(propsMemo.content, propsMemo.id) }}
       ></div>
       <MemoImage {...imageProps} />
-      {/*<Only when={externalImageUrls.length > 0}>*/}
-      {/*  <div className="images-wrapper">*/}
-      {/*    {externalImageUrls.map((imgUrl, idx) => (*/}
-      {/*      <Image alt="" key={idx} className="memo-img" imgUrl={imgUrl} referrerPolicy="no-referrer" />*/}
-      {/*    ))}*/}
-      {/*  </div>*/}
-      {/*</Only>*/}
-      {/*<Only when={internalImageUrls.length > 0}>*/}
-      {/*  <div className="images-wrapper internal-embed image-embed is-loaded">*/}
-      {/*    {internalImageUrls.map((imgUrl, idx) => (*/}
-      {/*      <Image*/}
-      {/*        key={idx}*/}
-      {/*        className="memo-img"*/}
-      {/*        imgUrl={imgUrl.path}*/}
-      {/*        alt={imgUrl.altText}*/}
-      {/*        filepath={imgUrl.filepath}*/}
-      {/*      />*/}
-      {/*    ))}*/}
-      {/*  </div>*/}
-      {/*</Only>*/}
-      {CommentOnMemos ? (
-        <div className={`memo-comment-wrapper`}>
-          {commentMemos.length > 0 && isCommentListShown ? (
-            <div className={`memo-comment-list`}>
-              {/*// TODO*/}
-              {commentMemos.map((m, idx) => (
-                <div key={idx} className="memo-comment">
-                  <div className="memo-comment-time">{m.createdAt}</div>
-                  {/*<div className="memo-comment-text" onDoubleClick={() => handleEditCommentClick(m)}>*/}
-                  {/*  {m.content.replace(/comment:(.*)]]/g, '').replace(/^\d{14} /g, '')}*/}
-                  {/*</div>*/}
-                  <div
-                    className="memo-comment-text"
-                    onClick={(e) => handleMemoContentClick(e, m)}
-                    onDoubleClick={() => handleEditCommentClick(m)}
-                    dangerouslySetInnerHTML={{
-                      __html: formatMemoContent(
-                        m.content
-                          .replace(/comment:(.*)]]/g, '')
-                          .replace(/^\d{14} /g, '')
-                          .trim(),
-                        m.id,
-                      ),
-                    }}
-                  ></div>
-                </div>
-              ))}
-            </div>
-          ) : null}
-          <div className={`memo-comment-inputer ${isCommentShown ? '' : 'hidden'}`}>
-            <Editor ref={memoCommentRef} {...editorConfig} />
-          </div>
-        </div>
-      ) : (
-        ''
-      )}
-      {/* <Only when={imageUrls.length > 0}>
-        <div className="images-wrapper">
-          {imageUrls.map((imgUrl, idx) => (
-            <Image className="memo-img" key={idx} imgUrl={imgUrl} />
-          ))}
-        </div>
-      </Only> */}
     </div>
   );
 };
