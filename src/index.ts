@@ -214,10 +214,8 @@ export default class MemosPlugin extends Plugin {
       leaf.view.containerEl.querySelector('textarea').focus();
       return;
     }
-    if (!this.settings.OpenMemosAutomatically) {
-      return;
-    }
-    this.openMemos();
+    // OpenMemosAutomatically removed - hardcoded to false (don't auto-open)
+    return;
   }
 
   async openMemos() {

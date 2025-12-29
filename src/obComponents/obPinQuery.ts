@@ -42,7 +42,7 @@ export const unpinQueryInFile = async (queryID: string): Promise<any> => {
   const { metadataCache, vault } = appStore.getState().dailyNotesState.app;
 
   const filePath = getDailyNotePath();
-  const absolutePath = filePath + '/' + QueryFileName + '.md';
+  const absolutePath = filePath + '/query.md'; // QueryFileName hardcoded
 
   const queryFile = metadataCache.getFirstLinkpathDest('', absolutePath);
 

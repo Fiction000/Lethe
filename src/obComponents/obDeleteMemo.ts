@@ -92,7 +92,7 @@ export async function getDeletedMemos(): Promise<any[]> {
   const { vault, metadataCache } = appStore.getState().dailyNotesState.app;
 
   const filePath = getDailyNotePath();
-  const absolutePath = filePath + '/' + DeleteFileName + '.md';
+  const absolutePath = filePath + '/delete.md'; // DeleteFileName hardcoded
   const deletedMemos: any[] | PromiseLike<any[]> = [];
   const deleteFile = metadataCache.getFirstLinkpathDest('', absolutePath);
   if (deleteFile instanceof TFile) {
@@ -135,7 +135,7 @@ export const sendMemoToDelete = async (memoContent: string): Promise<any> => {
   const { metadataCache, vault } = appStore.getState().dailyNotesState.app;
 
   const filePath = getDailyNotePath();
-  const absolutePath = filePath + '/' + DeleteFileName + '.md';
+  const absolutePath = filePath + '/delete.md'; // DeleteFileName hardcoded
 
   const deleteFile = metadataCache.getFirstLinkpathDest('', absolutePath);
 
