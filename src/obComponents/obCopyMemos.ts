@@ -1,5 +1,6 @@
 import { moment } from 'obsidian';
-import { AddBlankLineWhenDate, CommentOnMemos, DefaultMemoComposition, ShowDate, ShowTime } from '../memos';
+import { DefaultMemoComposition } from '../memos';
+// ShowDate, ShowTime, AddBlankLineWhenDate, CommentOnMemos removed - always show date/time
 import { memoService } from '../services';
 import utils, { getDailyNoteFormat } from '../helpers/utils';
 

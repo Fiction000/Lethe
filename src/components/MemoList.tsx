@@ -10,7 +10,7 @@ import '../less/memolist.less';
 import dailyNotesService from '../services/dailyNotesService';
 import appStore from '../stores/appStore';
 import { Notice, Platform } from 'obsidian';
-import { HideDoneTasks } from '../memos';
+// HideDoneTasks setting removed in Phase 3
 // import {moment} from 'obsidian';
 import { t } from '../translations/helper';
 
@@ -37,15 +37,11 @@ const MemoList: React.FC<Props> = () => {
   );
 
   const shownMemos =
-    showMemoFilter || HideDoneTasks
+    showMemoFilter
       ? memos.filter((memo) => {
           let shouldShow = true;
 
-          if (memo.memoType !== undefined) {
-            if (HideDoneTasks && memo.memoType === 'TASK-DONE') {
-              shouldShow = false;
-            }
-          }
+          // HideDoneTasks feature removed - all memos shown regardless of task status
 
           if (memo.content.contains('comment:')) {
             shouldShow = false;
