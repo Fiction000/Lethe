@@ -19,8 +19,27 @@ export async function obHideMemo(memoid: string): Promise<Model.Memo> {
     const fileLines = getAllLinesFromFile(fileContent);
     const content = extractContentfromText(fileLines[idString]);
     const originalLine = '- ' + memoid + ' ' + content;
-    const newLine = fileLines[idString];
-    const newFileContent = fileContent.replace(newLine, '');
+    const lineToRemove = fileLines[idString];
+
+    // Remove the line and its newline character
+    // Handle both \n and \r\n line endings
+    const lineWithNewline = new RegExp(
+      lineToRemove.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + '\\r?\\n?',
+      ''
+    );
+    let newFileContent = fileContent.replace(lineWithNewline, '');
+
+    // If the regex replacement didn't work, try simple string replacement
+    if (newFileContent === fileContent) {
+      newFileContent = fileContent.replace(lineToRemove + '\n', '');
+      if (newFileContent === fileContent) {
+        newFileContent = fileContent.replace(lineToRemove + '\r\n', '');
+      }
+      if (newFileContent === fileContent) {
+        newFileContent = fileContent.replace(lineToRemove, '');
+      }
+    }
+
     await vault.modify(dailyNote, newFileContent);
     const deleteDate = await sendMemoToDelete(originalLine);
     return deleteDate;
