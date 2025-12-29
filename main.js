@@ -108,7 +108,7 @@ function requireReact_production_min() {
   react_production_min.Fragment = 60107;
   react_production_min.StrictMode = 60108;
   react_production_min.Profiler = 60114;
-  var q = 60109, r = 60110, t2 = 60112;
+  var q = 60109, r = 60110, t = 60112;
   react_production_min.Suspense = 60113;
   var u = 60115, v = 60116;
   if ("function" === typeof Symbol && Symbol.for) {
@@ -120,7 +120,7 @@ function requireReact_production_min() {
     react_production_min.Profiler = w("react.profiler");
     q = w("react.provider");
     r = w("react.context");
-    t2 = w("react.forward_ref");
+    t = w("react.forward_ref");
     react_production_min.Suspense = w("react.suspense");
     u = w("react.memo");
     v = w("react.lazy");
@@ -346,7 +346,7 @@ function requireReact_production_min() {
     return { current: null };
   };
   react_production_min.forwardRef = function(a) {
-    return { $$typeof: t2, render: a };
+    return { $$typeof: t, render: a };
   };
   react_production_min.isValidElement = L;
   react_production_min.lazy = function(a) {
@@ -1984,18 +1984,18 @@ function requireScheduler_production_min() {
       };
     }
     if ("undefined" === typeof window || "function" !== typeof MessageChannel) {
-      var t2 = null, u = null, w = function() {
-        if (null !== t2)
+      var t = null, u = null, w = function() {
+        if (null !== t)
           try {
             var a = exports2.unstable_now();
-            t2(true, a);
-            t2 = null;
+            t(true, a);
+            t = null;
           } catch (b) {
             throw setTimeout(w, 0), b;
           }
       };
       f = function(a) {
-        null !== t2 ? setTimeout(f, 0, a) : (t2 = a, setTimeout(w, 0));
+        null !== t ? setTimeout(f, 0, a) : (t = a, setTimeout(w, 0));
       };
       g = function(a, b) {
         u = setTimeout(a, b);
@@ -2759,7 +2759,7 @@ function requireReactDom_production_min() {
   if (!aa)
     throw Error(y(227));
   var ba = /* @__PURE__ */ new Set(), ca = {};
-  function da2(a, b) {
+  function da(a, b) {
     ea(a, b);
     ea(a + "Capture", b);
   }
@@ -2768,15 +2768,15 @@ function requireReactDom_production_min() {
     for (a = 0; a < b.length; a++)
       ba.add(b[a]);
   }
-  var fa = !("undefined" === typeof window || "undefined" === typeof window.document || "undefined" === typeof window.document.createElement), ha = /^[:A-Z_a-z\u00C0-\u00D6\u00D8-\u00F6\u00F8-\u02FF\u0370-\u037D\u037F-\u1FFF\u200C-\u200D\u2070-\u218F\u2C00-\u2FEF\u3001-\uD7FF\uF900-\uFDCF\uFDF0-\uFFFD][:A-Z_a-z\u00C0-\u00D6\u00D8-\u00F6\u00F8-\u02FF\u0370-\u037D\u037F-\u1FFF\u200C-\u200D\u2070-\u218F\u2C00-\u2FEF\u3001-\uD7FF\uF900-\uFDCF\uFDF0-\uFFFD\-.0-9\u00B7\u0300-\u036F\u203F-\u2040]*$/, ia = Object.prototype.hasOwnProperty, ja2 = {}, ka = {};
+  var fa = !("undefined" === typeof window || "undefined" === typeof window.document || "undefined" === typeof window.document.createElement), ha = /^[:A-Z_a-z\u00C0-\u00D6\u00D8-\u00F6\u00F8-\u02FF\u0370-\u037D\u037F-\u1FFF\u200C-\u200D\u2070-\u218F\u2C00-\u2FEF\u3001-\uD7FF\uF900-\uFDCF\uFDF0-\uFFFD][:A-Z_a-z\u00C0-\u00D6\u00D8-\u00F6\u00F8-\u02FF\u0370-\u037D\u037F-\u1FFF\u200C-\u200D\u2070-\u218F\u2C00-\u2FEF\u3001-\uD7FF\uF900-\uFDCF\uFDF0-\uFFFD\-.0-9\u00B7\u0300-\u036F\u203F-\u2040]*$/, ia = Object.prototype.hasOwnProperty, ja = {}, ka = {};
   function la(a) {
     if (ia.call(ka, a))
       return true;
-    if (ia.call(ja2, a))
+    if (ia.call(ja, a))
       return false;
     if (ha.test(a))
       return ka[a] = true;
-    ja2[a] = true;
+    ja[a] = true;
     return false;
   }
   function ma(a, b, c, d) {
@@ -3836,7 +3836,7 @@ function requireReactDom_production_min() {
       e = "on" + (e[0].toUpperCase() + e.slice(1));
       Nc.set(d, b);
       Mc.set(d, e);
-      da2(e, [d]);
+      da(e, [d]);
     }
   }
   var Qc = r.unstable_now;
@@ -4005,7 +4005,7 @@ function requireReactDom_production_min() {
       (Kb = f) || Mb();
     }
   }
-  function id2(a, b, c, d) {
+  function id(a, b, c, d) {
     ed(dd, hd.bind(null, a, b, c, d));
   }
   function hd(a, b, c, d) {
@@ -4202,7 +4202,7 @@ function requireReactDom_production_min() {
     deltaMode: 0
   }), Zd = rd(Yd), $d = [9, 13, 27, 32], ae = fa && "CompositionEvent" in window, be = null;
   fa && "documentMode" in document && (be = document.documentMode);
-  var ce = fa && "TextEvent" in window && !be, de2 = fa && (!ae || be && 8 < be && 11 >= be), ee = String.fromCharCode(32), fe = false;
+  var ce = fa && "TextEvent" in window && !be, de = fa && (!ae || be && 8 < be && 11 >= be), ee = String.fromCharCode(32), fe = false;
   function ge(a, b) {
     switch (a) {
       case "keyup":
@@ -4252,7 +4252,7 @@ function requireReactDom_production_min() {
         }
         return null;
       case "compositionend":
-        return de2 && "ko" !== b.locale ? null : b.data;
+        return de && "ko" !== b.locale ? null : b.data;
       default:
         return null;
     }
@@ -4414,12 +4414,12 @@ function requireReactDom_production_min() {
   ea("onMouseLeave", ["mouseout", "mouseover"]);
   ea("onPointerEnter", ["pointerout", "pointerover"]);
   ea("onPointerLeave", ["pointerout", "pointerover"]);
-  da2("onChange", "change click focusin focusout input keydown keyup selectionchange".split(" "));
-  da2("onSelect", "focusout contextmenu dragend focusin keydown keyup mousedown mouseup selectionchange".split(" "));
-  da2("onBeforeInput", ["compositionend", "keypress", "textInput", "paste"]);
-  da2("onCompositionEnd", "compositionend focusout keydown keypress keyup mousedown".split(" "));
-  da2("onCompositionStart", "compositionstart focusout keydown keypress keyup mousedown".split(" "));
-  da2("onCompositionUpdate", "compositionupdate focusout keydown keypress keyup mousedown".split(" "));
+  da("onChange", "change click focusin focusout input keydown keyup selectionchange".split(" "));
+  da("onSelect", "focusout contextmenu dragend focusin keydown keyup mousedown mouseup selectionchange".split(" "));
+  da("onBeforeInput", ["compositionend", "keypress", "textInput", "paste"]);
+  da("onCompositionEnd", "compositionend focusout keydown keypress keyup mousedown".split(" "));
+  da("onCompositionStart", "compositionstart focusout keydown keypress keyup mousedown".split(" "));
+  da("onCompositionUpdate", "compositionupdate focusout keydown keypress keyup mousedown".split(" "));
   var Xe = "abort canplay canplaythrough durationchange emptied encrypted ended error loadeddata loadedmetadata loadstart pause play playing progress ratechange seeked seeking stalled suspend timeupdate volumechange waiting".split(" "), Ye = new Set("cancel close invalid load scroll toggle".split(" ").concat(Xe));
   function Ze(a, b, c) {
     var d = a.type || "unknown-event";
@@ -4489,7 +4489,7 @@ function requireReactDom_production_min() {
         e = gd;
         break;
       case 1:
-        e = id2;
+        e = id;
         break;
       default:
         e = hd;
@@ -4620,13 +4620,13 @@ function requireReactDom_production_min() {
           }
           var w = 0 !== (b & 4), z = !w && "scroll" === a, u = w ? null !== h2 ? h2 + "Capture" : null : h2;
           w = [];
-          for (var t2 = d2, q; null !== t2; ) {
-            q = t2;
+          for (var t = d2, q; null !== t; ) {
+            q = t;
             var v = q.stateNode;
-            5 === q.tag && null !== v && (q = v, null !== u && (v = Ob(t2, u), null != v && w.push(ef(t2, v, q))));
+            5 === q.tag && null !== v && (q = v, null !== u && (v = Ob(t, u), null != v && w.push(ef(t, v, q))));
             if (z)
               break;
-            t2 = t2.return;
+            t = t.return;
           }
           0 < w.length && (h2 = new k2(h2, x, null, c, e2), g2.push({ event: h2, listeners: w }));
         }
@@ -4648,32 +4648,32 @@ function requireReactDom_production_min() {
               w = Bd;
               v = "onMouseLeave";
               u = "onMouseEnter";
-              t2 = "mouse";
+              t = "mouse";
               if ("pointerout" === a || "pointerover" === a)
-                w = Td, v = "onPointerLeave", u = "onPointerEnter", t2 = "pointer";
+                w = Td, v = "onPointerLeave", u = "onPointerEnter", t = "pointer";
               z = null == k2 ? h2 : ue(k2);
               q = null == x ? h2 : ue(x);
-              h2 = new w(v, t2 + "leave", k2, c, e2);
+              h2 = new w(v, t + "leave", k2, c, e2);
               h2.target = z;
               h2.relatedTarget = q;
               v = null;
-              wc(e2) === d2 && (w = new w(u, t2 + "enter", x, c, e2), w.target = q, w.relatedTarget = z, v = w);
+              wc(e2) === d2 && (w = new w(u, t + "enter", x, c, e2), w.target = q, w.relatedTarget = z, v = w);
               z = v;
               if (k2 && x)
                 b: {
                   w = k2;
                   u = x;
-                  t2 = 0;
+                  t = 0;
                   for (q = w; q; q = gf(q))
-                    t2++;
+                    t++;
                   q = 0;
                   for (v = u; v; v = gf(v))
                     q++;
-                  for (; 0 < t2 - q; )
-                    w = gf(w), t2--;
-                  for (; 0 < q - t2; )
+                  for (; 0 < t - q; )
+                    w = gf(w), t--;
+                  for (; 0 < q - t; )
                     u = gf(u), q--;
-                  for (; t2--; ) {
+                  for (; t--; ) {
                     if (w === u || null !== u && w === u.alternate)
                       break b;
                     w = gf(w);
@@ -4752,7 +4752,7 @@ function requireReactDom_production_min() {
           }
         else
           ie ? ge(a, c) && (L = "onCompositionEnd") : "keydown" === a && 229 === c.keyCode && (L = "onCompositionStart");
-        L && (de2 && "ko" !== c.locale && (ie || "onCompositionStart" !== L ? "onCompositionEnd" === L && ie && (Q = nd()) : (kd = e2, ld = "value" in kd ? kd.value : kd.textContent, ie = true)), K = oe(d2, L), 0 < K.length && (L = new Ld(L, a, null, c, e2), g2.push({ event: L, listeners: K }), Q ? L.data = Q : (Q = he(c), null !== Q && (L.data = Q))));
+        L && (de && "ko" !== c.locale && (ie || "onCompositionStart" !== L ? "onCompositionEnd" === L && ie && (Q = nd()) : (kd = e2, ld = "value" in kd ? kd.value : kd.textContent, ie = true)), K = oe(d2, L), 0 < K.length && (L = new Ld(L, a, null, c, e2), g2.push({ event: L, listeners: K }), Q ? L.data = Q : (Q = he(c), null !== Q && (L.data = Q))));
         if (Q = ce ? je(a, c) : ke(a, c))
           d2 = oe(d2, "onBeforeInput"), 0 < d2.length && (e2 = new Ld(
             "onBeforeInput",
@@ -5438,7 +5438,7 @@ function requireReactDom_production_min() {
       return null;
     }
     function x(e2, g2, h2, k2) {
-      for (var l2 = null, t2 = null, u = g2, z = g2 = 0, q = null; null !== u && z < h2.length; z++) {
+      for (var l2 = null, t = null, u = g2, z = g2 = 0, q = null; null !== u && z < h2.length; z++) {
         u.index > z ? (q = u, u = null) : q = u.sibling;
         var n2 = p(e2, u, h2[z], k2);
         if (null === n2) {
@@ -5447,19 +5447,19 @@ function requireReactDom_production_min() {
         }
         a && u && null === n2.alternate && b(e2, u);
         g2 = f(n2, g2, z);
-        null === t2 ? l2 = n2 : t2.sibling = n2;
-        t2 = n2;
+        null === t ? l2 = n2 : t.sibling = n2;
+        t = n2;
         u = q;
       }
       if (z === h2.length)
         return c(e2, u), l2;
       if (null === u) {
         for (; z < h2.length; z++)
-          u = A(e2, h2[z], k2), null !== u && (g2 = f(u, g2, z), null === t2 ? l2 = u : t2.sibling = u, t2 = u);
+          u = A(e2, h2[z], k2), null !== u && (g2 = f(u, g2, z), null === t ? l2 = u : t.sibling = u, t = u);
         return l2;
       }
       for (u = d(e2, u); z < h2.length; z++)
-        q = C(u, e2, z, h2[z], k2), null !== q && (a && null !== q.alternate && u.delete(null === q.key ? z : q.key), g2 = f(q, g2, z), null === t2 ? l2 = q : t2.sibling = q, t2 = q);
+        q = C(u, e2, z, h2[z], k2), null !== q && (a && null !== q.alternate && u.delete(null === q.key ? z : q.key), g2 = f(q, g2, z), null === t ? l2 = q : t.sibling = q, t = q);
       a && u.forEach(function(a2) {
         return b(e2, a2);
       });
@@ -5472,7 +5472,7 @@ function requireReactDom_production_min() {
       h2 = l2.call(h2);
       if (null == h2)
         throw Error(y(151));
-      for (var t2 = l2 = null, u = g2, z = g2 = 0, q = null, n2 = h2.next(); null !== u && !n2.done; z++, n2 = h2.next()) {
+      for (var t = l2 = null, u = g2, z = g2 = 0, q = null, n2 = h2.next(); null !== u && !n2.done; z++, n2 = h2.next()) {
         u.index > z ? (q = u, u = null) : q = u.sibling;
         var w2 = p(e2, u, n2.value, k2);
         if (null === w2) {
@@ -5481,19 +5481,19 @@ function requireReactDom_production_min() {
         }
         a && u && null === w2.alternate && b(e2, u);
         g2 = f(w2, g2, z);
-        null === t2 ? l2 = w2 : t2.sibling = w2;
-        t2 = w2;
+        null === t ? l2 = w2 : t.sibling = w2;
+        t = w2;
         u = q;
       }
       if (n2.done)
         return c(e2, u), l2;
       if (null === u) {
         for (; !n2.done; z++, n2 = h2.next())
-          n2 = A(e2, n2.value, k2), null !== n2 && (g2 = f(n2, g2, z), null === t2 ? l2 = n2 : t2.sibling = n2, t2 = n2);
+          n2 = A(e2, n2.value, k2), null !== n2 && (g2 = f(n2, g2, z), null === t ? l2 = n2 : t.sibling = n2, t = n2);
         return l2;
       }
       for (u = d(e2, u); !n2.done; z++, n2 = h2.next())
-        n2 = C(u, e2, z, n2.value, k2), null !== n2 && (a && null !== n2.alternate && u.delete(null === n2.key ? z : n2.key), g2 = f(n2, g2, z), null === t2 ? l2 = n2 : t2.sibling = n2, t2 = n2);
+        n2 = C(u, e2, z, n2.value, k2), null !== n2 && (a && null !== n2.alternate && u.delete(null === n2.key ? z : n2.key), g2 = f(n2, g2, z), null === t ? l2 = n2 : t.sibling = n2, t = n2);
       a && u.forEach(function(a2) {
         return b(e2, a2);
       });
@@ -6178,7 +6178,7 @@ function requireReactDom_production_min() {
     tg(b, e);
     d = Ch(a, b, c, d, f, e);
     if (null !== a && !ug)
-      return b.updateQueue = a.updateQueue, b.flags &= -517, a.lanes &= ~e, hi2(a, b, e);
+      return b.updateQueue = a.updateQueue, b.flags &= -517, a.lanes &= ~e, hi(a, b, e);
     b.flags |= 1;
     fi(a, b, d, e);
     return b.child;
@@ -6195,7 +6195,7 @@ function requireReactDom_production_min() {
     }
     g = a.child;
     if (0 === (e & f) && (e = g.memoizedProps, c = c.compare, c = null !== c ? c : Je, c(e, d) && a.ref === b.ref))
-      return hi2(a, b, f);
+      return hi(a, b, f);
     b.flags |= 1;
     a = Tg(g, d);
     a.ref = b.ref;
@@ -6207,7 +6207,7 @@ function requireReactDom_production_min() {
       if (ug = false, 0 !== (f & e))
         0 !== (a.flags & 16384) && (ug = true);
       else
-        return b.lanes = a.lanes, hi2(a, b, f);
+        return b.lanes = a.lanes, hi(a, b, f);
     return li(a, b, c, d, f);
   }
   function mi(a, b, c) {
@@ -6235,7 +6235,7 @@ function requireReactDom_production_min() {
     tg(b, e);
     c = Ch(a, b, c, d, f, e);
     if (null !== a && !ug)
-      return b.updateQueue = a.updateQueue, b.flags &= -517, a.lanes &= ~e, hi2(a, b, e);
+      return b.updateQueue = a.updateQueue, b.flags &= -517, a.lanes &= ~e, hi(a, b, e);
     b.flags |= 1;
     fi(a, b, c, e);
     return b.child;
@@ -6291,7 +6291,7 @@ function requireReactDom_production_min() {
     oi(a, b);
     var g = 0 !== (b.flags & 64);
     if (!d && !g)
-      return e && Kf(b, c, false), hi2(a, b, f);
+      return e && Kf(b, c, false), hi(a, b, f);
     d = b.stateNode;
     ei.current = b;
     var h = g && "function" !== typeof c.getDerivedStateFromError ? null : d.render();
@@ -6448,7 +6448,7 @@ function requireReactDom_production_min() {
       }
     return b.child;
   }
-  function hi2(a, b, c) {
+  function hi(a, b, c) {
     null !== a && (b.dependencies = a.dependencies);
     Dg |= b.lanes;
     if (0 !== (c & b.childLanes)) {
@@ -7732,9 +7732,9 @@ function requireReactDom_production_min() {
                     if (null === h.alternate)
                       h.tag = 17;
                     else {
-                      var t2 = zg(-1, 1);
-                      t2.tag = 2;
-                      Ag(h, t2);
+                      var t = zg(-1, 1);
+                      t.tag = 2;
+                      Ag(h, t);
                     }
                   h.lanes |= 1;
                   break a;
@@ -7979,16 +7979,16 @@ function requireReactDom_production_min() {
       do
         try {
           for (g = a; null !== Z; ) {
-            var t2 = Z.flags;
-            t2 & 16 && pb(Z.stateNode, "");
-            if (t2 & 128) {
+            var t = Z.flags;
+            t & 16 && pb(Z.stateNode, "");
+            if (t & 128) {
               var q = Z.alternate;
               if (null !== q) {
                 var v = q.ref;
                 null !== v && ("function" === typeof v ? v(null) : v.current = null);
               }
             }
-            switch (t2 & 1038) {
+            switch (t & 1038) {
               case 2:
                 fj(Z);
                 Z.flags &= -3;
@@ -8026,16 +8026,16 @@ function requireReactDom_production_min() {
       while (null !== Z);
       v = lf;
       q = Ne();
-      t2 = v.focusedElem;
+      t = v.focusedElem;
       g = v.selectionRange;
-      if (q !== t2 && t2 && t2.ownerDocument && Me(t2.ownerDocument.documentElement, t2)) {
-        null !== g && Oe(t2) && (q = g.start, v = g.end, void 0 === v && (v = q), "selectionStart" in t2 ? (t2.selectionStart = q, t2.selectionEnd = Math.min(v, t2.value.length)) : (v = (q = t2.ownerDocument || document) && q.defaultView || window, v.getSelection && (v = v.getSelection(), h = t2.textContent.length, J = Math.min(g.start, h), g = void 0 === g.end ? J : Math.min(g.end, h), !v.extend && J > g && (h = g, g = J, J = h), h = Le(t2, J), f = Le(t2, g), h && f && (1 !== v.rangeCount || v.anchorNode !== h.node || v.anchorOffset !== h.offset || v.focusNode !== f.node || v.focusOffset !== f.offset) && (q = q.createRange(), q.setStart(h.node, h.offset), v.removeAllRanges(), J > g ? (v.addRange(q), v.extend(f.node, f.offset)) : (q.setEnd(f.node, f.offset), v.addRange(q))))));
+      if (q !== t && t && t.ownerDocument && Me(t.ownerDocument.documentElement, t)) {
+        null !== g && Oe(t) && (q = g.start, v = g.end, void 0 === v && (v = q), "selectionStart" in t ? (t.selectionStart = q, t.selectionEnd = Math.min(v, t.value.length)) : (v = (q = t.ownerDocument || document) && q.defaultView || window, v.getSelection && (v = v.getSelection(), h = t.textContent.length, J = Math.min(g.start, h), g = void 0 === g.end ? J : Math.min(g.end, h), !v.extend && J > g && (h = g, g = J, J = h), h = Le(t, J), f = Le(t, g), h && f && (1 !== v.rangeCount || v.anchorNode !== h.node || v.anchorOffset !== h.offset || v.focusNode !== f.node || v.focusOffset !== f.offset) && (q = q.createRange(), q.setStart(h.node, h.offset), v.removeAllRanges(), J > g ? (v.addRange(q), v.extend(f.node, f.offset)) : (q.setEnd(f.node, f.offset), v.addRange(q))))));
         q = [];
-        for (v = t2; v = v.parentNode; )
+        for (v = t; v = v.parentNode; )
           1 === v.nodeType && q.push({ element: v, left: v.scrollLeft, top: v.scrollTop });
-        "function" === typeof t2.focus && t2.focus();
-        for (t2 = 0; t2 < q.length; t2++)
-          v = q[t2], v.element.scrollLeft = v.left, v.element.scrollTop = v.top;
+        "function" === typeof t.focus && t.focus();
+        for (t = 0; t < q.length; t++)
+          v = q[t], v.element.scrollLeft = v.left, v.element.scrollTop = v.top;
       }
       fd = !!kf;
       lf = kf = null;
@@ -8043,9 +8043,9 @@ function requireReactDom_production_min() {
       Z = d;
       do
         try {
-          for (t2 = a; null !== Z; ) {
+          for (t = a; null !== Z; ) {
             var K = Z.flags;
-            K & 36 && Yi(t2, Z.alternate, Z);
+            K & 36 && Yi(t, Z.alternate, Z);
             if (K & 128) {
               q = void 0;
               var Q = Z.ref;
@@ -8264,7 +8264,7 @@ function requireReactDom_production_min() {
               if (0 !== (c & b.child.childLanes))
                 return ti(a, b, c);
               I(P, P.current & 1);
-              b = hi2(a, b, c);
+              b = hi(a, b, c);
               return null !== b ? b.sibling : null;
             }
             I(P, P.current & 1);
@@ -8287,7 +8287,7 @@ function requireReactDom_production_min() {
           case 24:
             return b.lanes = 0, mi(a, b, c);
         }
-        return hi2(a, b, c);
+        return hi(a, b, c);
       }
     else
       ug = false;
@@ -8365,7 +8365,7 @@ function requireReactDom_production_min() {
         Cg(b, d, null, c);
         d = b.memoizedState.element;
         if (d === e)
-          sh(), b = hi2(a, b, c);
+          sh(), b = hi(a, b, c);
         else {
           e = b.stateNode;
           if (f = e.hydrate)
@@ -8416,7 +8416,7 @@ function requireReactDom_production_min() {
           if (null !== g)
             if (h = g.value, f = He(h, f) ? 0 : ("function" === typeof d._calculateChangedBits ? d._calculateChangedBits(h, f) : 1073741823) | 0, 0 === f) {
               if (g.children === e.children && !N.current) {
-                b = hi2(a, b, c);
+                b = hi(a, b, c);
                 break a;
               }
             } else
@@ -16587,15 +16587,15 @@ function requireReactDom_development() {
       }
       var clientId = 0;
       function makeClientIdInDEV(warnOnAccessInDEV) {
-        var id2 = "r:" + (clientId++).toString(36);
+        var id = "r:" + (clientId++).toString(36);
         return {
           toString: function() {
             warnOnAccessInDEV();
-            return id2;
+            return id;
           },
           valueOf: function() {
             warnOnAccessInDEV();
-            return id2;
+            return id;
           }
         };
       }
@@ -20400,15 +20400,15 @@ function requireReactDom_development() {
               }
             }
           };
-          var id2 = makeOpaqueHydratingObject(readValue);
-          var setId = mountState(id2)[1];
+          var id = makeOpaqueHydratingObject(readValue);
+          var setId = mountState(id)[1];
           if ((currentlyRenderingFiber$1.mode & BlockingMode) === NoMode) {
             currentlyRenderingFiber$1.flags |= Update | Passive;
             pushEffect(HasEffect | Passive$1, function() {
               setId(makeId());
             }, void 0, null);
           }
-          return id2;
+          return id;
         } else {
           var _id = makeId();
           mountState(_id);
@@ -20416,12 +20416,12 @@ function requireReactDom_development() {
         }
       }
       function updateOpaqueIdentifier() {
-        var id2 = updateState()[0];
-        return id2;
+        var id = updateState()[0];
+        return id;
       }
       function rerenderOpaqueIdentifier() {
-        var id2 = rerenderState()[0];
-        return id2;
+        var id = rerenderState()[0];
+        return id;
       }
       function dispatchAction(fiber, queue, action) {
         {
@@ -27006,16 +27006,16 @@ For more info, visit https://reactjs.org/link/mock-scheduler`);
         var copyWithSet = function(obj, path, value) {
           return copyWithSetImpl(obj, path, 0, value);
         };
-        var findHook = function(fiber, id2) {
+        var findHook = function(fiber, id) {
           var currentHook2 = fiber.memoizedState;
-          while (currentHook2 !== null && id2 > 0) {
+          while (currentHook2 !== null && id > 0) {
             currentHook2 = currentHook2.next;
-            id2--;
+            id--;
           }
           return currentHook2;
         };
-        overrideHookState = function(fiber, id2, path, value) {
-          var hook = findHook(fiber, id2);
+        overrideHookState = function(fiber, id, path, value) {
+          var hook = findHook(fiber, id);
           if (hook !== null) {
             var newState = copyWithSet(hook.memoizedState, path, value);
             hook.memoizedState = newState;
@@ -27024,8 +27024,8 @@ For more info, visit https://reactjs.org/link/mock-scheduler`);
             scheduleUpdateOnFiber(fiber, SyncLane, NoTimestamp);
           }
         };
-        overrideHookStateDeletePath = function(fiber, id2, path) {
-          var hook = findHook(fiber, id2);
+        overrideHookStateDeletePath = function(fiber, id, path) {
+          var hook = findHook(fiber, id);
           if (hook !== null) {
             var newState = copyWithDelete(hook.memoizedState, path);
             hook.memoizedState = newState;
@@ -27034,8 +27034,8 @@ For more info, visit https://reactjs.org/link/mock-scheduler`);
             scheduleUpdateOnFiber(fiber, SyncLane, NoTimestamp);
           }
         };
-        overrideHookStateRenamePath = function(fiber, id2, oldPath, newPath) {
-          var hook = findHook(fiber, id2);
+        overrideHookStateRenamePath = function(fiber, id, oldPath, newPath) {
+          var hook = findHook(fiber, id);
           if (hook !== null) {
             var newState = copyWithRename(hook.memoizedState, oldPath, newPath);
             hook.memoizedState = newState;
@@ -29237,946 +29237,6 @@ main$1.getWeeklyNote = getWeeklyNote;
 main$1.getWeeklyNoteSettings = getWeeklyNoteSettings;
 main$1.getYearlyNote = getYearlyNote;
 main$1.getYearlyNoteSettings = getYearlyNoteSettings;
-const ar = {};
-const cz = {};
-const da = {};
-const de = {};
-const en = {
-  welcome: "Welcome to Lethe",
-  ribbonIconTitle: "Lethe",
-  to: "to",
-  months: [
-    "January",
-    "February",
-    "March",
-    "April",
-    "May",
-    "June",
-    "July",
-    "August",
-    "September",
-    "October",
-    "November",
-    "December"
-  ],
-  monthsShort: ["Jan.", "Feb.", "Mar.", "Apr.", "May", "June", "July", "Aug.", "Sept.", "Oct.", "Nov.", "Dec."],
-  weekDays: ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"],
-  weekDaysShort: ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"],
-  year: null,
-  month: null,
-  "Basic Options": "Basic Options",
-  "User name in Lethe": "User name in Lethe",
-  "User name in Memos": "User name in Lethe",
-  "Set your user name here. 'MEMO \u{1F609}' By default": "Set your user name here. 'MEMO \u{1F609}' By default",
-  "Set your user name here. 'Memos \u{1F60F}' By default": "Set your user name here. 'MEMO \u{1F609}' By default",
-  "Insert after heading": "Insert after heading",
-  "You should set the same heading below if you want to insert and process memos below the same heading.": "You should set the same heading below if you want to insert and process memos below the same heading.",
-  "Allows admonitions to be created using ": "Allows admonitions to be created using ",
-  "Process Memos below": "Process Memos below",
-  "Only entries below this string/section in your notes will be processed. If it does not exist no notes will be processed for that file.": "Only entries below this string/section in your notes will be processed. If it does not exist no notes will be processed for that file.",
-  "Save Memo button label": "Save Memo button label",
-  "The text shown on the save Memo button in the UI. 'NOTEIT' by default.": "The text shown on the save Memo button in the UI. 'NOTEIT' by default.",
-  "Focus on editor when open Lethe": "Focus on editor when open Lethe",
-  "Focus on editor when opening Lethe. Focus by default.": "Focus on editor when opening Lethe. Focus by default.",
-  "Focus on editor when open memos": "Focus on editor when open Lethe",
-  "Focus on editor when open memos. Focus by default.": "Focus on editor when opening Lethe. Focus by default.",
-  "Open daily memos with Lethe": "Open daily memos with Lethe",
-  "Open daily memos when opening Lethe. Open by default.": "Open daily memos when opening Lethe. Open by default.",
-  "Open daily memos with open memos": "Open daily memos with Lethe",
-  "Open daily memos with open memos. Open by default.": "Open daily memos when opening Lethe. Open by default.",
-  "Open Lethe when obsidian opens": "Open Lethe when obsidian opens",
-  "When enabled, Lethe will open when Obsidian opens. False by default.": "When enabled, Lethe will open when Obsidian opens. False by default.",
-  "Open Memos when obsidian opens": "Open Lethe when obsidian opens",
-  "When enable this, Memos will open when Obsidian opens. False by default.": "When enabled, Lethe will open when Obsidian opens. False by default.",
-  "Hide done tasks in Memo list": "Hide done tasks in Memo list",
-  "Hide all done tasks in Memo list. Show done tasks by default.": "Hide all done tasks in Memo list. Show done tasks by default.",
-  "Advanced Options": "Advanced Options",
-  "UI language for date": "UI language for date",
-  "Translates the date UI language. Only 'en' and 'zh' are available.": "Translates the date UI language. Only 'en' and 'zh' are available.",
-  "Default prefix": "Default prefix",
-  "Set the default prefix when create memo, 'List' by default.": "Set the default prefix when create memo, 'List' by default.",
-  "Default insert date format": "Default insert date format",
-  "Set the default date format when insert date by @, 'Tasks' by default.": "Set the default date format when insert date by @, 'Tasks' by default.",
-  "Default editor position on mobile": "Default editor position on mobile",
-  "Set the default editor position on Mobile, 'Top' by default.": "Set the default editor position on Mobile, 'Top' by default.",
-  "Use button to show editor on mobile": "Use button to show editor on mobile",
-  "Set a float button to call editor on mobile. Only when editor located at the bottom works.": "Set a float button to call editor on mobile. Only when editor located at the bottom works.",
-  "Show Time When Copy Results": "Show Time When Copy Results",
-  "Show time when you copy results, like 12:00. Copy time by default.": "Show time when you copy results, like 12:00. Copy time by default.",
-  "Show Date When Copy Results": "Show Date When Copy Results",
-  "Show date when you copy results, like [[2022-01-01]]. Copy date by default.": "Show date when you copy results, like [[2022-01-01]]. Copy date by default.",
-  "Add Blank Line Between Different Date": "Add Blank Line Between Different Date",
-  "Add blank line when copy result with date. No blank line by default.": "Add blank line when copy result with date. No blank line by default.",
-  "Share Options": "Share Options",
-  "Share Memos Image Footer Start": "Share Memos Image Footer Start",
-  "Set anything you want here, use {MemosNum} to display Number of memos, {UsedDay} for days. '{MemosNum} Memos {UsedDay} Days' By default": "Set anything you want here, use {MemosNum} to display Number of memos, {UsedDay} for days. '{MemosNum} Memos {UsedDay} Days' By default",
-  "Share Memos Image Footer End": "Share Memos Image Footer End",
-  "Set anything you want here, use {UserName} as your username. '\u270D\uFE0F By {UserName}' By default": "Set anything you want here, use {UserName} as your username. '\u270D\uFE0F By {UserName}' By default",
-  "Save Shared Image To Folder For Mobile": "Save Shared Image To Folder For Mobile",
-  "Save image to folder for mobile. False by Default": "Save image to folder for mobile. False by Default",
-  "Say Thank You": "Say Thank You",
-  Donate: "Donate",
-  "If you like this plugin, consider donating to support continued development:": "If you like this plugin, consider donating to support continued development:",
-  "File Name of Recycle Bin": "File Name of Recycle Bin",
-  "Set the filename for recycle bin. 'delete' By default": "Set the filename for recycle bin. 'delete' By default",
-  "File Name of Query File": "File Name of Query File",
-  "Set the filename for query file. 'query' By default": "Set the filename for query file. 'query' By default",
-  "Use Tags In Vault": "Use Tags In Vault",
-  "Use tags in vault rather than only in Memos. False by default.": "Use tags in vault rather than only in Memos. False by default.",
-  "Ready to convert image into background": "Ready to convert image into background",
-  List: "List",
-  Task: "Task",
-  Top: "Top",
-  Bottom: "Bottom",
-  TAG: "TAG",
-  DAY: "DAY",
-  QUERY: "QUERY",
-  EDIT: "EDIT",
-  PIN: "PIN",
-  UNPIN: "UNPIN",
-  DELETE: "DELETE",
-  "CONFIRM\uFF01": "CONFIRM\uFF01",
-  "CREATE FILTER": "CREATE FILTER",
-  "Comment it...": "Comment it...",
-  Settings: "Settings",
-  "Recycle bin": "Recycle bin",
-  "About Me": "About Me",
-  "Fetching data...": "Fetching data...",
-  "Here is No Zettels.": "Here is No Zettels.",
-  "Frequently Used Tags": "Frequently Used Tags",
-  "What do you think now...": "What do you think now...",
-  READ: "READ",
-  MARK: "MARK",
-  SHARE: "SHARE",
-  SOURCE: "SOURCE",
-  RESTORE: "RESTORE",
-  "DELETE AT": "DELETE AT",
-  "Noooop!": "Noooop!",
-  "All Data is Loaded \u{1F389}": "All Data is Loaded \u{1F389}",
-  "Quick filter": "Quick filter",
-  TYPE: "TYPE",
-  LINKED: "LINKED",
-  "NO TAGS": "NO TAGS",
-  "HAS LINKS": "HAS LINKS",
-  "HAS IMAGES": "HAS IMAGES",
-  INCLUDE: "INCLUDE",
-  EXCLUDE: "EXCLUDE",
-  TEXT: "TEXT",
-  IS: "IS",
-  ISNOT: "ISNOT",
-  SELECT: "SELECT",
-  "ADD FILTER TERMS": "ADD FILTER TERMS",
-  FILTER: "FILTER",
-  TITLE: "TITLE",
-  "CREATE QUERY": "CREATE QUERY",
-  "EDIT QUERY": "EDIT QUERY",
-  MATCH: "MATCH",
-  TIMES: "TIMES",
-  "Share Memo Image": "Share Memo Image",
-  "\u2197Click the button to save": "\u2197Click the button to save",
-  "Image is generating...": "Image is generating...",
-  "Image is loading...": "Image is loading...",
-  "Loading...": "Loading...",
-  "\u{1F61F} Cannot load image, image link maybe broken": "\u{1F61F} Cannot load image, image link maybe broken",
-  "Daily Memos": "Daily Memos",
-  "CANCEL EDIT": "CANCEL EDIT",
-  "LINK TO THE": "LINK TO THE",
-  "Mobile Options": "Mobile Options",
-  "Experimental Options": "Experimental Options",
-  "Don't support web image yet, please input image path in vault": "Don't support web image yet, please input image path in vault",
-  "Background Image in Dark Theme": "Background Image in Dark Theme",
-  "Background Image in Light Theme": "Background Image in Light Theme",
-  'Set background image in dark theme. Set something like "Daily/one.png"': 'Set background image in dark theme. Set something like "Daily/one.png"',
-  'Set background image in light theme. Set something like "Daily/one.png"': 'Set background image in light theme. Set something like "Daily/one.png"',
-  'Set default memo composition, you should use {TIME} as "HH:mm" and {CONTENT} as content. "{TIME} {CONTENT}" by default': 'Set default memo composition, you should use {TIME} as "HH:mm" and {CONTENT} as content. "{TIME} {CONTENT}" by default',
-  "Default Memo Composition": "Default Memo Composition",
-  "Show Tasks Label": "Show Tasks Label",
-  "Show tasks label near the time text. False by default": "Show tasks label near the time text. False by default",
-  "Please Open Lethe First": "Please Open Lethe First",
-  "Please Open Memos First": "Please Open Lethe First",
-  DATE: "DATE",
-  OBSIDIAN_NLDATES_PLUGIN_NOT_ENABLED: "OBSIDIAN_NLDATES_PLUGIN_NOT_ENABLED",
-  BEFORE: "BEFORE",
-  AFTER: "AFTER",
-  "Allow Comments On Memos": "Allow Comments On Memos",
-  "You can comment on memos. False by default": "You can comment on memos. False by default",
-  Import: "Import",
-  "TITLE CANNOT BE NULL!": "TITLE CANNOT BE NULL!",
-  "FILTER CANNOT BE NULL!": "FILTER CANNOT BE NULL!",
-  "Comments In Original DailyNotes/Notes": "Comments In Original DailyNotes/Notes",
-  "You should install Dataview Plugin ver 0.5.9 or later to use this feature.": "You should install Dataview Plugin ver 0.5.9 or later to use this feature.",
-  "Open Memos Successfully": "Open Memos Successfully",
-  "Fetch Error": "\u{1F62D} Fetch Error",
-  "Copied to clipboard Successfully": "Copied to clipboard Successfully",
-  "Check if you opened Daily Notes Plugin Or Periodic Notes Plugin": "Check if you opened Daily Notes Plugin Or Periodic Notes Plugin",
-  "Please finish the last filter setting first": "Please finish the last filter setting first",
-  "Close Lethe Successfully": "Close Lethe Successfully",
-  "Close Memos Successfully": "Close Lethe Successfully",
-  "Insert as Memo": "Insert as Memo",
-  "Insert file as memo content": "Insert file as memo content",
-  "Image load failed": "Image load failed",
-  "Content cannot be empty": "Content cannot be empty",
-  "Unable to create new file.": "Unable to create new file.",
-  "Failed to fetch deleted memos: ": "Failed to fetch deleted memos: ",
-  "RESTORE SUCCEED": "RESTORE SUCCEED",
-  "Save Memo button icon": "Save Memo button icon",
-  "The icon shown on the save Memo button in the UI.": "The icon shown on the save Memo button in the UI.",
-  "Fetch Memos From Particular Notes": "Fetch Memos From Particular Notes",
-  'You can set any Dataview Query for memos to fetch it. All memos in those notes will show on list. "#memo" by default': 'You can set any Dataview Query for memos to fetch it. All memos in those notes will show on list. "#memo" by default',
-  "Allow Lethe to Fetch Memos from All Notes": "Allow Lethe to Fetch Memos from All Notes",
-  "Use Lethe to manage all memos in your notes, not only in daily notes. False by default": "Use Lethe to manage all memos in your notes, not only in daily notes. False by default",
-  "Allow Memos to Fetch Memo from Notes": "Allow Lethe to Fetch Memos from All Notes",
-  "Use Memos to manage all memos in your notes, not only in daily notes. False by default": "Use Lethe to manage all memos in your notes, not only in daily notes. False by default",
-  "Always Show Memo Comments": "Always Show Memo Comments",
-  "Always show memo comments on memos. False by default": "Always show memo comments on memos. False by default",
-  "You didn't set folder for daily notes in both periodic-notes and daily-notes plugins.": "You didn't set folder for daily notes in both periodic-notes and daily-notes plugins.",
-  "Please check your daily note plugin OR periodic notes plugin settings": "Please check your daily note plugin OR periodic notes plugin settings",
-  "Use Which Plugin's Default Configuration": "Use Which Plugin's Default Configuration",
-  "Lethe uses the plugin's default configuration to fetch memos from daily notes, 'Daily' by default.": "Lethe uses the plugin's default configuration to fetch memos from daily notes, 'Daily' by default.",
-  "Memos use the plugin's default configuration to fetch memos from daily, 'Daily' by default.": "Lethe uses the plugin's default configuration to fetch memos from daily notes, 'Daily' by default.",
-  Daily: "Daily",
-  "Always Show Leaf Sidebar on PC": "Always Show Leaf Sidebar on PC",
-  "Show left sidebar on PC even when the leaf width is less than 875px. False by default.": "Show left sidebar on PC even when the leaf width is less than 875px. False by default.",
-  "Show Lethe in Sidebar": "Show Lethe in Sidebar",
-  "Open Lethe in the sidebar instead of a tab. Requires restart of Lethe to take effect.": "Open Lethe in the sidebar instead of a tab. Requires restart of Lethe to take effect.",
-  "Sidebar Location": "Sidebar Location",
-  "Choose which sidebar to open Lethe in.": "Choose which sidebar to open Lethe in.",
-  Left: "Left",
-  Right: "Right",
-  "You didn't set format for daily notes in both periodic-notes and daily-notes plugins.": "You didn't set format for daily notes in both periodic-notes and daily-notes plugins.",
-  "Storage Options": "Storage Options",
-  "Memo Storage Mode": "Memo Storage Mode",
-  "Choose how memos are stored: in daily notes or as individual files.": "Choose how memos are stored: in daily notes or as individual files.",
-  "Daily Notes": "Daily Notes",
-  "Individual Files": "Individual Files",
-  "Individual Memo Folder": "Individual Memo Folder",
-  'Folder path for individual memo files. Only used when storage mode is "Individual Files".': 'Folder path for individual memo files. Only used when storage mode is "Individual Files".',
-  "Filename Length Limit": "Filename Length Limit",
-  "Maximum characters from memo content to use for filename.": "Maximum characters from memo content to use for filename.",
-  "Default Tags": "Default Tags",
-  "Individual memo folder not found: ": "Individual memo folder not found: ",
-  'Comma-separated tags to add to individual memo files (e.g., "memo, note").': 'Comma-separated tags to add to individual memo files (e.g., "memo, note").',
-  "Pre-create daily notes": "Pre-create daily notes",
-  "Automatically create today and tomorrow's daily notes in the background for faster memo saves.": "Automatically create today and tomorrow's daily notes in the background for faster memo saves."
-};
-const enGB = {};
-const es = {};
-const fr = {
-  welcome: "Bienvenue dans M\xE9mo !",
-  ribbonIconTitle: "M\xE9mos",
-  months: [
-    "Janvier",
-    "F\xE9vrier",
-    "Mars",
-    "Avril",
-    "Mai",
-    "Juin",
-    "Juillet",
-    "Aout",
-    "Septembre",
-    "Octobre",
-    "Novembre",
-    "D\xE9cembre"
-  ],
-  monthsShort: ["Jan.", "Feb.", "Mar.", "Apr.", "May", "June", "July", "Aug.", "Sept.", "Oct.", "Nov.", "Dec."],
-  weekDays: ["Dimanche", "Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi", "Samedi"],
-  weekDaysShort: ["Dim", "Lun", "Mar", "Mer", "Jeu", "Ven", "Sam"],
-  to: "\xE0",
-  year: null,
-  month: null,
-  "Basic Options": "Options basique",
-  "User name in Memos": "Username dans M\xE9mos",
-  "Set your user name here. 'Memos \u{1F60F}' By default": "D\xE9finissez votre username ici. D\xE9faut : 'Memo \u{1F60F}'",
-  "Insert after heading": "Ins\xE9rer apr\xE8s le titre",
-  "You should set the same heading below if you want to insert and process memos below the same heading.": "Vous devez d\xE9finir le m\xEAme titre en-dessous si vous voulez ins\xE9rer et traiter des m\xE9mos sous le m\xEAme titre.",
-  "Allows admonitions to be created using ": "Permet de cr\xE9er des admonitions en utilisant",
-  "Process Memos below": "Ins\xE9rer M\xE9mo sous",
-  "Only entries below this string/section in your notes will be processed. If it does not exist no notes will be processed for that file.": "Seulement les entr\xE9e sous cette section/phrase dans vos notes seront consid\xE9r\xE9s. S'il n'existe pas, aucune notes ne sera trait\xE9 pour ce fichier.",
-  "Save Memo button label": "Titre du bouton de sauvegarde",
-  "The text shown on the save Memo button in the UI. 'NOTEIT' by default.": "Le texte affich\xE9 sur le bouton de sauvegarde dans l'UI. D\xE9faut : 'NOTEIT'",
-  "Focus on editor when open memos": "Focus sur l'\xE9diteur lors de l'ouverture du m\xE9mo.",
-  "Focus on editor when open memos. Focus by default.": "Focus sur l'\xE9diteur lors de l'ouverture du m\xE9mo. Focus par d\xE9faut.",
-  "Open daily memos with open memos": "Ouvrir les m\xE9mos quotidiens quand m\xE9mo est ouvert.",
-  "Open daily memos with open memos. Open by default.": "Ouvrir les m\xE9mos quotidiens quand m\xE9mo est ouvert.",
-  "Open Memos when obsidian opens": "Ouvrir M\xE9mo quand Obsidian est ouvert.",
-  "When enable this, Memos will open when Obsidian opens. False by default.": "Quand activ\xE9, Memo sera ouvert quand Obsidian \xE0 l'ouverture d'Obsidian. D\xE9sactiv\xE9 par d\xE9faut.",
-  "Hide done tasks in Memo list": "Masquer les t\xE2ches accomplies dans la liste des m\xE9mos.",
-  "Hide all done tasks in Memo list. Show done tasks by default.": "Masquer les t\xE2ches accomplies dans les m\xE9mos. Affiche les t\xE2ches accomplies par d\xE9faut.",
-  "Advanced Options": "Options avanc\xE9es",
-  "UI language for date": "Langue de l'UI pour la date",
-  "Translates the date UI language. Only 'en' and 'zh' are available.": "Traduit la langue des dates dans l'UI. Seuls 'en', 'fr' et 'zh' sont disponibles. ",
-  "Default prefix": "Pr\xE9fix par d\xE9faut.",
-  "Set the default prefix when create memo, 'List' by default.": "D\xE9finit le pr\xE9fix par d\xE9faut lors de la cr\xE9ation d'un m\xE9mo. D\xE9fault : 'Liste'",
-  "Default insert date format": "Format de la date ins\xE9r\xE9e par d\xE9faut.",
-  "Default editor position on mobile": "Position par d\xE9faut de l'\xE9diteur sur mobile.",
-  "Set the default date format when insert date by @, 'Tasks' by default.": "D\xE9finit le format de la date par d\xE9faut lors de l'insertion de la date par @. D\xE9faut : 'T\xE2ches'.",
-  "Set the default editor position on Mobile, 'Top' by default.": "Position par d\xE9faut de l'\xE9diteur sur le mobile. D\xE9faut : 'Haut'.",
-  "Use button to show editor on mobile": "Utilisation du bouton pour afficher l'\xE9diteur sur le mobile.",
-  "Show Time When Copy Results": "Aficher l'heure quand les r\xE9sultats sont copi\xE9s",
-  "Set a float button to call editor on mobile. Only when editor located at the bottom works.": "Place un bouton flottant pour appeler l'\xE9diteur sur mobile. Fonctionne uniquement quand l'\xE9diteur est plac\xE9 en bas.",
-  "Show time when you copy results, like 12:00. Copy time by default.": "Affiche l'heure quand les r\xE9sultats sont copi\xE9s, comme '12:00'. Copie l'heure par d\xE9faut",
-  "Show Date When Copy Results": "Affiche la date quand les r\xE9sultats sont copi\xE9s",
-  "Show date when you copy results, like [[2022-01-01]]. Copy date by default.": "Affiche la date quand les r\xE9sultats sont copi\xE9s, comme [[2022-01-01]]. Par d\xE9faut, copie la date.",
-  "Add Blank Line Between Different Date": "Ajoute une ligne entre les diff\xE9rentes dates.",
-  "Add blank line when copy result with date. No blank line by default.": "Ajoute une ligne lors de la copie du r\xE9sultat avec la date. Pas de ligne par d\xE9faut.",
-  "Share Options": "Options de partage",
-  "Share Memos Image Footer Start": "D\xE9but du pied de page \u2014 Partage de m\xE9mo de m\xE9mos",
-  "Set anything you want here, use {MemosNum} to display Number of memos, {UsedDay} for days. '{MemosNum} Memos {UsedDay} Days' By default": "D\xE9finissez ce que vous voulez ici, utilisez {MemosNum} pour afficher le nombre de m\xE9mos, {UsedDay} pour les jours. Par d\xE9faut : '{MemosNum} Memos {UsedDay} Days.",
-  "Share Memos Image Footer End": "Fin du pied de page \u2014 Partage de m\xE9mo",
-  "Set anything you want here, use {UserName} as your username. '\u270D\uFE0F By {UserName}' By default": "D\xE9finissez ce que vous voulez ici. Utilisez {UserName} comme username. Par d\xE9faut : '\u270D\uFE0F By {UserName}'",
-  "Save Shared Image To Folder For Mobile": "Sauvegarde des images partag\xE9s dans un dossier sur mobile.",
-  "Save image to folder for mobile. False by Default": "Sauvegarder les images dans un dossier sur mobile. D\xE9sactiv\xE9 par d\xE9faut.",
-  "Say Thank You": "Dites Merci",
-  Donate: "Faire un don",
-  "If you like this plugin, consider donating to support continued development:": "Si vous aimez ce plugin, envisagez de faire un don pour soutenir le d\xE9veloppement continu :",
-  "File Name of Recycle Bin": "Nom de la corbeille",
-  "Set the filename for recycle bin. 'delete' By default": "D\xE9finition du nom de la poubelle. D\xE9faut : 'Delete'",
-  "Set the filename for query file. 'query' By default": "D\xE9finit le nom de fichier pour les requ\xEAte. D\xE9faut : 'Query'",
-  "Use Tags In Vault": "Utiliser des tags dans le Coffre",
-  "Use tags in vault rather than only in Memos. False by default.": "Utiliser des tags du coffre plut\xF4t que ceux que seulement dans M\xE9mo. D\xE9sactiv\xE9 par d\xE9faut.",
-  "Ready to convert image into background": "Pr\xEAt pour convertir des image en arri\xE8re-plan.",
-  List: "Liste",
-  Task: "T\xE2che",
-  Top: "Haut",
-  Bottom: "Bas",
-  TAG: "TAG",
-  DAY: "JOUR",
-  QUERY: "RECHERCHE",
-  EDIT: "EDITER",
-  PIN: "PIN",
-  UNPIN: "\xC9PINGLER",
-  DELETE: "DES\xC9PINGLER",
-  "CONFIRM\uFF01": "CONFIRMER \uFF01",
-  "CREATE FILTER": "CR\xC9ER FILTRE",
-  Settings: "Param\xE8tres",
-  "Recycle bin": "Corbeille",
-  "About Me": "\xC0 propos de moi",
-  "Fetching data...": "R\xE9cup\xE9ration des donn\xE9es...",
-  "Here is No Zettels.": "Il n'y a pas de Zettels.",
-  "Frequently Used Tags": "Tags fr\xE9quemment utilis\xE9s",
-  "What do you think now...": "Que pensez-vous maintenant...",
-  READ: "LU",
-  MARK: "MARQUER",
-  SHARE: "PARTAGER",
-  SOURCE: "SOURCE",
-  RESTORE: "RESTAURER",
-  "DELETE AT": "SUPPRIMER",
-  "Noooop!": "Noooop!",
-  "All Data is Loaded \u{1F389}": "Toutes les donn\xE9es sont charg\xE9es \u{1F389}",
-  "Quick filter": "Filtre rapide",
-  TYPE: "TYPE",
-  LINKED: "LIEN",
-  "NO TAGS": "PAS DE TAGS",
-  "HAS LINKS": "A DES LIENS",
-  "HAS IMAGES": "A DES IMAGES",
-  INCLUDE: "INCLUS",
-  EXCLUDE: "EXCLUS",
-  TEXT: "TEXTE",
-  IS: "EST",
-  ISNOT: "N'EST PAS",
-  SELECT: "SELECTION",
-  "ADD FILTER TERMS": "AJOUTER DES TERMES FILTR\xC9",
-  FILTER: "FILTRE",
-  TITLE: "TITRE",
-  "CREATE QUERY": "CR\xC9ER UNE RECHERCHE",
-  "EDIT QUERY": "\xC9DITER UNE RECHERCHE",
-  MATCH: "MATCH",
-  TIMES: "HEURE",
-  "Share Memo Image": "Partager un m\xE9mo image",
-  "\u2197Click the button to save": "\u2197Clique pour sauvegarder",
-  "Image is generating...": "G\xE9n\xE9ration de l'image...",
-  "Image is loading...": "Image en chargement...",
-  "Loading...": "Chargement...",
-  "\u{1F61F} Cannot load image, image link maybe broken": "\u{1F61F} Impossible de charger l'image, le lien peut \xEAtre bris\xE9",
-  "Daily Memos": "M\xE9mo quotidien",
-  "CANCEL EDIT": "ANNULER L'\xC9DITION",
-  "LINK TO THE": "LIENS \xC0",
-  "Mobile Options": "Options mobile",
-  "Don't support web image yet, please input image path in vault": "Ne supporte pas les images webs. Merci d'ins\xE9rer le chemin de l'image depuis le coffre.",
-  "Background Image in Dark Theme": "Image de fond en th\xE8me sombre",
-  "Background Image in Light Theme": "Image de fond en th\xE8me clair",
-  'Set background image in dark theme. Set something like "Daily/one.png"': "D\xE9finir l'image de fond en th\xE8me sombre. D\xE9finir 'Daily/one.png' par exemple.",
-  'Set background image in light theme. Set something like "Daily/one.png"': "D\xE9finir l'image de fond en th\xE8me clair. D\xE9finir 'Daily/one.png' par exemple.",
-  'Set default memo composition, you should use {TIME} as "HH:mm" and {CONTENT} as content. "{TIME} {CONTENT}" by default': 'D\xE9finir la composition par d\xE9faut du m\xE9mo, vous devez utiliser {TIME} comme "HH:mm" et {CONTENT} comme contenu. "{TIME} {CONTENT}" par d\xE9faut',
-  "Default Memo Composition": "Composition par d\xE9faut du m\xE9mo",
-  "Show Tasks Label": "Afficher les \xE9tiquettes des t\xE2ches",
-  "Show tasks label near the time text. False by default": "Afficher les \xE9tiquettes des t\xE2ches \xE0 c\xF4t\xE9 du texte horaire. D\xE9sactiv\xE9 par d\xE9faut.",
-  "Please Open Memos First": "Merci d'ouvrir les m\xE9mos en premier"
-};
-const hi = {};
-const id = {};
-const it = {};
-const ja = {};
-const ko = {};
-const nl = {};
-const no = {};
-const pl = {};
-const pt = {
-  welcome: "Bem-vindo ao Memos!",
-  ribbonIconTitle: "Memos",
-  months: [
-    "Janeiro",
-    "Fevereiro",
-    "Mar\xE7o",
-    "Abril",
-    "Maio",
-    "Junho",
-    "Julho",
-    "Agosto",
-    "Setembro",
-    "Outubro",
-    "Novembro",
-    "Dezembro"
-  ],
-  monthsShort: ["Jan.", "Fev.", "Mar.", "Abr.", "Maio", "Jun.", "Jul.", "Ago.", "Set.", "Out.", "Nov.", "Dez."],
-  weekDays: ["Domingo", "Segunda", "Ter\xE7a", "Quarta", "Quinta", "Sexta", "S\xE1bado"],
-  weekDaysShort: ["Dom", "Seg", "Ter", "Qua", "Qui", "Sex", "S\xE1b"],
-  to: "para",
-  year: null,
-  month: null,
-  "Basic Options": "Op\xE7\xF5es B\xE1sicas",
-  "User name in Memos": "Nome de Usu\xE1rio no Memos",
-  "Set your user name here. 'Memos \u{1F60F}' By default": "Defina o nome de usu\xE1rio. Padr\xE3o: 'Memos \u{1F60F}'.",
-  "Insert after heading": "Inserir ap\xF3s o cabe\xE7alho",
-  "You should set the same heading below if you want to insert and process memos below the same heading.": "Deve definir o mesmo cabe\xE7alho na configura\xE7\xE3o posterior se pretende inserir e processar memorandos abaixo do cabe\xE7alho aqui definido.",
-  "Allows admonitions to be created using ": "Permitir que Admonitions sejam criadas usando ",
-  "Process Memos below": "Processar Memorandos abaixo do Cabe\xE7alho",
-  "Only entries below this string/section in your notes will be processed. If it does not exist no notes will be processed for that file.": "Somente as entradas abaixo deste cabe\xE7alho ser\xE3o processadas nas suas notas. Se n\xE3o configurar esta funcionalidade, nenhuma nota ser\xE1 processada para o ficheiro respetivo.",
-  "Save Memo button label": "Legenda do Bot\xE3o de Guardar Memorandos",
-  "The text shown on the save Memo button in the UI. 'NOTEIT' by default.": 'Define o texto apresentado na UI do bot\xE3o guardar memorandos. Padr\xE3o: "NOTEIT".',
-  "Focus on editor when open memos": "Focar no Editor ao iniciar o Memos",
-  "Focus on Editor when open memos. Focus by default.": 'Focar no editor ao iniciar o Memos. Padr\xE3o: "Focar".',
-  "Open daily memos with open memos": "Abrir memorandos di\xE1rios ao iniciar o Memos",
-  "Open daily memos with open memos. Open by default.": 'Abrir memorandos di\xE1rios ao iniciar o Memos. Padr\xE3o: "Abrir".',
-  "Open Memos when obsidian opens": "Abrir Memos quando o Obsidian inicia",
-  "When enable this, Memos will open when Obsidian opens. False by default.": 'Quando esta op\xE7\xE3o est\xE1 activa, o Memos abrir\xE1 quando o Obsidian inicia. Padr\xE3o: "Falso".',
-  "Hide done tasks in Memo list": "Ocultar tarefas conclu\xEDdas na lista de memorandos",
-  "Hide all done tasks in Memo list. Show done tasks by default.": 'Ocultar todas as tarefas conclu\xEDdas na lista de memorandos. Padr\xE3o: "Mostrar tarefas conclu\xEDdas".',
-  "Advanced Options": "Op\xE7\xF5es Avan\xE7adas",
-  "UI language for date": "Idioma na UI da Data ",
-  "Translates the date UI language. Only 'en' and 'zh' are available.": "Define o idioma na UI da Data. De momento, apenas 'en', 'fr', 'pt' e 'zh' est\xE3o dispon\xEDveis.",
-  "Default prefix": "Prefixo Padr\xE3o",
-  "Set the default prefix when create memo, 'List' by default.": "Define o prefixo padr\xE3o quando um memorando \xE9 criado. Padr\xE3o: 'Lista'.",
-  "Default insert date format": "Formato Padr\xE3o para Inser\xE7\xE3o de Data",
-  "Set the default date format when insert date by @, 'Tasks' by default.": "Define o formato de Data padr\xE3o ao inserir a data usando '@'. Padr\xE3o: 'Tarefas'.",
-  "Default editor position on mobile": "Posi\xE7\xE3o Padr\xE3o do Editor de Memorandos na Vers\xE3o M\xF3vel",
-  "Set the default editor position on Mobile, 'Top' by default.": "Define a posi\xE7\xE3o padr\xE3o do editor de memorandos na vers\xE3o m\xF3vel. Padr\xE3o: 'Topo'.",
-  "Use button to show editor on mobile": "Usar Bot\xE3o para Mostrar o Editor na Vers\xE3o M\xF3vel",
-  "Set a float button to call editor on mobile. Only when editor located at the bottom works.": "Define um bot\xE3o flutuante para abrir o editor na vers\xE3o m\xF3vel. Op\xE7\xE3o dispon\xEDvel somente quando a posi\xE7\xE3o do editor est\xE1 definida para 'Fundo'.",
-  "Show Time When Copy Results": "Mostrar a Hora ao Copiar os Resultados",
-  "Show time when you copy results, like 12:00. Copy time by default.": "Mostrar a Hora, no formato '12:00', ao copiar os resultados. Padr\xE3o: 'Copiar a hora'.",
-  "Show Date When Copy Results": "Mostrar a Data ao Copiar os Resultados",
-  "Show date when you copy results, like [[2022-01-01]]. Copy date by default.": 'Mostrar a Data, no formato [[2022-01-01]], ao copiar os resultados. Padr\xE3o: "Copiar a hora".',
-  "Add Blank Line Between Different Date": "Adicionar Linha em Branco entre Datas Diferentes.",
-  "Add blank line when copy result with date. No blank line by default.": 'Adicionar linha em branco ao copiar resultados com Data. Padr\xE3o: "N\xE3o adicionar linha."',
-  "Share Options": "Op\xE7\xF5es de Partilha",
-  "Share Memos Image Footer Start": "Partilhar a Imagem de um memorando - In\xEDcio do Rodap\xE9",
-  "Set anything you want here, use {MemosNum} to display Number of memos, {UsedDay} for days. '{MemosNum} Memos {UsedDay} Days' By default": "Defina como preferir, use {MemosNum} para mostrar o n\xFAmero de memorandos e use {UsedDay} para dias. 'Padr\xE3o: {MemosNum} Memorandos {UsedDay} Dias'.",
-  "Share Memos Image Footer End": "Partilhar a Imagem de um memorando - Fim do Rodap\xE9",
-  "Set anything you want here, use {UserName} as your username. '\u270D\uFE0F By {UserName}' By default": "Defina como preferir, use {UserName} como o seu nome de usu\xE1rio. Padr\xE3o: '\u270D\uFE0F Por {UserName}'.",
-  "Save Shared Image To Folder For Mobile": "Guardar a Imagem Partilhada para Pasta na Vers\xE3o M\xF3vel",
-  "Save image to folder for mobile. False by Default": 'Guardar a imagem partilhada para pasta na vers\xE3o m\xF3vel. Padr\xE3o: "Falso".',
-  "Say Thank You": "Agrade\xE7a",
-  Donate: "Doar",
-  "If you like this plugin, consider donating to support continued development:": "Se gosta deste plugin, considere doar para apoiar o seu desenvolvimento cont\xEDnuo:",
-  "File Name of Recycle Bin": "Nome da Reciclagem",
-  "Set the filename for recycle bin. 'delete' By default": "Define o nome do ficheiro para a Reciclagem. Padr\xE3o: 'delete'.",
-  "File Name of Query File": "Nome do Ficheiro de Query",
-  "Set the filename for query file. 'query' By default": "Define o nome do ficheiro de Query. Padr\xE3o: 'Query'.",
-  "Use Tags In Vault": "Usar Tags no Vault",
-  "Use tags in vault rather than only in Memos. False by default.": 'Usar as Tags do Vault e n\xE3o somente dos memorandos. Padr\xE3o: "Falso".',
-  "Ready to convert image into background": "Pronto para converter imagem em fundo",
-  List: "Lista",
-  Task: "Tarefa",
-  Top: "Topo",
-  Bottom: "Fundo",
-  TAG: "TAG",
-  DAY: "DIA",
-  QUERY: "QUERY",
-  EDIT: "EDITAR",
-  PIN: "FIXAR",
-  UNPIN: "DESAFIXAR",
-  DELETE: "ELIMINAR",
-  "CONFIRM\uFF01": "CONFIRMAR\uFF01",
-  "CREATE FILTER": "CRIAR FILTRO",
-  Settings: "Defini\xE7\xF5es",
-  "Recycle bin": "Reciclagem",
-  "About Me": "Acerca de mim",
-  "Fetching data...": "A obter dados...",
-  "Here is No Zettels.": "N\xE3o existem Zettels.",
-  "Frequently Used Tags": "Tags Usadas Frequentemente",
-  "What do you think now...": "Em que est\xE1 a pensar...",
-  READ: "LER",
-  MARK: "ASSINALAR",
-  SHARE: "PARTILHAR",
-  SOURCE: "ORIGEM",
-  RESTORE: "RESTAURAR",
-  "DELETE AT": "ELIMINADO EM",
-  "Noooop!": "Noooop!",
-  "All Data is Loaded \u{1F389}": "Todos os Dados foram Carregados \u{1F389}",
-  "Quick filter": "Filtro r\xE1pido",
-  TYPE: "TIPO",
-  LINKED: "LINKED",
-  "NO TAGS": "SEM TAGS",
-  "HAS LINKS": "TEM LINKS",
-  "HAS IMAGES": "TEM IMAGENS",
-  INCLUDE: "INCLUIR",
-  EXCLUDE: "EXCLUIR",
-  TEXT: "TEXTO",
-  IS: "\xC9",
-  ISNOT: "N\xC3O \xC9",
-  SELECT: "SELECCIONAR",
-  "ADD FILTER TERMS": "ADICIONAR TERMOS DE FILTRAGEM",
-  FILTER: "FILTRAR",
-  TITLE: "T\xCDTULO",
-  "CREATE QUERY": "CRIAR QUERY",
-  "EDIT QUERY": "EDITAR QUERY",
-  MATCH: "IGUALA",
-  TIMES: "VEZES",
-  "Share Memo Image": "Partilhar Imagem de Memo",
-  "\u2197Click the button to save": "\u2197Clique no bot\xE3o para guardar",
-  "Image is generating...": "A gerar Imagem..",
-  "Image is loading...": "A carregar Imagem...",
-  "Loading...": "Carregando...",
-  "\u{1F61F} Cannot load image, image link maybe broken": "\u{1F61F} N\xE3o \xE9 poss\xEDvel carregar a imagem, o link da imagem pode estar incorrecto",
-  "Daily Memos": "Memos Di\xE1rios",
-  "CANCEL EDIT": "CANCELAR EDI\xC7\xC3O",
-  "LINK TO THE": "LINK PARA O",
-  "Mobile Options": "Op\xE7\xF5es M\xF3veis",
-  "Don't support web image yet, please input image path in vault": "Ainda n\xE3o existe suporte para imagens de web. Por favor, insira o link para uma imagem do vault",
-  "Experimental Options": "Op\xE7\xF5es Experimentais",
-  "Background Image in Dark Theme": "Imagem de Fundo no Tema Escuro",
-  "Background Image in Light Theme": "Imagem de Fundo no Tema Claro",
-  'Set background image in dark theme. Set something like "Daily/one.png"': 'Defina a imagem de fundo para o tema escuro. Defina da seguinte forma: "Daily/one.png".',
-  'Set background image in light theme. Set something like "Daily/one.png"': 'Defina a imagem de fundo para o tema claro. Defina da seguinte forma: "Daily/one.png".',
-  'Set default memo composition, you should use {TIME} as "HH:mm" and {CONTENT} as content. "{TIME} {CONTENT}" by default': 'Defina a composi\xE7\xE3o padr\xE3o do memorando, deve usar {TIME} como "HH:mm" e {CONTENT} como conte\xFAdo. Padr\xE3o: "{TIME} {CONTENT}".',
-  "Default Memo Composition": "Composi\xE7\xE3o Padr\xE3o de um Memorando",
-  "Show Tasks Label": "Mostrar Etiquetas de Tarefas",
-  "Show tasks label near the time text. False by default": 'Mostrar etiquetas de tarefas pr\xF3ximas do texto de tempo. Padr\xE3o: "Falso".',
-  "Please Open Memos First": "Por favor, abra o Memos primeiro",
-  DATE: "DATA",
-  OBSIDIAN_NLDATES_PLUGIN_NOT_ENABLED: "OBSIDIAN_NLDATES_PLUGIN_NOT_ENABLED",
-  BEFORE: "ANTES",
-  AFTER: "DEPOIS",
-  "Allow Comments On Memos": "Permitir Coment\xE1rios nos Memorandos",
-  "You can comment on memos. False by default": 'Permite que comente os memorandos. Padr\xE3o: "Falso".',
-  Import: "Importar",
-  "TITLE CANNOT BE NULL!": "O T\xCDTULO N\xC3O PODE SER NULO!",
-  "FILTER CANNOT BE NULL!": "O FILTRO N\xC3O PODE SER NULO!",
-  "Comments In Original DailyNotes/Notes": "Coment\xE1rios nas Notas/Notas Di\xE1rias Originais",
-  "You should install Dataview Plug-in ver 0.5.9 or later to use this feature.": "Deve instalar a vers\xE3o 0.5.9 ou posterior do plugin Dataview para usar esta funcionalidade.",
-  "Open Memos Successfully": "Memos Iniciado com Sucesso",
-  "Fetch Error": "\u{1F62D} Erro de Fetch",
-  "Copied to clipboard Successfully": "Copiado para a \xE1rea de transfer\xEAncia com sucesso",
-  "Check if you opened Daily Notes Plugin Or Periodic Notes Plugin": "Verifique se abriu o plugin de Notas Di\xE1rias ou de Notas Peri\xF3dicas",
-  "Please finish the last filter setting first": "Por favor, termine  primeiro a configura\xE7\xE3o do \xFAltimo filtro",
-  "Close Memos Successfully": "Memos Fechado com Sucesso",
-  "Insert as Memo": "Inserir como um Memorando",
-  "Insert file as memo content": "Inserir ficheiro como conte\xFAdo de um memorando",
-  "Image load failed": "Falha no carregamento da imagem",
-  "Content cannot be empty": "O Conte\xFAdo n\xE3o pode estar vazio",
-  "Unable to create new file.": "N\xE3o foi poss\xEDvel criar um novo ficheiro.",
-  "Failed to fetch deleted memos: ": "Falha no fetch dos memorandos removidos: ",
-  "RESTORE SUCCEED": "RESTAURO BEM SUCEDIDO",
-  "Save Memo button icon": "\xCDcone do Bot\xE3o para Guardar Memorandos",
-  "The icon shown on the save Memo button in the UI.": "O \xEDcone exibido na UI do bot\xE3o para guardar memorandos.",
-  "Fetch Memos From Particular Notes": "Obter Memorandos de Notas Espec\xEDficas",
-  'You can set any Dataview Query for memos to fetch it. All memos in those notes will show on list. "#memo" by default': 'Pode definir qualquer Query de Dataview para o Memos procurar. Todos os memorandos nessas notas ser\xE3o mostrados na lista. Padr\xE3o: "#memo".',
-  "Allow Memos to Fetch Memo from Notes": "Permitir que o Memos Obtenha memorandos das Notas",
-  "Use Memos to manage all memos in your notes, not only in daily notes. False by default": 'Use o Memos para gerir todos os memorandos nas suas notas e n\xE3o apenas nas notas di\xE1rias. Padr\xE3o: "Falso".',
-  "Always Show Memo Comments": "Mostrar Coment\xE1rios dos Memorandos",
-  "Always show memo comments on memos. False by default": 'Mostrar sempre os coment\xE1rios dos memorandos. Padr\xE3o: "Falso".',
-  "You didn't set folder for daily notes in both periodic-notes and daily-notes plugins.": "N\xE3o definiu a pasta para as notas di\xE1rias, quer no plugin the Notas Peri\xF3dicas ou de Notas Di\xE1rias.",
-  "Please check your daily note plugin OR periodic notes plugin settings": "Por favor, verifique as configura\xE7\xF5es dos plugins de Notas Di\xE1rias OU de Notas Peri\xF3dicas",
-  "Use Which Plugin's Default Configuration": "Usar a Configura\xE7\xE3o Padr\xE3o do Plugin",
-  "Memos use the plugin's default configuration to fetch memos from daily, 'Daily' by default.": "O Memos usa a configura\xE7\xE3o padr\xE3o do plugin seleccionado para obter memorandos diariamente. Padr\xE3o: 'Notas Di\xE1rias'.",
-  Daily: "Di\xE1rio"
-};
-const ptBR = {
-  welcome: "Bem-vindo ao Memos!",
-  ribbonIconTitle: "Memos",
-  months: [
-    "Janeiro",
-    "Fevereiro",
-    "Mar\xE7o",
-    "Abril",
-    "Maio",
-    "Junho",
-    "Julho",
-    "Agosto",
-    "Setembro",
-    "Outubro",
-    "Novembro",
-    "Dezembro"
-  ],
-  monthsShort: ["Jan.", "Fev.", "Mar.", "Abr.", "Maio", "Jun.", "Jul.", "Ago.", "Set.", "Out.", "Nov.", "Dez."],
-  weekDays: ["Domingo", "Segunda", "Ter\xE7a", "Quarta", "Quinta", "Sexta", "S\xE1bado"],
-  weekDaysShort: ["Dom", "Seg", "Ter", "Qua", "Qui", "Sex", "S\xE1b"],
-  to: "para",
-  year: null,
-  month: null,
-  "Basic Options": "Op\xE7\xF5es B\xE1sicas",
-  "User name in Memos": "Nome de Usu\xE1rio no Memos",
-  "Set your user name here. 'Memos \u{1F60F}' By default": "Defina o nome de usu\xE1rio. Padr\xE3o: 'Memos \u{1F60F}'.",
-  "Insert after heading": "Inserir ap\xF3s o cabe\xE7alho",
-  "You should set the same heading below if you want to insert and process memos below the same heading.": "Deve definir o mesmo cabe\xE7alho na configura\xE7\xE3o posterior se pretende inserir e processar memorandos abaixo do cabe\xE7alho aqui definido.",
-  "Allows admonitions to be created using ": "Permitir que Admonitions sejam criadas usando ",
-  "Process Memos below": "Processar Memorandos abaixo do Cabe\xE7alho",
-  "Only entries below this string/section in your notes will be processed. If it does not exist no notes will be processed for that file.": "Somente as entradas abaixo deste cabe\xE7alho ser\xE3o processadas nas suas notas. Se n\xE3o configurar esta funcionalidade, nenhuma nota ser\xE1 processada para o ficheiro respetivo.",
-  "Save Memo button label": "Legenda do Bot\xE3o de Guardar Memorandos",
-  "The text shown on the save Memo button in the UI. 'NOTEIT' by default.": 'Define o texto apresentado na UI do bot\xE3o guardar memorandos. Padr\xE3o: "NOTEIT".',
-  "Focus on editor when open memos": "Focar no Editor ao iniciar o Memos",
-  "Focus on Editor when open memos. Focus by default.": 'Focar no editor ao iniciar o Memos. Padr\xE3o: "Focar".',
-  "Open daily memos with open memos": "Abrir memorandos di\xE1rios ao iniciar o Memos",
-  "Open daily memos with open memos. Open by default.": 'Abrir memorandos di\xE1rios ao iniciar o Memos. Padr\xE3o: "Abrir".',
-  "Open Memos when obsidian opens": "Abrir Memos quando o Obsidian inicia",
-  "When enable this, Memos will open when Obsidian opens. False by default.": 'Quando esta op\xE7\xE3o est\xE1 activa, o Memos abrir\xE1 quando o Obsidian inicia. Padr\xE3o: "Falso".',
-  "Hide done tasks in Memo list": "Ocultar tarefas conclu\xEDdas na lista de memorandos",
-  "Hide all done tasks in Memo list. Show done tasks by default.": 'Ocultar todas as tarefas conclu\xEDdas na lista de memorandos. Padr\xE3o: "Mostrar tarefas conclu\xEDdas".',
-  "Advanced Options": "Op\xE7\xF5es Avan\xE7adas",
-  "UI language for date": "Idioma na UI da Data ",
-  "Translates the date UI language. Only 'en' and 'zh' are available.": "Define o idioma na UI da Data. De momento, apenas 'en', 'fr', 'pt' e 'zh' est\xE3o dispon\xEDveis.",
-  "Default prefix": "Prefixo Padr\xE3o",
-  "Set the default prefix when create memo, 'List' by default.": "Define o prefixo padr\xE3o quando um memorando \xE9 criado. Padr\xE3o: 'Lista'.",
-  "Default insert date format": "Formato Padr\xE3o para Inser\xE7\xE3o de Data",
-  "Set the default date format when insert date by @, 'Tasks' by default.": "Define o formato de Data padr\xE3o ao inserir a data usando '@'. Padr\xE3o: 'Tarefas'.",
-  "Default editor position on mobile": "Posi\xE7\xE3o Padr\xE3o do Editor de Memorandos na Vers\xE3o M\xF3vel",
-  "Set the default editor position on Mobile, 'Top' by default.": "Define a posi\xE7\xE3o padr\xE3o do editor de memorandos na vers\xE3o m\xF3vel. Padr\xE3o: 'Topo'.",
-  "Use button to show editor on mobile": "Usar Bot\xE3o para Mostrar o Editor na Vers\xE3o M\xF3vel",
-  "Set a float button to call editor on mobile. Only when editor located at the bottom works.": "Define um bot\xE3o flutuante para abrir o editor na vers\xE3o m\xF3vel. Op\xE7\xE3o dispon\xEDvel somente quando a posi\xE7\xE3o do editor est\xE1 definida para 'Fundo'.",
-  "Show Time When Copy Results": "Mostrar a Hora ao Copiar os Resultados",
-  "Show time when you copy results, like 12:00. Copy time by default.": "Mostrar a Hora, no formato '12:00', ao copiar os resultados. Padr\xE3o: 'Copiar a hora'.",
-  "Show Date When Copy Results": "Mostrar a Data ao Copiar os Resultados",
-  "Show date when you copy results, like [[2022-01-01]]. Copy date by default.": 'Mostrar a Data, no formato [[2022-01-01]], ao copiar os resultados. Padr\xE3o: "Copiar a hora".',
-  "Add Blank Line Between Different Date": "Adicionar Linha em Branco entre Datas Diferentes.",
-  "Add blank line when copy result with date. No blank line by default.": 'Adicionar linha em branco ao copiar resultados com Data. Padr\xE3o: "N\xE3o adicionar linha."',
-  "Share Options": "Op\xE7\xF5es de Partilha",
-  "Share Memos Image Footer Start": "Partilhar a Imagem de um memorando - In\xEDcio do Rodap\xE9",
-  "Set anything you want here, use {MemosNum} to display Number of memos, {UsedDay} for days. '{MemosNum} Memos {UsedDay} Days' By default": "Defina como preferir, use {MemosNum} para mostrar o n\xFAmero de memorandos e use {UsedDay} para dias. 'Padr\xE3o: {MemosNum} Memorandos {UsedDay} Dias'.",
-  "Share Memos Image Footer End": "Partilhar a Imagem de um memorando - Fim do Rodap\xE9",
-  "Set anything you want here, use {UserName} as your username. '\u270D\uFE0F By {UserName}' By default": "Defina como preferir, use {UserName} como o seu nome de usu\xE1rio. Padr\xE3o: '\u270D\uFE0F Por {UserName}'.",
-  "Save Shared Image To Folder For Mobile": "Guardar a Imagem Partilhada para Pasta na Vers\xE3o M\xF3vel",
-  "Save image to folder for mobile. False by Default": 'Guardar a imagem partilhada para pasta na vers\xE3o m\xF3vel. Padr\xE3o: "Falso".',
-  "Say Thank You": "Agrade\xE7a",
-  Donate: "Doar",
-  "If you like this plugin, consider donating to support continued development:": "Se gosta deste plugin, considere doar para apoiar o seu desenvolvimento cont\xEDnuo:",
-  "File Name of Recycle Bin": "Nome da Reciclagem",
-  "Set the filename for recycle bin. 'delete' By default": "Define o nome do ficheiro para a Reciclagem. Padr\xE3o: 'delete'.",
-  "File Name of Query File": "Nome do Ficheiro de Query",
-  "Set the filename for query file. 'query' By default": "Define o nome do ficheiro de Query. Padr\xE3o: 'Query'.",
-  "Use Tags In Vault": "Usar Tags no Vault",
-  "Use tags in vault rather than only in Memos. False by default.": 'Usar as Tags do Vault e n\xE3o somente dos memorandos. Padr\xE3o: "Falso".',
-  "Ready to convert image into background": "Pronto para converter imagem em fundo",
-  List: "Lista",
-  Task: "Tarefa",
-  Top: "Topo",
-  Bottom: "Fundo",
-  TAG: "TAG",
-  DAY: "DIA",
-  QUERY: "QUERY",
-  EDIT: "EDITAR",
-  PIN: "FIXAR",
-  UNPIN: "DESAFIXAR",
-  DELETE: "ELIMINAR",
-  "CONFIRM\uFF01": "CONFIRMAR\uFF01",
-  "CREATE FILTER": "CRIAR FILTRO",
-  Settings: "Defini\xE7\xF5es",
-  "Recycle bin": "Reciclagem",
-  "About Me": "Acerca de mim",
-  "Fetching data...": "A obter dados...",
-  "Here is No Zettels.": "N\xE3o existem Zettels.",
-  "Frequently Used Tags": "Tags Usadas Frequentemente",
-  "What do you think now...": "Em que est\xE1 a pensar...",
-  READ: "LER",
-  MARK: "ASSINALAR",
-  SHARE: "PARTILHAR",
-  SOURCE: "ORIGEM",
-  RESTORE: "RESTAURAR",
-  "DELETE AT": "ELIMINADO EM",
-  "Noooop!": "Noooop!",
-  "All Data is Loaded \u{1F389}": "Todos os Dados foram Carregados \u{1F389}",
-  "Quick filter": "Filtro r\xE1pido",
-  TYPE: "TIPO",
-  LINKED: "LINKED",
-  "NO TAGS": "SEM TAGS",
-  "HAS LINKS": "TEM LINKS",
-  "HAS IMAGES": "TEM IMAGENS",
-  INCLUDE: "INCLUIR",
-  EXCLUDE: "EXCLUIR",
-  TEXT: "TEXTO",
-  IS: "\xC9",
-  ISNOT: "N\xC3O \xC9",
-  SELECT: "SELECCIONAR",
-  "ADD FILTER TERMS": "ADICIONAR TERMOS DE FILTRAGEM",
-  FILTER: "FILTRAR",
-  TITLE: "T\xCDTULO",
-  "CREATE QUERY": "CRIAR QUERY",
-  "EDIT QUERY": "EDITAR QUERY",
-  MATCH: "IGUALA",
-  TIMES: "VEZES",
-  "Share Memo Image": "Partilhar Imagem de Memo",
-  "\u2197Click the button to save": "\u2197Clique no bot\xE3o para guardar",
-  "Image is generating...": "A gerar Imagem..",
-  "Image is loading...": "A carregar Imagem...",
-  "Loading...": "Carregando...",
-  "\u{1F61F} Cannot load image, image link maybe broken": "\u{1F61F} N\xE3o \xE9 poss\xEDvel carregar a imagem, o link da imagem pode estar incorrecto",
-  "Daily Memos": "Memos Di\xE1rios",
-  "CANCEL EDIT": "CANCELAR EDI\xC7\xC3O",
-  "LINK TO THE": "LINK PARA O",
-  "Mobile Options": "Op\xE7\xF5es M\xF3veis",
-  "Don't support web image yet, please input image path in vault": "Ainda n\xE3o existe suporte para imagens de web. Por favor, insira o link para uma imagem do vault",
-  "Experimental Options": "Op\xE7\xF5es Experimentais",
-  "Background Image in Dark Theme": "Imagem de Fundo no Tema Escuro",
-  "Background Image in Light Theme": "Imagem de Fundo no Tema Claro",
-  'Set background image in dark theme. Set something like "Daily/one.png"': 'Defina a imagem de fundo para o tema escuro. Defina da seguinte forma: "Daily/one.png".',
-  'Set background image in light theme. Set something like "Daily/one.png"': 'Defina a imagem de fundo para o tema claro. Defina da seguinte forma: "Daily/one.png".',
-  'Set default memo composition, you should use {TIME} as "HH:mm" and {CONTENT} as content. "{TIME} {CONTENT}" by default': 'Defina a composi\xE7\xE3o padr\xE3o do memorando, deve usar {TIME} como "HH:mm" e {CONTENT} como conte\xFAdo. Padr\xE3o: "{TIME} {CONTENT}".',
-  "Default Memo Composition": "Composi\xE7\xE3o Padr\xE3o de um Memorando",
-  "Show Tasks Label": "Mostrar Etiquetas de Tarefas",
-  "Show tasks label near the time text. False by default": 'Mostrar etiquetas de tarefas pr\xF3ximas do texto de tempo. Padr\xE3o: "Falso".',
-  "Please Open Memos First": "Por favor, abra o Memos primeiro",
-  DATE: "DATA",
-  OBSIDIAN_NLDATES_PLUGIN_NOT_ENABLED: "OBSIDIAN_NLDATES_PLUGIN_NOT_ENABLED",
-  BEFORE: "ANTES",
-  AFTER: "DEPOIS",
-  "Allow Comments On Memos": "Permitir Coment\xE1rios nos Memorandos",
-  "You can comment on memos. False by default": 'Permite que comente os memorandos. Padr\xE3o: "Falso".',
-  Import: "Importar",
-  "TITLE CANNOT BE NULL!": "O T\xCDTULO N\xC3O PODE SER NULO!",
-  "FILTER CANNOT BE NULL!": "O FILTRO N\xC3O PODE SER NULO!",
-  "Comments In Original DailyNotes/Notes": "Coment\xE1rios nas Notas/Notas Di\xE1rias Originais",
-  "You should install Dataview Plug-in ver 0.5.9 or later to use this feature.": "Deve instalar a vers\xE3o 0.5.9 ou posterior do plugin Dataview para usar esta funcionalidade.",
-  "Open Memos Successfully": "Memos Iniciado com Sucesso",
-  "Fetch Error": "\u{1F62D} Erro de Fetch",
-  "Copied to clipboard Successfully": "Copiado para a \xE1rea de transfer\xEAncia com sucesso",
-  "Check if you opened Daily Notes Plugin Or Periodic Notes Plugin": "Verifique se abriu o plugin de Notas Di\xE1rias ou de Notas Peri\xF3dicas",
-  "Please finish the last filter setting first": "Por favor, termine  primeiro a configura\xE7\xE3o do \xFAltimo filtro",
-  "Close Memos Successfully": "Memos Fechado com Sucesso",
-  "Insert as Memo": "Inserir como um Memorando",
-  "Insert file as memo content": "Inserir ficheiro como conte\xFAdo de um memorando",
-  "Image load failed": "Falha no carregamento da imagem",
-  "Content cannot be empty": "O Conte\xFAdo n\xE3o pode estar vazio",
-  "Unable to create new file.": "N\xE3o foi poss\xEDvel criar um novo ficheiro.",
-  "Failed to fetch deleted memos: ": "Falha no fetch dos memorandos removidos: ",
-  "RESTORE SUCCEED": "RESTAURO BEM SUCEDIDO",
-  "Save Memo button icon": "\xCDcone do Bot\xE3o para Guardar Memorandos",
-  "The icon shown on the save Memo button in the UI.": "O \xEDcone exibido na UI do bot\xE3o para guardar memorandos.",
-  "Fetch Memos From Particular Notes": "Obter Memorandos de Notas Espec\xEDficas",
-  'You can set any Dataview Query for memos to fetch it. All memos in those notes will show on list. "#memo" by default': 'Pode definir qualquer Query de Dataview para o Memos procurar. Todos os memorandos nessas notas ser\xE3o mostrados na lista. Padr\xE3o: "#memo".',
-  "Allow Memos to Fetch Memo from Notes": "Permitir que o Memos Obtenha memorandos das Notas",
-  "Use Memos to manage all memos in your notes, not only in daily notes. False by default": 'Use o Memos para gerir todos os memorandos nas suas notas e n\xE3o apenas nas notas di\xE1rias. Padr\xE3o: "Falso".',
-  "Always Show Memo Comments": "Mostrar Coment\xE1rios dos Memorandos",
-  "Always show memo comments on memos. False by default": 'Mostrar sempre os coment\xE1rios dos memorandos. Padr\xE3o: "Falso".',
-  "You didn't set folder for daily notes in both periodic-notes and daily-notes plugins.": "N\xE3o definiu a pasta para as notas di\xE1rias, quer no plugin the Notas Peri\xF3dicas ou de Notas Di\xE1rias.",
-  "Please check your daily note plugin OR periodic notes plugin settings": "Por favor, verifique as configura\xE7\xF5es dos plugins de Notas Di\xE1rias OU de Notas Peri\xF3dicas",
-  "Use Which Plugin's Default Configuration": "Usar a Configura\xE7\xE3o Padr\xE3o do Plugin",
-  "Memos use the plugin's default configuration to fetch memos from daily, 'Daily' by default.": "O Memos usa a configura\xE7\xE3o padr\xE3o do plugin seleccionado para obter memorandos diariamente. Padr\xE3o: 'Notas Di\xE1rias'.",
-  Daily: "Di\xE1rio"
-};
-const ro = {};
-const ru = {};
-const tr = {};
-const zhCN = {
-  welcome: "\u6B22\u8FCE\u4F7F\u7528 Memos ",
-  ribbonIconTitle: "Memos",
-  months: ["\u4E00\u6708", "\u4E8C\u6708", "\u4E09\u6708", "\u56DB\u6708", "\u4E94\u6708", "\u516D\u6708", "\u4E03\u6708", "\u516B\u6708", "\u4E5D\u6708", "\u5341\u6708", "\u5341\u4E00\u6708", "\u5341\u4E8C\u6708"],
-  monthsShort: [null, null, null, null, null, null, null, null, null, null, null, null],
-  weekDays: ["\u5468\u65E5", "\u5468\u4E00", "\u5468\u4E8C", "\u5468\u4E09", "\u5468\u56DB", "\u5468\u4E94", "\u5468\u516D"],
-  weekDaysShort: ["\u5468\u65E5", "\u5468\u4E00", "\u5468\u4E8C", "\u5468\u4E09", "\u5468\u56DB", "\u5468\u4E94", "\u5468\u516D"],
-  to: "\u81F3",
-  year: "\u5E74",
-  month: "\u6708",
-  "Basic Options": "\u57FA\u7840\u9009\u9879",
-  "User name in Memos": "\u5728 Memos \u4E2D\u663E\u793A\u7684\u7528\u6237\u540D",
-  "Set your user name here. 'Memos \u{1F60F}' By default": "\u5728\u8FD9\u91CC\u8BBE\u7F6E\u4F60\u559C\u6B22\u7684\u7528\u6237\u540D\u3002 \u9ED8\u8BA4\u4E3A 'Memos \u{1F60F}'",
-  "Insert after heading": "\u5728\u6307\u5B9A\u6807\u9898\u540E\u63D2\u5165 Memo",
-  "You should set the same heading below if you want to insert and process memos below the same heading.": "\u4F60\u5982\u679C\u60F3\u8981\u63D2\u5165\u6807\u9898\u7684\u540C\u65F6\u663E\u793A\u5BF9\u5E94\u6807\u9898\u4E0B\u7684 Memo\uFF0C\u4F60\u5FC5\u987B\u4FDD\u8BC1\u5F53\u524D\u8BBE\u7F6E\u4E0E\u4E0B\u65B9\u7684\u89E3\u6790\u8BBE\u7F6E\u662F\u4E00\u81F4\u7684\u3002\u5F53\u4E3A\u7A7A\u65F6\u63D2\u5165\u5230\u6587\u672B",
-  "Process Memos below": "\u89E3\u6790\u6307\u5B9A\u6807\u9898\u540E\u7684 Memo",
-  "Only entries below this string/section in your notes will be processed. If it does not exist no notes will be processed for that file.": "\u53EA\u6709\u5728\u8BBE\u7F6E\u7684\u6807\u9898\u540E\u7684 Memo \u624D\u4F1A\u88AB\u89E3\u6790\u3002\u5F53\u4E3A\u7A7A\u65F6\u89E3\u6790\u5168\u6587\u7684 Memo",
-  "Save Memo button label": "\u4FDD\u5B58\u6309\u94AE\u4E0A\u7684\u6587\u672C",
-  "The text shown on the save Memo button in the UI. 'NOTEIT' by default.": "\u5728\u4FDD\u5B58\u6309\u94AE\u4E0A\u5C55\u793A\u7684\u6587\u672C\u3002\u9ED8\u8BA4\u4E3A 'NOTEIT'",
-  "Focus on editor when open memos": "\u81EA\u52A8\u805A\u7126\u5230 Memos \u8F93\u5165\u6846",
-  "Focus on editor when open memos. Focus by default.": "\u5F53\u6253\u5F00 Memos \u7684\u65F6\u5019\u81EA\u52A8\u805A\u7126\u5230 Memos \u8F93\u5165\u6846\u3002\u9ED8\u8BA4\u5F00\u542F",
-  "Open daily memos with open memos": "\u6253\u5F00\u6BCF\u65E5 Memo \u7684\u65F6\u5019\u6253\u5F00 Memos \u754C\u9762",
-  "Open daily memos with open memos. Open by default.": "\u6253\u5F00\u6BCF\u65E5 Memo \u7684\u65F6\u5019\u6253\u5F00 Memos \u754C\u9762\u3002\u9ED8\u8BA4\u5F00\u542F",
-  "Open Memos when obsidian opens": "\u5F53\u5F00\u542F Obsidian \u7684\u65F6\u5019\u81EA\u52A8\u6253\u5F00 Memos",
-  "When enable this, Memos will open when Obsidian opens. False by default.": "\u5F53\u5F00\u542F\u8BE5\u9009\u9879, Memos \u4F1A\u5728 Obsidian \u6253\u5F00\u65F6\u81EA\u52A8\u6253\u5F00\u3002\u9ED8\u8BA4\u4E0D\u5F00\u542F\u3002",
-  "Hide done tasks in Memo list": "\u5728 memo \u5217\u8868\u4E2D\u9690\u85CF\u5DF2\u5B8C\u6210 memo",
-  "Hide all done tasks in Memo list. Show done tasks by default.": "\u5728 memo \u5217\u8868\u4E2D\u9690\u85CF\u5DF2\u5B8C\u6210 memo\u3002\u9ED8\u8BA4\u4E0D\u5F00\u542F",
-  "Advanced Options": "\u8FDB\u9636\u9009\u9879",
-  "UI language for date": "\u9488\u5BF9\u65E5\u671F\u5C55\u793A\u7684\u8BED\u8A00\u754C\u9762",
-  "Translates the date UI language. Only 'en' and 'zh' are available.": "\u5BF9\u65E5\u671F\u7684\u4E0D\u540C\u7FFB\u8BD1\u3002\u76EE\u524D\u53EA\u80FD\u9009\u62E9 'en' \u548C 'zh'\uFF08\u672A\u6765\u4F1A\u5E9F\u7F6E\uFF09",
-  "Default prefix": "\u9ED8\u8BA4\u524D\u7F00",
-  "Set the default prefix when create memo, 'List' by default.": "\u8BBE\u7F6E\u9ED8\u8BA4\u7684\u524D\u7F00\u6837\u5F0F\u3002\u9ED8\u8BA4\u4E3A\u5217\u8868",
-  "Default insert date format": "\u63D2\u5165\u65E5\u671F\u9644\u5E26\u7684\u6837\u5F0F",
-  "Set the default date format when insert date by @, 'Tasks' by default.": "\u5F53\u4F7F\u7528 @ \u6765\u5FEB\u901F\u63D2\u5165\u65E5\u671F\u65F6\uFF0C\u63D2\u5165\u65E5\u671F\u9644\u5E26\u7684\u6837\u5F0F\uFF0C\u9ED8\u8BA4\u4E3A 'Tasks' \u6837\u5F0F",
-  "Default editor position on mobile": "\u5728\u79FB\u52A8\u7AEF\u4E0A\u7684\u9ED8\u8BA4\u7F16\u8F91\u5668\u4F4D\u7F6E",
-  "Set the default editor position on Mobile, 'Top' by default.": "\u8BBE\u7F6E\u5728\u79FB\u52A8\u7AEF\u4E0A\u7684\u9ED8\u8BA4\u7F16\u8F91\u5668\u4F4D\u7F6E\uFF0C\u9ED8\u8BA4\u5728\u9876\u90E8\u3002",
-  "Use button to show editor on mobile": "\u5F53\u7F16\u8F91\u5668\u4F4D\u7F6E\u5728\u5E95\u90E8\u65F6\uFF0C\u7528\u6309\u94AE\u6765\u5524\u51FA\u7F16\u8F91\u5668",
-  "Set a float button to call editor on mobile. Only when editor located at the bottom works.": "\u8BBE\u7F6E\u4E00\u4E2A\u6D6E\u52A8\u6309\u94AE\u6765\u5524\u51FA\u7F16\u8F91\u5668\u3002\u5F53\u5728\u79FB\u52A8\u7AEF\u4E0A\u542F\u7528\u8BE5\u9009\u9879\u624D\u4F1A\u751F\u6548",
-  "Show Time When Copy Results": "\u5F53\u590D\u5236\u68C0\u7D22\u7ED3\u679C\u65F6\u9644\u5E26\u65F6\u95F4",
-  "Show time when you copy results, like 12:00. Copy time by default.": "\u5728\u590D\u5236\u68C0\u7D22\u7ED3\u679C\u65F6\u9644\u5E26\u5176\u65F6\u95F4\uFF0C\u4F8B\u5982 12:00 \u3002\u9ED8\u8BA4\u5F00\u542F",
-  "Show Date When Copy Results": "\u5F53\u590D\u5236\u68C0\u7D22\u7ED3\u679C\u65F6\u9644\u5E26\u65E5\u671F",
-  "Show date when you copy results, like [[2022-01-01]]. Copy date by default.": "\u5728\u590D\u5236\u68C0\u7D22\u7ED3\u679C\u65F6\u9644\u5E26\u5176\u65E5\u671F\uFF0C\u4F8B\u5982 [[2022-01-01]]\u3002\u9ED8\u8BA4\u5F00\u542F",
-  "Add Blank Line Between Different Date": "\u5728\u590D\u5236\u65E5\u671F\u7684\u65F6\u5019\u52A0\u4E0A\u7A7A\u884C",
-  "Add blank line when copy result with date. No blank line by default.": "\u5728\u590D\u5236\u65E5\u671F\u7684\u65F6\u5019\u5728\u76F8\u90BB\u7684\u65E5\u671F\u4E4B\u95F4\u52A0\u4E0A\u7A7A\u884C\u3002\u9ED8\u8BA4\u65E0\u7A7A\u884C",
-  "Share Options": "\u5206\u4EAB\u9009\u9879",
-  "Share Memos Image Footer Start": "\u5206\u4EAB memo \u56FE\u7247\u7684\u5DE6\u8FB9\u9875\u811A",
-  "Set anything you want here, use {MemosNum} to display Number of memos, {UsedDay} for days. '{MemosNum} Memos {UsedDay} Days' By default": "\u4F60\u53EF\u4EE5\u5728\u8FD9\u91CC\u8BBE\u7F6E\u4F60\u60F3\u8981\u7684\u4EFB\u610F\u6587\u672C\uFF0C\u7528 {MemosNum} \u6765\u5C55\u793A\u4F60\u8BB0\u5F55\u7684 memo \u6570\u91CF\uFF0C{UsedDay} \u6765\u5C55\u793A\u4F7F\u7528\u65E5\u671F\u3002\u9ED8\u8BA4\u4E3A'{MemosNum} Memos {UsedDay} Days'",
-  "Share Memos Image Footer End": "\u5206\u4EAB memo \u56FE\u7247\u7684\u53F3\u8FB9\u9875\u811A",
-  "Set anything you want here, use {UserName} as your username. '\u270D\uFE0F By {UserName}' By default": "\u4F60\u53EF\u4EE5\u5728\u8FD9\u91CC\u8BBE\u7F6E\u4F60\u60F3\u8981\u7684\u4EFB\u610F\u6587\u672C\uFF0C\u7528 {UserName} \u6765\u5C55\u793A\u4F60\u7684\u7528\u6237\u540D\u3002\u9ED8\u8BA4\u4E3A '\u270D\uFE0F By {UserName}'",
-  "Save Shared Image To Folder For Mobile": "\u5F53\u5728\u79FB\u52A8\u7AEF\u4E0A\u65F6\u4FDD\u5B58\u56FE\u7247\u5230\u6587\u4EF6\u5939",
-  "Save image to folder for mobile. False by Default": "\u5F53\u5728\u79FB\u52A8\u7AEF\u4E0A\u65F6\uFF0C\u4FDD\u5B58\u751F\u6210\u7684\u56FE\u7247\u5230\u6587\u4EF6\u5939",
-  "Say Thank You": "\u611F\u8C22\u5F00\u53D1",
-  Donate: "\u6350\u8D60",
-  "If you like this plugin, consider donating to support continued development:": "\u5982\u679C\u4F60\u559C\u6B22\u8FD9\u4E2A\u63D2\u4EF6\uFF0C\u800C\u4E14\u4E5F\u5E0C\u671B\u7ED9\u6211\u4E70\u9E21\u817F\uFF0C\u90A3\u4E48\u53EF\u4EE5\u8003\u8651 Github \u9875\u9762\u53F3\u8FB9\u7684 Sponsor~",
-  "File Name of Recycle Bin": "\u56DE\u6536\u7AD9\u7684\u6587\u4EF6\u540D",
-  "Set the filename for recycle bin. 'delete' By default": "\u7ED9\u56DE\u6536\u7AD9\u8BBE\u7F6E\u4E00\u4E2A\u6587\u4EF6\u540D\u3002\u9ED8\u8BA4\u4E3A'delete'",
-  "File Name of Query File": "\u68C0\u7D22\u6587\u4EF6\u7684\u6587\u4EF6\u540D",
-  "Set the filename for query file. 'query' By default": "\u8BBE\u7F6E\u5B58\u653E\u68C0\u7D22\u5F0F\u7684\u6587\u4EF6\u7684\u6587\u4EF6\u540D\u3002\u9ED8\u8BA4\u4E3A'query'",
-  "Use Tags In Vault": "\u4F7F\u7528\u5728\u5E93\u5185\u7684\u6240\u6709\u6807\u7B7E",
-  "Use tags in vault rather than only in Memos. False by default.": "\u4F7F\u7528\u5728\u5E93\u5185\u7684\u800C\u4E0D\u662F Memos \u5185\u7684\u6807\u7B7E\u3002\u9ED8\u8BA4\u5173\u95ED",
-  "Don't support web image yet, please input image path in vault": "\u6682\u4E0D\u652F\u6301\u7F51\u7EDC\u56FE\u7247\uFF0C\u8BF7\u4F7F\u7528\u672C\u5730\u56FE\u7247",
-  "Ready to convert image into background": "\u6B63\u5728\u5C06\u56FE\u7247\u8F6C\u6362\u4E3A\u80CC\u666F\u56FE",
-  List: "\u5217\u8868",
-  Task: "\u4EFB\u52A1",
-  Top: "\u9876\u90E8",
-  Bottom: "\u5E95\u90E8",
-  TAG: "\u6807\u7B7E",
-  DAY: "\u5929",
-  QUERY: "\u68C0\u7D22\u5F0F",
-  EDIT: "\u7F16\u8F91",
-  PIN: "\u7F6E\u9876",
-  UNPIN: "\u53D6\u6D88\u7F6E\u9876",
-  DELETE: "\u5220\u9664",
-  "CONFIRM\uFF01": "\u786E\u5B9A\u5220\u9664",
-  "CREATE FILTER": "\u521B\u5EFA\u68C0\u7D22\u5F0F",
-  Settings: "\u8BBE\u7F6E",
-  "Recycle bin": "\u56DE\u6536\u7AD9",
-  "About Me": "\u5173\u4E8E",
-  "Fetching data...": "\u83B7\u53D6\u6570\u636E\u4E2D...",
-  "Here is No Zettels.": "\u6CA1\u6709\u627E\u5230 memo",
-  "Frequently Used Tags": "\u5E38\u7528\u6807\u7B7E",
-  "What do you think now...": "\u4F60\u73B0\u5728\u5728\u60F3\u4EC0\u4E48\uFF1F",
-  READ: "\u9605\u8BFB",
-  MARK: "\u5F15\u7528",
-  SHARE: "\u5206\u4EAB",
-  SOURCE: "\u6765\u6E90",
-  RESTORE: "\u6062\u590D",
-  "DELETE AT": "\u5220\u9664\u4E8E",
-  "Noooop!": "\u5565\u90FD\u6CA1\u6709\uFF01",
-  "All Data is Loaded \u{1F389}": "\u6240\u6709\u6570\u636E\u90FD\u52A0\u8F7D\u597D\u5566 \u{1F389}",
-  "Quick filter": "\u5FEB\u901F\u7B5B\u9009",
-  TYPE: "\u7C7B\u578B",
-  LINKED: "\u6709\u94FE\u63A5",
-  "NO TAGS": "\u65E0\u6807\u7B7E",
-  "HAS LINKS": "\u6709\u8D85\u94FE\u63A5",
-  "HAS IMAGES": "\u6709\u56FE\u7247",
-  INCLUDE: "\u5305\u62EC",
-  EXCLUDE: "\u6392\u9664",
-  TEXT: "\u6587\u672C",
-  IS: "\u662F",
-  ISNOT: "\u4E0D\u662F",
-  SELECT: "\u9009\u62E9",
-  "ADD FILTER TERMS": "\u6DFB\u52A0\u68C0\u7D22\u6761\u4EF6",
-  FILTER: "\u68C0\u7D22\u5668",
-  TITLE: "\u6807\u9898",
-  "CREATE QUERY": "\u521B\u5EFA\u68C0\u7D22\u5F0F",
-  "EDIT QUERY": "\u7F16\u8F91\u68C0\u7D22\u5F0F",
-  MATCH: "\u5339\u914D",
-  TIMES: "\u6B21",
-  "Share Memo Image": "\u5206\u4EAB Memo \u56FE\u7247",
-  "\u2197Click the button to save": "\u2197\u70B9\u51FB\u53F3\u4E0A\u89D2\u7684\u6309\u94AE\u6765\u4FDD\u5B58",
-  "Image is generating...": "\u56FE\u7247\u6B63\u5728\u751F\u6210\u4E2D...",
-  "Image is loading...": "\u56FE\u7247\u6B63\u5728\u52A0\u8F7D\u4E2D...",
-  "\u{1F61F} Cannot load image, image link maybe broken": "\u{1F61F} \u65E0\u6CD5\u52A0\u8F7D\u56FE\u7247\uFF0C\u56FE\u7247\u94FE\u63A5\u4E5F\u8BB8\u4E0D\u5B58\u5728",
-  "Loading...": "\u52AA\u529B\u52A0\u8F7D\u4E2D...",
-  "Daily Memos": "\u6BCF\u65E5 Memos",
-  "CANCEL EDIT": "\u53D6\u6D88\u7F16\u8F91",
-  "LINK TO THE": "\u94FE\u63A5\u5230",
-  "Mobile Options": "\u79FB\u52A8\u7AEF\u9009\u9879",
-  "Experimental Options": "\u5B9E\u9A8C\u6027\u9009\u9879",
-  "Background Image in Dark Theme": "\u6DF1\u8272\u4E3B\u9898\u7684\u80CC\u666F\u56FE",
-  "Background Image in Light Theme": "\u6D45\u8272\u4E3B\u9898\u7684\u80CC\u666F\u56FE",
-  'Set background image in dark theme. Set something like "Daily/one.png"': '\u8BBE\u7F6E\u6DF1\u8272\u4E3B\u9898\u7684\u80CC\u666F\u56FE\u3002\u8BF7\u8BBE\u7F6E\u7C7B\u4F3C"Daily/one.png"\u7684\u8DEF\u5F84',
-  'Set background image in light theme. Set something like "Daily/one.png"': '\u8BBE\u7F6E\u6D45\u8272\u4E3B\u9898\u7684\u80CC\u666F\u56FE\u3002\u8BF7\u8BBE\u7F6E\u7C7B\u4F3C"Daily/one.png"\u7684\u8DEF\u5F84',
-  'Set default memo composition, you should use {TIME} as "HH:mm" and {CONTENT} as content. "{TIME} {CONTENT}" by default': '\u8BBE\u7F6E\u9ED8\u8BA4 Memo \u7EC4\u6210\uFF0C\u4F60\u5FC5\u987B\u8981\u4F7F\u7528 {TIME} \u4F5C\u4E3A "HH:mm" \u800C\u4E14\u8981\u8BBE\u7F6E {CONTENT} \u4F5C\u4E3A\u5185\u5BB9\u8BC6\u522B\u3002\u9ED8\u8BA4\u60C5\u51B5\u4E0B\uFF0C Memo \u57FA\u4E8E "{TIME} {CONTENT}" \u8BC6\u522B',
-  "Default Memo Composition": "\u9ED8\u8BA4 Memo \u7EC4\u6210",
-  "Show Tasks Label": "\u5C55\u793A\u4EFB\u52A1\u6807\u7B7E",
-  "Show tasks label near the time text. False by default": "\u5728 Memo \u7684\u65F6\u95F4\u65C1\u5C55\u793A\u4EFB\u52A1\u6807\u7B7E\u3002\u9ED8\u8BA4\u60C5\u51B5\u4E0B\u4E0D\u5C55\u793A",
-  "Please Open Memos First": "\u8BF7\u5148\u6253\u5F00 Memos",
-  "Comment it...": "\u8BC4\u8BBA...",
-  DATE: "\u65E5\u671F",
-  OBSIDIAN_NLDATES_PLUGIN_NOT_ENABLED: "Obsidian Natrual DATES language \u63D2\u4EF6\u6CA1\u542F\u52A8",
-  BEFORE: "\u5728\u4E4B\u524D",
-  AFTER: "\u5728\u4E4B\u540E",
-  "Allow Comments On Memos": "\u5141\u8BB8\u5728 Memos \u4E0A\u8BC4\u8BBA",
-  "You can comment on memos. False by default": "\u4F60\u53EF\u4EE5\u5728 Memos \u70B9\u51FB\u56FE\u6807\u8FDB\u884C\u8BC4\u8BBA\u4E86\u3002\u9ED8\u8BA4\u4E0D\u5F00\u542F",
-  Import: "\u5BFC\u5165",
-  "TITLE CANNOT BE NULL!": "\u6807\u9898\u4E0D\u53EF\u4EE5\u4E3A\u7A7A\uFF01",
-  "FILTER CANNOT BE NULL!": "\u7B5B\u9009\u5668\u4E0D\u53EF\u4EE5\u4E3A\u7A7A\uFF01",
-  "Comments In Original DailyNotes/Notes": "\u5728\u539F\u6587\u4EF6\u4E2D\u8FDB\u884C\u8BC4\u8BBA",
-  "You should install Dataview Plugin ver 0.5.9 or later to use this feature.": "\u4F60\u9700\u8981\u5B89\u88C5 0.5.9 \u7248\u672C\u4EE5\u4E0A\u7684 Dataview \u63D2\u4EF6\u6765\u4F7F\u7528\u8BE5\u529F\u80FD",
-  "Open Memos Successfully": "\u6210\u529F\u6253\u5F00 Memos ",
-  "Fetch Error": "\u{1F62D} Memos \u83B7\u53D6\u5931\u8D25",
-  "Copied to clipboard Successfully": "\u590D\u5236\u6210\u529F",
-  "Check if you opened Daily Notes Plugin Or Periodic Notes Plugin": "\u8BF7\u68C0\u67E5\u4F60\u6709\u6CA1\u6709\u5F00\u542F\u65E5\u8BB0\u63D2\u4EF6\u6216\u8005 Periodic Notes \u63D2\u4EF6\u4E14\u542F\u7528\u4E86\u65E5\u8BB0\u6A21\u5F0F",
-  "Please finish the last filter setting first": "\u5148\u5B8C\u5584\u4E0A\u4E00\u4E2A\u8FC7\u6EE4\u5668\u5427",
-  "Close Memos Successfully": "\u6210\u529F\u5173\u95ED Memos ",
-  "Insert as Memo": "\u63D2\u5165\u5185\u5BB9\u4E3A Memo",
-  "Insert file as memo content": "\u63D2\u5165\u6587\u4EF6\u4E3A Memo",
-  "Image load failed": "\u6709\u4E2A\u56FE\u7247\u52A0\u8F7D\u5931\u8D25\u4E86\u{1F61F}",
-  "Content cannot be empty": "\u5185\u5BB9\u4E0D\u80FD\u4E3A\u7A7A\u5440",
-  "Unable to create new file.": "\u65E0\u6CD5\u65B0\u5EFA\u6587\u4EF6",
-  "Failed to fetch deleted memos: ": "\u65E0\u6CD5\u83B7\u53D6\u5DF2\u5220\u9664\u7684 Memos \uFF1A",
-  "RESTORE SUCCEED": "\u6210\u529F\u6062\u590D Memo",
-  "Save Memo button icon": "\u4FDD\u5B58\u6309\u94AE\u4E0A\u7684\u56FE\u6807",
-  "The icon shown on the save Memo button in the UI.": "\u4F60\u53EF\u4EE5\u8BBE\u7F6E\u4FDD\u5B58\u6309\u94AE\u4E0A\u7684\u56FE\u6807",
-  "Fetch Memos From Particular Notes": "\u4ECE\u6307\u5B9A\u7684\u6587\u4EF6\u4E2D\u83B7\u53D6 Memos",
-  'You can set any Dataview Query for memos to fetch it. All memos in those notes will show on list. "#memo" by default': '\u4F60\u53EF\u4EE5\u7ED9\u7B14\u8BB0\u8BBE\u7F6E\u6307\u5B9A\u68C0\u7D22\u5F0F\u6765\u8BA9 Memos \u53EF\u4EE5\u7D22\u5F15\u5230\u5B83\u3002\u9ED8\u8BA4\u4E3A "#memo" ',
-  "Allow Memos to Fetch Memo from Notes": "\u5141\u8BB8 Memos \u4ECE\u7B14\u8BB0\u4E2D\u83B7\u53D6 Memo",
-  "Use Memos to manage all memos in your notes, not only in daily notes. False by default": "\u4F7F\u7528 Memos \u6765\u7BA1\u7406\u4F60\u7B14\u8BB0\u4E2D\u7684 Memos\uFF0C\u4E0D\u5355\u53EA DailyNotes \u4E2D\u7684\u5185\u5BB9\u3002\u9ED8\u8BA4\u4E3A\u5173\u95ED",
-  "Always Show Memo Comments": "\u8BC4\u8BBA\u5C06\u603B\u662F\u53EF\u89C1",
-  "Always show memo comments on memos. False by default": "\u5F53\u5F00\u542F\u540E\u8BC4\u8BBA\u603B\u662F\u4F1A\u5728 Memo \u7684\u4E0B\u65B9\u5C55\u793A\u3002\u9ED8\u8BA4\u4E3A\u5173\u95ED",
-  "You didn't set folder for daily notes in both periodic-notes and daily-notes plugins.": "\u4F60\u5728 Periodic Notes \u63D2\u4EF6\u548C\u65E5\u8BB0\u63D2\u4EF6\u90FD\u6CA1\u8BBE\u7F6E\u65E5\u8BB0\u7684\u6240\u5728\u6587\u4EF6\u5939",
-  "Please check your daily note plugin OR periodic notes plugin settings": "\u8BF7\u68C0\u67E5\u4F60\u7684\u65E5\u8BB0\u63D2\u4EF6\u548C/\u6216 Periodic Notes \u63D2\u4EF6\u7684\u8BBE\u7F6E",
-  "Use Which Plugin's Default Configuration": "\u4F7F\u7528\u54EA\u4E2A\u63D2\u4EF6\u7684\u9ED8\u8BA4\u65E5\u8BB0\u914D\u7F6E",
-  "Memos use the plugin's default configuration to fetch memos from daily, 'Daily' by default.": "Memos \u91C7\u7528\u6307\u5B9A\u63D2\u4EF6\u7684\u9ED8\u8BA4\u914D\u7F6E\u6765\u83B7\u53D6 Memos\u3002\u9ED8\u8BA4\u4E3A\u65E5\u8BB0\u63D2\u4EF6\u3002",
-  Daily: "\u65E5\u8BB0\u63D2\u4EF6",
-  "Always Show Leaf Sidebar on PC": "\u5728 PC \u4E0A\u603B\u662F\u5C55\u793A\u5DE6\u4FA7\u680F",
-  "Show left sidebar on PC even when the leaf width is less than 875px. False by default.": "\u5728 PC \u4E0A\u5373\u4F7F\u9875\u9762\u5BBD\u5EA6\u5C0F\u4E8E 875px \u65F6\u90FD\u5C55\u793A\u5DE6\u4FA7\u680F\u3002\u9ED8\u8BA4\u4E3A\u5173\u95ED",
-  "You didn't set format for daily notes in both periodic-notes and daily-notes plugins.": "\u4F60\u5728 Periodic Notes \u63D2\u4EF6\u548C\u65E5\u8BB0\u63D2\u4EF6\u90FD\u6CA1\u8BBE\u7F6E\u65E5\u8BB0\u7684\u683C\u5F0F"
-};
-const zhTW = {};
-const localeMap = {
-  ar,
-  cs: cz,
-  da,
-  de,
-  en,
-  "en-gb": enGB,
-  es,
-  fr,
-  hi,
-  id,
-  it,
-  ja,
-  ko,
-  nl,
-  nn: no,
-  pl,
-  pt,
-  "pt-br": ptBR,
-  ro,
-  ru,
-  tr,
-  "zh-cn": zhCN,
-  "zh-tw": zhTW
-};
-const locale = localeMap[require$$0.moment.locale()];
-function t(str) {
-  return locale && locale[str] || en[str];
-}
 var utils;
 ((utils2) => {
   function getNowTimeStamp() {
@@ -30196,28 +29256,28 @@ var utils;
     return detectedOS;
   }
   utils2.getOSVersion = getOSVersion;
-  function getTimeStampByDate(t2) {
-    if (typeof t2 === "string") {
-      t2 = t2.replaceAll("-", "/");
+  function getTimeStampByDate(t) {
+    if (typeof t === "string") {
+      t = t.replaceAll("-", "/");
     }
-    return new Date(t2).getTime();
+    return new Date(t).getTime();
   }
   utils2.getTimeStampByDate = getTimeStampByDate;
-  function getDateStampByDate(t2) {
-    const d = new Date(getTimeStampByDate(t2));
+  function getDateStampByDate(t) {
+    const d = new Date(getTimeStampByDate(t));
     return new Date(d.getFullYear(), d.getMonth(), d.getDate()).getTime();
   }
   utils2.getDateStampByDate = getDateStampByDate;
-  function getDateString(t2) {
-    const d = new Date(getTimeStampByDate(t2));
+  function getDateString(t) {
+    const d = new Date(getTimeStampByDate(t));
     const year = d.getFullYear();
     const month = d.getMonth() + 1;
     const date = d.getDate();
     return `${year}/${month}/${date}`;
   }
   utils2.getDateString = getDateString;
-  function getTimeString(t2) {
-    const d = new Date(getTimeStampByDate(t2));
+  function getTimeString(t) {
+    const d = new Date(getTimeStampByDate(t));
     const hours = d.getHours();
     const mins = d.getMinutes();
     const hoursStr = hours < 10 ? "0" + hours : hours;
@@ -30225,8 +29285,8 @@ var utils;
     return `${hoursStr}:${minsStr}`;
   }
   utils2.getTimeString = getTimeString;
-  function getDateTimeString(t2) {
-    const d = new Date(getTimeStampByDate(t2));
+  function getDateTimeString(t) {
+    const d = new Date(getTimeStampByDate(t));
     const year = d.getFullYear();
     const month = d.getMonth() + 1;
     const date = d.getDate();
@@ -30459,7 +29519,7 @@ function getDailyNoteFormat() {
   } else {
     const dailyNoteFormat = getDailyNoteSettings_1().format || "YYYY-MM-DD";
     if (!dailyNoteFormat) {
-      new require$$0.Notice(t("You didn't set format for daily notes in both periodic-notes and daily-notes plugins."));
+      new require$$0.Notice("You didn't set format for daily notes in both periodic-notes and daily-notes plugins.");
     }
     return dailyNoteFormat;
   }
@@ -30476,7 +29536,7 @@ function getDailyNotePath() {
     dailyNotePath = getDailyNoteSettings_1().folder || "";
   }
   if (dailyNotePath === "" || dailyNotePath === void 0) {
-    new require$$0.Notice(t("You didn't set folder for daily notes in both periodic-notes and daily-notes plugins."));
+    new require$$0.Notice("You didn't set folder for daily notes in both periodic-notes and daily-notes plugins.");
   }
   return dailyNotePath;
 }
@@ -30987,7 +30047,7 @@ const findQuery = async () => {
         const createdDateString = getCreatedDateFromLine(fileLines[i]);
         const createdDate = require$$0.moment(createdDateString, "YYYYMMDDHHmmss").format("YYYY/MM/DD HH:mm:ss");
         const updatedDate = createdDate;
-        const id2 = createdDateString + getIDFromLine$1(fileLines[i]);
+        const id = createdDateString + getIDFromLine$1(fileLines[i]);
         const querystring = getStringFromLine(fileLines[i]);
         const title = getTitleFromLine(fileLines[i]);
         let pinnedDate;
@@ -30995,7 +30055,7 @@ const findQuery = async () => {
           pinnedDate = require$$0.moment(getPinnedDateFromLine$1(fileLines[i]), "YYYYMMDDHHmmss");
           queryList.push({
             createdAt: createdDate,
-            id: id2,
+            id,
             pinnedAt: pinnedDate.format("YYYY/MM/DD HH:mm:ss"),
             querystring,
             title,
@@ -31005,7 +30065,7 @@ const findQuery = async () => {
         } else if (/^(.+)\[\](.+)?$/.test(fileLines[i])) {
           queryList.push({
             createdAt: createdDate,
-            id: id2,
+            id,
             pinnedAt: "",
             querystring: "",
             title,
@@ -31015,7 +30075,7 @@ const findQuery = async () => {
         } else {
           queryList.push({
             createdAt: createdDate,
-            id: id2,
+            id,
             pinnedAt: "",
             querystring,
             title,
@@ -31066,12 +30126,12 @@ const createObsidianQuery = async (title, querystring) => {
     } else {
       lineNum = fileLines.length + 1;
     }
-    const id2 = date.format("YYYYMMDDHHmmss") + lineNum;
-    await createQueryInFile(queryFile, fileContents, id2, title, querystring);
+    const id = date.format("YYYYMMDDHHmmss") + lineNum;
+    await createQueryInFile(queryFile, fileContents, id, title, querystring);
     return [
       {
         createdAt: createdDate,
-        id: id2,
+        id,
         pinnedAt: "",
         querystring,
         title,
@@ -31086,12 +30146,12 @@ const createObsidianQuery = async (title, querystring) => {
     const date = require$$0.moment();
     const createdDate = date.format("YYYY/MM/DD HH:mm:ss");
     const updatedDate = createdDate;
-    const id2 = date.format("YYYYMMDDHHmmss") + 1;
-    await createQueryInFile(file, fileContents, id2, title, querystring);
+    const id = date.format("YYYYMMDDHHmmss") + 1;
+    await createQueryInFile(file, fileContents, id, title, querystring);
     return [
       {
         createdAt: createdDate,
-        id: id2,
+        id,
         pinnedAt: "",
         querystring,
         title,
@@ -31101,13 +30161,13 @@ const createObsidianQuery = async (title, querystring) => {
     ];
   }
 };
-const createQueryInFile = async (file, fileContent, id2, title, queryString) => {
+const createQueryInFile = async (file, fileContent, id, title, queryString) => {
   const { vault } = appStore.getState().dailyNotesState.app;
   let newContent;
   if (fileContent === "") {
-    newContent = id2 + " " + title + " " + queryString;
+    newContent = id + " " + title + " " + queryString;
   } else {
-    newContent = fileContent + "\n" + id2 + " " + title + " " + queryString;
+    newContent = fileContent + "\n" + id + " " + title + " " + queryString;
   }
   await vault.modify(file, newContent);
   return true;
@@ -31119,7 +30179,7 @@ const createQueryFile = async (path) => {
     return createdFile;
   } catch (err) {
     console.error(`Failed to create file: '${path}'`, err);
-    new require$$0.Notice(t("Unable to create new file."));
+    new require$$0.Notice("Unable to create new file.");
   }
 };
 const getAllLinesFromFile$8 = (cache) => cache.split(/\r?\n/);
@@ -31224,7 +30284,7 @@ async function getMemosFromIndividualFiles(allMemos, _commentMemos) {
   const folderPath = require$$0.normalizePath(IndividualMemoFolder);
   const folder = vault.getAbstractFileByPath(folderPath);
   if (!folder) {
-    new require$$0.Notice(t("Individual memo folder not found: ") + folderPath);
+    new require$$0.Notice("Individual memo folder not found: " + folderPath);
     return;
   }
   const files = folder.children.filter(
@@ -31282,7 +30342,7 @@ async function getMemos() {
   const folder = getDailyNotePath();
   if (folder === "" || folder === void 0) {
     console.error("[Lethe] Daily notes folder path is empty or undefined");
-    new require$$0.Notice(t("Please check your daily note plugin OR periodic notes plugin settings"));
+    new require$$0.Notice("Please check your daily note plugin OR periodic notes plugin settings");
     return { memos: [], commentMemos: [] };
   }
   const dailyNotesFolder = vault.getAbstractFileByPath(require$$0.normalizePath(folder));
@@ -31379,18 +30439,18 @@ const updateObsidianQuery = async (queryId, title, queryString) => {
       const updatedDateString = date.format("YYYYMMDDHHmmss");
       const updatedDate = date.format("YYYY/MM/DD HH:mm:ss");
       const newLineNum = lineNum + 1;
-      const id2 = updatedDateString + newLineNum;
+      const id = updatedDateString + newLineNum;
       if (/^(.+)pinnedAt(.+)$/.test(oldContent)) {
         const pinnedString = getPinnedStringFromLine(oldContent);
         const pinnedDateString = getPinnedDateFromLine(oldContent);
-        const newContent = id2 + " " + title + " " + queryString + " " + pinnedString;
+        const newContent = id + " " + title + " " + queryString + " " + pinnedString;
         const pinnedAtDate = require$$0.moment(pinnedDateString, "YYYYMMDDHHmmss").format("YYYY/MM/DD HH:mm:ss");
         const newFileContents = fileContents.replace(oldContent, newContent);
         await vault.modify(queryFile, newFileContents);
         return [
           {
             createdAt: updatedDate,
-            id: id2,
+            id,
             pinnedAt: pinnedAtDate,
             querystring: queryString,
             title,
@@ -31399,13 +30459,13 @@ const updateObsidianQuery = async (queryId, title, queryString) => {
           }
         ];
       } else {
-        const newContent = id2 + " " + title + " " + queryString;
+        const newContent = id + " " + title + " " + queryString;
         const newFileContents = fileContents.replace(oldContent, newContent);
         await vault.modify(queryFile, newFileContents);
         return [
           {
             createdAt: updatedDate,
-            id: id2,
+            id,
             pinnedAt: "",
             querystring: queryString,
             title,
@@ -31637,7 +30697,7 @@ type: ${isTASK ? "task" : "memo"}`;
   if (tags.length > 0) {
     frontmatter += `
 tags:
-${tags.map((t2) => `  - ${t2}`).join("\n")}`;
+${tags.map((t) => `  - ${t}`).join("\n")}`;
   }
   frontmatter += `
 ---
@@ -31657,9 +30717,9 @@ ${tags.map((t2) => `  - ${t2}`).join("\n")}`;
     console.error("Failed to create memo file:", error);
     throw new Error(`Failed to create memo file: ${filename}`);
   }
-  const id2 = timestamp + "001";
+  const id = timestamp + "001";
   return {
-    id: id2,
+    id,
     content: MemoContent,
     deletedAt: "",
     createdAt: date.format("YYYY/MM/DD HH:mm:ss"),
@@ -31687,8 +30747,8 @@ async function restoreDeletedMemo(deletedMemoid) {
         const newDeletefileContents = fileContents.replace(line, "");
         await vault.modify(deleteFile, newDeletefileContents);
         if (/^- (.+)$/.test(line)) {
-          const id2 = extractIDfromText(line);
-          const date = require$$0.moment(id2, "YYYYMMDDHHmmss");
+          const id = extractIDfromText(line);
+          const date = require$$0.moment(id, "YYYYMMDDHHmmss");
           const timeHour = date.format("HH");
           const timeMinute = date.format("mm");
           const newEvent = `- ` + String(timeHour) + `:` + String(timeMinute) + ` ` + extractContentfromText$1(line);
@@ -31762,8 +30822,8 @@ async function getDeletedMemos() {
         if (!/- /.test(line)) {
           continue;
         } else {
-          const id2 = extractIDfromText(line);
-          const timeString = id2.slice(0, 13);
+          const id = extractIDfromText(line);
+          const timeString = id.slice(0, 13);
           const createdDate = require$$0.moment(timeString, "YYYYMMDDHHmmss");
           const deletedDateID = extractDeleteDatefromText(fileLines[i]);
           const deletedDate = require$$0.moment(deletedDateID.slice(0, 13), "YYYYMMDDHHmmss");
@@ -32177,24 +31237,24 @@ class MemoService {
       }
     });
   }
-  getMemoById(id2) {
+  getMemoById(id) {
     for (const m of this.getState().memos) {
-      if (m.id === id2) {
+      if (m.id === id) {
         return m;
       }
     }
     return null;
   }
-  getCommentMemoById(id2) {
+  getCommentMemoById(id) {
     for (const m of this.getState().commentMemos) {
-      if (m.id === id2) {
+      if (m.id === id) {
         return m;
       }
     }
     return null;
   }
-  async hideMemoById(id2) {
-    const memo2 = this.getMemoById(id2);
+  async hideMemoById(id) {
+    const memo2 = this.getMemoById(id);
     if (!memo2) {
       throw new Error("Memo not found");
     }
@@ -32202,15 +31262,15 @@ class MemoService {
     appStore.dispatch({
       type: "DELETE_MEMO_BY_ID",
       payload: {
-        id: id2
+        id
       }
     });
   }
-  async restoreMemoById(id2) {
-    await api$1.restoreMemo(id2);
+  async restoreMemoById(id) {
+    await api$1.restoreMemo(id);
   }
-  async deleteMemoById(id2) {
-    await api$1.deleteMemo(id2);
+  async deleteMemoById(id) {
+    await api$1.deleteMemo(id);
   }
   editMemo(memo2) {
     appStore.dispatch({
@@ -32231,20 +31291,20 @@ class MemoService {
     const tempTags = /* @__PURE__ */ new Set();
     const tags = [];
     for (const m of memos) {
-      for (const t2 of Array.from((_a = m.content.match(TAG_REG)) != null ? _a : [])) {
-        tagsSet.add(t2.replace(TAG_REG, "$1").trim());
-        tempTags.add(t2.replace(TAG_REG, "$1").trim());
+      for (const t of Array.from((_a = m.content.match(TAG_REG)) != null ? _a : [])) {
+        tagsSet.add(t.replace(TAG_REG, "$1").trim());
+        tempTags.add(t.replace(TAG_REG, "$1").trim());
       }
-      for (const t2 of Array.from((_b = m.content.match(NOP_FIRST_TAG_REG)) != null ? _b : [])) {
-        tagsSet.add(t2.replace(NOP_FIRST_TAG_REG, "$1").trim());
-        tempTags.add(t2.replace(NOP_FIRST_TAG_REG, "$1").trim());
+      for (const t of Array.from((_b = m.content.match(NOP_FIRST_TAG_REG)) != null ? _b : [])) {
+        tagsSet.add(t.replace(NOP_FIRST_TAG_REG, "$1").trim());
+        tempTags.add(t.replace(NOP_FIRST_TAG_REG, "$1").trim());
       }
-      for (const t2 of Array.from((_c = m.content.match(FIRST_TAG_REG)) != null ? _c : [])) {
-        tagsSet.add(t2.replace(FIRST_TAG_REG, "$2").trim());
-        tempTags.add(t2.replace(FIRST_TAG_REG, "$2").trim());
+      for (const t of Array.from((_c = m.content.match(FIRST_TAG_REG)) != null ? _c : [])) {
+        tagsSet.add(t.replace(FIRST_TAG_REG, "$2").trim());
+        tempTags.add(t.replace(FIRST_TAG_REG, "$2").trim());
       }
-      Array.from(tempTags).forEach((t2) => {
-        tags.push(t2);
+      Array.from(tempTags).forEach((t) => {
+        tags.push(t);
       });
       tempTags.clear();
     }
@@ -32536,28 +31596,28 @@ const MenuBtnsPopup = (props) => {
       children: [/* @__PURE__ */ jsx("span", {
         className: "icon",
         children: "\u{1F464}"
-      }), " ", t("Settings")]
+      }), " Settings"]
     }), /* @__PURE__ */ jsxs("button", {
       className: "btn action-btn",
       onClick: handleMemosTrashBtnClick,
       children: [/* @__PURE__ */ jsx("span", {
         className: "icon",
         children: "\u{1F5D1}\uFE0F"
-      }), " ", t("Recycle bin")]
+      }), " Recycle bin"]
     }), /* @__PURE__ */ jsxs("button", {
       className: "btn action-btn",
       onClick: handleImportBtnClick,
       children: [/* @__PURE__ */ jsx("span", {
         className: "icon",
         children: "\u{1F4C2}"
-      }), " ", t("Import")]
+      }), " Import"]
     }), /* @__PURE__ */ jsxs("button", {
       className: "btn action-btn",
       onClick: handleAboutBtnClick,
       children: [/* @__PURE__ */ jsx("span", {
         className: "icon",
         children: "\u{1F920}"
-      }), " ", t("About Me")]
+      }), " About Me"]
     })]
   });
 };
@@ -32627,7 +31687,7 @@ const UserBanner = () => {
           children: tags.length
         }), /* @__PURE__ */ jsx("span", {
           className: "type-text",
-          children: t("TAG")
+          children: "TAG"
         })]
       }), /* @__PURE__ */ jsxs("div", {
         className: "status-text duration-text",
@@ -32636,7 +31696,7 @@ const UserBanner = () => {
           children: createdDays != null ? createdDays : 0
         }), /* @__PURE__ */ jsx("span", {
           className: "type-text",
-          children: t("DAY")
+          children: "DAY"
         })]
       })]
     })]
@@ -32699,9 +31759,9 @@ const TagList = () => {
           tagText += "/" + key;
         }
         let obj = null;
-        for (const t2 of tempObj.subTags) {
-          if (t2.text === tagText) {
-            obj = t2;
+        for (const t of tempObj.subTags) {
+          if (t.text === tagText) {
+            obj = t;
             break;
           }
         }
@@ -32723,13 +31783,13 @@ const TagList = () => {
     className: "tags-wrapper",
     children: [/* @__PURE__ */ jsx("p", {
       className: "title-text",
-      children: t("Frequently Used Tags")
+      children: "Frequently Used Tags"
     }), /* @__PURE__ */ jsxs("div", {
       className: "tags-container",
-      children: [tags.map((t2, idx) => /* @__PURE__ */ jsx(TagItemContainer, {
-        tag: t2,
+      children: [tags.map((t, idx) => /* @__PURE__ */ jsx(TagItemContainer, {
+        tag: t,
         tagQuery
-      }, t2.text + "-" + idx)), /* @__PURE__ */ jsx(Only, {
+      }, t.text + "-" + idx)), /* @__PURE__ */ jsx(Only, {
         when: tags.length < 5 && memoService.initialized,
         children: /* @__PURE__ */ jsxs("p", {
           className: "tag-tip-container",
@@ -33345,8 +32405,8 @@ var Listener = function Listener2() {
     };
     return _this.index++;
   };
-  this.remove = function(id2) {
-    delete _this.listeners[id2];
+  this.remove = function(id) {
+    delete _this.listeners[id];
   };
   this.removeAll = function() {
     _this.listeners = {};
@@ -33482,9 +32542,9 @@ var List = /* @__PURE__ */ function(_React$Component) {
         }
         return item.key;
       };
-      var id2 = computeId();
-      _this.cachedIdOfItems.set(item, id2);
-      return id2;
+      var id = computeId();
+      _this.cachedIdOfItems.set(item, id);
+      return id;
     };
     _this.listeners = [];
     _this.itemsRef = {};
@@ -34671,7 +33731,7 @@ const Editor = react.exports.forwardRef((props, ref) => {
           children: /* @__PURE__ */ jsx("button", {
             className: "action-btn cancel-btn",
             onClick: handleCommonCancelBtnClick,
-            children: t("CANCEL EDIT")
+            children: "CANCEL EDIT"
           })
         }), /* @__PURE__ */ jsx(Only, {
           when: showConfirmBtn,
@@ -36042,16 +35102,16 @@ function equal(a, b) {
           return false;
       return true;
     }
-    var it2;
+    var it;
     if (hasMap && a instanceof Map && b instanceof Map) {
       if (a.size !== b.size)
         return false;
-      it2 = a.entries();
-      while (!(i = it2.next()).done)
+      it = a.entries();
+      while (!(i = it.next()).done)
         if (!b.has(i.value[0]))
           return false;
-      it2 = a.entries();
-      while (!(i = it2.next()).done)
+      it = a.entries();
+      while (!(i = it.next()).done)
         if (!equal(i.value[1], b.get(i.value[0])))
           return false;
       return true;
@@ -36059,8 +35119,8 @@ function equal(a, b) {
     if (hasSet && a instanceof Set && b instanceof Set) {
       if (a.size !== b.size)
         return false;
-      it2 = a.entries();
-      while (!(i = it2.next()).done)
+      it = a.entries();
+      while (!(i = it.next()).done)
         if (!b.has(i.value[0]))
           return false;
       return true;
@@ -36204,7 +35264,7 @@ var usePopper = function usePopper2(referenceElement, popperElement, options) {
 const datePicker = "";
 const SvgArrowLeft = (props) => /* @__PURE__ */ react.exports.createElement("svg", { xmlns: "http://www.w3.org/2000/svg", height: "24px", viewBox: "0 0 24 24", width: "24px", fill: "#37352f", ...props }, /* @__PURE__ */ react.exports.createElement("path", { d: "M0 0h24v24H0V0z", fill: "none" }), /* @__PURE__ */ react.exports.createElement("path", { d: "M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12l4.58-4.59z" }));
 const DatePicker = (props) => {
-  var _a, _b;
+  var _a;
   const {
     className,
     datestamp,
@@ -36258,7 +35318,7 @@ const DatePicker = (props) => {
         })
       }), /* @__PURE__ */ jsxs("span", {
         className: "normal-text",
-        children: [firstDate.getFullYear(), " ", t("year"), " ", (_a = t("monthsShort")[firstDate.getMonth()]) != null ? _a : firstDate.getMonth() + 1, " ", (_b = t("month")) != null ? _b : ""]
+        children: [firstDate.getFullYear(), "  ", (_a = ["Jan.", "Feb.", "Mar.", "Apr.", "May", "June", "July", "Aug.", "Sept.", "Oct.", "Nov.", "Dec."][firstDate.getMonth()]) != null ? _a : firstDate.getMonth() + 1, " "]
       }), /* @__PURE__ */ jsx("span", {
         className: "btn-text",
         onClick: () => handleChangeMonthBtnClick(1),
@@ -36272,25 +35332,25 @@ const DatePicker = (props) => {
         className: "date-picker-day-header",
         children: [/* @__PURE__ */ jsx("span", {
           className: "day-item",
-          children: t("weekDaysShort")[0]
+          children: "Sun"
         }), /* @__PURE__ */ jsx("span", {
           className: "day-item",
-          children: t("weekDaysShort")[1]
+          children: "Mon"
         }), /* @__PURE__ */ jsx("span", {
           className: "day-item",
-          children: t("weekDaysShort")[2]
+          children: "Tue"
         }), /* @__PURE__ */ jsx("span", {
           className: "day-item",
-          children: t("weekDaysShort")[3]
+          children: "Wed"
         }), /* @__PURE__ */ jsx("span", {
           className: "day-item",
-          children: t("weekDaysShort")[4]
+          children: "Thu"
         }), /* @__PURE__ */ jsx("span", {
           className: "day-item",
-          children: t("weekDaysShort")[5]
+          children: "Fri"
         }), /* @__PURE__ */ jsx("span", {
           className: "day-item",
-          children: t("weekDaysShort")[6]
+          children: "Sat"
         })]
       }), dayList.map((d) => {
         if (d.date === 0) {
@@ -36473,7 +35533,7 @@ const MemoEditor = () => {
     var _a, _b, _c, _d, _e;
     if (globalState.markMemoId) {
       const editorCurrentValue = (_a = editorRef.current) == null ? void 0 : _a.getContent();
-      const memoLinkText = `${editorCurrentValue ? "\n" : ""}${t("MARK")}: [@MEMO](${globalState.markMemoId})`;
+      const memoLinkText = `${editorCurrentValue ? "\n" : ""}MARK: [@MEMO](${globalState.markMemoId})`;
       (_b = editorRef.current) == null ? void 0 : _b.insertText(memoLinkText);
       globalStateService.setMarkMemoId("");
     }
@@ -36549,7 +35609,7 @@ const MemoEditor = () => {
   const handleSaveBtnClick = react.exports.useCallback(async (content) => {
     var _a;
     if (content === "") {
-      new require$$0.Notice(t("Content cannot be empty"));
+      new require$$0.Notice("Content cannot be empty");
       return;
     }
     const {
@@ -36730,7 +35790,7 @@ const MemoEditor = () => {
     className: "memo-editor",
     inputerType: "memo",
     initialContent: getEditorContentCache(),
-    placeholder: t("What do you think now..."),
+    placeholder: "What do you think now...",
     showConfirmBtn: true,
     showCancelBtn: showEditStatus,
     showTools: true,
@@ -36791,84 +35851,84 @@ function setEditorContentCache(content) {
 const filterConsts = {
   TAG: {
     value: "TAG",
-    text: t("TAG"),
+    text: "TAG",
     operators: [
       {
-        text: t("INCLUDE"),
+        text: "INCLUDE",
         value: "CONTAIN"
       },
       {
-        text: t("EXCLUDE"),
+        text: "EXCLUDE",
         value: "NOT_CONTAIN"
       }
     ]
   },
   TYPE: {
     value: "TYPE",
-    text: t("TYPE"),
+    text: "TYPE",
     operators: [
       {
         value: "IS",
-        text: t("IS")
+        text: "IS"
       },
       {
         value: "IS_NOT",
-        text: t("ISNOT")
+        text: "ISNOT"
       }
     ],
     values: [
       {
         value: "CONNECTED",
-        text: t("LINKED")
+        text: "LINKED"
       },
       {
         value: "NOT_TAGGED",
-        text: t("NO TAGS")
+        text: "NO TAGS"
       },
       {
         value: "LINKED",
-        text: t("HAS LINKS")
+        text: "HAS LINKS"
       },
       {
         value: "IMAGED",
-        text: t("HAS IMAGES")
+        text: "HAS IMAGES"
       }
     ]
   },
   TEXT: {
     value: "TEXT",
-    text: t("TEXT"),
+    text: "TEXT",
     operators: [
       {
         value: "CONTAIN",
-        text: t("INCLUDE")
+        text: "INCLUDE"
       },
       {
         value: "NOT_CONTAIN",
-        text: t("EXCLUDE")
+        text: "EXCLUDE"
       }
     ]
   },
   DATE: {
     value: "DATE",
-    text: t("DATE"),
+    text: "DATE",
     operators: [
       {
         value: "NOT_CONTAIN",
-        text: t("BEFORE")
+        text: "BEFORE"
       },
       {
         value: "CONTAIN",
-        text: t("AFTER")
+        text: "AFTER"
       }
     ]
   }
 };
 const memoSpecialTypes = filterConsts["TYPE"].values;
 const getTextWithMemoType = (type) => {
-  for (const t2 of memoSpecialTypes) {
-    if (t2.value === type) {
-      return t2.text;
+  for (const t of memoSpecialTypes) {
+    if (t.value === type) {
+      return t.text;
     }
   }
   return "";
@@ -36948,27 +36008,27 @@ const SearchBar = () => {
         className: "quickly-action-container",
         children: [/* @__PURE__ */ jsx("p", {
           className: "title-text",
-          children: t("Quick filter")
+          children: "Quick filter"
         }), /* @__PURE__ */ jsxs("div", {
           className: "section-container types-container",
-          children: [/* @__PURE__ */ jsxs("span", {
+          children: [/* @__PURE__ */ jsx("span", {
             className: "section-text",
-            children: [t("TYPE"), ":"]
+            children: "TYPE:"
           }), /* @__PURE__ */ jsx("div", {
             className: "values-container",
-            children: memoSpecialTypes.map((t2, idx) => {
+            children: memoSpecialTypes.map((t, idx) => {
               return /* @__PURE__ */ jsxs("div", {
                 children: [/* @__PURE__ */ jsx("span", {
-                  className: `type-item ${memoType === t2.value ? "selected" : ""}`,
+                  className: `type-item ${memoType === t.value ? "selected" : ""}`,
                   onClick: () => {
-                    handleMemoTypeItemClick(t2.value);
+                    handleMemoTypeItemClick(t.value);
                   },
-                  children: t2.text
+                  children: t.text
                 }), idx + 1 < memoSpecialTypes.length ? /* @__PURE__ */ jsx("span", {
                   className: "split-text",
                   children: "/"
                 }) : null]
-              }, t2.value);
+              }, t.value);
             })
           })]
         })]
@@ -37098,9 +36158,9 @@ const parseRawTextToHtml = (rawTextStr) => {
   return htmlText;
 };
 const encodeHtml = (htmlStr) => {
-  const t2 = document.createElement("div");
-  t2.textContent = htmlStr;
-  return t2.innerHTML;
+  const t = document.createElement("div");
+  t.textContent = htmlStr;
+  return t.innerHTML;
 };
 const memoCardDialog = "";
 const SvgEdit = (props) => /* @__PURE__ */ react.exports.createElement("svg", { xmlns: "http://www.w3.org/2000/svg", height: "20px", viewBox: "0 0 24 24", width: "20px", fill: "#37352f", ...props }, /* @__PURE__ */ react.exports.createElement("path", { d: "M0 0h24v24H0V0z", fill: "none" }), /* @__PURE__ */ react.exports.createElement("path", { d: "M14.06 9.02l.92.92L5.92 19H5v-.92l9.06-9.06M17.66 3c-.25 0-.51.1-.7.29l-1.83 1.83 3.75 3.75 1.83-1.83c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.2-.2-.45-.29-.71-.29zm-3.6 3.19L3 17.25V21h3.75L17.81 9.94l-3.75-3.75z" }));
@@ -37185,10 +36245,10 @@ const PreviewImageDialog = ({
         src: imgUrl
       }), /* @__PURE__ */ jsx("span", {
         className: "loading-text " + (imgWidth === -1 ? "" : "hidden"),
-        children: t("Image is loading...")
+        children: "Image is loading..."
       }), /* @__PURE__ */ jsx("span", {
         className: "loading-text " + (imgWidth === 0 ? "" : "hidden"),
-        children: t("\u{1F61F} Cannot load image, image link maybe broken")
+        children: "\u{1F61F} Cannot load image, image link maybe broken"
       })]
     }), /* @__PURE__ */ jsxs("div", {
       className: "action-btns-container",
@@ -37410,8 +36470,8 @@ const MemoCardDialog = (props) => {
         const matchedArr = [...memo2.content.matchAll(MEMO_LINK_REG)];
         for (const matchRes of matchedArr) {
           if (matchRes && matchRes.length === 3) {
-            const id2 = matchRes[2];
-            const memoTemp = memoService.getMemoById(id2);
+            const id = matchRes[2];
+            const memoTemp = memoService.getMemoById(id);
             if (memoTemp) {
               linkMemos2.push({
                 ...memoTemp,
@@ -37518,7 +36578,7 @@ const MemoCardDialog = (props) => {
       className: "linked-memos-wrapper",
       children: [/* @__PURE__ */ jsxs("p", {
         className: "normal-text",
-        children: [t("LINKED"), " ", linkMemos.length, " MEMO", " "]
+        children: ["LINKED ", linkMemos.length, " MEMO", " "]
       }), linkMemos.map((m) => {
         const rawtext = parseHtmlToRawText(formatMemoContent(m.content)).replaceAll("\n", " ");
         return /* @__PURE__ */ jsxs("div", {
@@ -37534,7 +36594,7 @@ const MemoCardDialog = (props) => {
       className: "linked-memos-wrapper",
       children: [/* @__PURE__ */ jsxs("p", {
         className: "normal-text",
-        children: [linkedMemos.length, " MEMO ", t("LINK TO THE"), " MEMO"]
+        children: [linkedMemos.length, " MEMO LINK TO THE MEMO"]
       }), linkedMemos.map((m) => {
         const rawtext = parseHtmlToRawText(formatMemoContent(m.content)).replaceAll("\n", " ");
         return /* @__PURE__ */ jsxs("div", {
@@ -37683,23 +36743,23 @@ const Memo = (props) => {
               children: [/* @__PURE__ */ jsx("span", {
                 className: "btn",
                 onClick: handleShowMemoStoryDialog,
-                children: t("READ")
+                children: "READ"
               }), /* @__PURE__ */ jsx("span", {
                 className: "btn",
                 onClick: handleMarkMemoClick,
-                children: t("MARK")
+                children: "MARK"
               }), /* @__PURE__ */ jsx("span", {
                 className: "btn",
                 onClick: handleEditMemoClick,
-                children: t("EDIT")
+                children: "EDIT"
               }), /* @__PURE__ */ jsx("span", {
                 className: "btn",
                 onClick: () => handleSourceMemoClick(propsMemo),
-                children: t("SOURCE")
+                children: "SOURCE"
               }), /* @__PURE__ */ jsx("span", {
                 className: `btn delete-btn ${showConfirmDeleteBtn ? "final-confirm" : ""}`,
                 onClick: handleDeleteMemoClick,
-                children: showConfirmDeleteBtn ? t("CONFIRM\uFF01") : t("DELETE")
+                children: showConfirmDeleteBtn ? "CONFIRM\uFF01" : "DELETE"
               })]
             })
           })]
@@ -37720,8 +36780,8 @@ const Memo = (props) => {
 function formatMemoContent(content, memoid) {
   var _a;
   content = encodeHtml(content);
-  content = parseRawTextToHtml(content).split("<br>").map((t2) => {
-    return `<p>${t2 !== "" ? t2 : "<br>"}</p>`;
+  content = parseRawTextToHtml(content).split("<br>").map((t) => {
+    return `<p>${t !== "" ? t : "<br>"}</p>`;
   }).join("");
   const {
     shouldUseMarkdownParser,
@@ -37775,8 +36835,8 @@ const MemoList = () => {
     }
     if (tagQuery) {
       const tagsSet = /* @__PURE__ */ new Set();
-      for (const t2 of Array.from((_a = memo2.content.match(TAG_REG)) != null ? _a : [])) {
-        const tag = t2.replace(TAG_REG, "$1").trim();
+      for (const t of Array.from((_a = memo2.content.match(TAG_REG)) != null ? _a : [])) {
+        const tag = t.replace(TAG_REG, "$1").trim();
         const items = tag.split("/");
         let temp = "";
         for (const i of items) {
@@ -37785,8 +36845,8 @@ const MemoList = () => {
           temp += "/";
         }
       }
-      for (const t2 of Array.from((_b = memo2.content.match(NOP_FIRST_TAG_REG)) != null ? _b : [])) {
-        const tag = t2.replace(NOP_FIRST_TAG_REG, "$1").trim();
+      for (const t of Array.from((_b = memo2.content.match(NOP_FIRST_TAG_REG)) != null ? _b : [])) {
+        const tag = t.replace(NOP_FIRST_TAG_REG, "$1").trim();
         const items = tag.split("/");
         let temp = "";
         for (const i of items) {
@@ -37795,8 +36855,8 @@ const MemoList = () => {
           temp += "/";
         }
       }
-      for (const t2 of Array.from((_c = memo2.content.match(FIRST_TAG_REG)) != null ? _c : [])) {
-        const tag = t2.replace(FIRST_TAG_REG, "$2").trim();
+      for (const t of Array.from((_c = memo2.content.match(FIRST_TAG_REG)) != null ? _c : [])) {
+        const tag = t.replace(FIRST_TAG_REG, "$2").trim();
         const items = tag.split("/");
         let temp = "";
         for (const i of items) {
@@ -37836,7 +36896,7 @@ const MemoList = () => {
       setFetchStatus(false);
     }).catch((err) => {
       console.error("[Lethe] Failed to fetch memos:", err);
-      new require$$0.Notice(t("Fetch Error"));
+      new require$$0.Notice("\u{1F62D} Fetch Error");
     });
     dailyNotesService.getMyAllDailyNotes().catch((err) => {
       console.error("[Lethe] Failed to fetch daily notes:", err);
@@ -37881,7 +36941,7 @@ const MemoList = () => {
       className: "status-text-container",
       children: /* @__PURE__ */ jsx("p", {
         className: "status-text",
-        children: isFetching ? t("Fetching data...") : shownMemos.length === 0 ? t("Noooop!") : showMemoFilter ? "" : t("All Data is Loaded \u{1F389}")
+        children: isFetching ? "Fetching data..." : shownMemos.length === 0 ? "Noooop!" : showMemoFilter ? "" : "All Data is Loaded \u{1F389}"
       })
     })]
   });
@@ -37955,7 +37015,7 @@ const MemoFilter = () => {
     const memosByDate = getMemosByDate(copyShownMemos);
     const queryDailyMemos = transferMemosIntoText(memosByDate);
     await utils$1.copyTextToClipboard(queryDailyMemos);
-    new require$$0.Notice(t("Copied to clipboard Successfully"));
+    new require$$0.Notice("Copied to clipboard Successfully");
   };
   return /* @__PURE__ */ jsxs("div", {
     className: `filter-query-container ${showFilter ? "" : "hidden"}`,
@@ -37990,7 +37050,7 @@ const MemoFilter = () => {
         children: [/* @__PURE__ */ jsx("span", {
           className: "icon-text",
           children: "\u{1F5D3}\uFE0F"
-        }), " ", require$$0.moment(duration.from, "x").format("YYYY/MM/DD"), " ", t("to"), " ", require$$0.moment(duration.to, "x").add(1, "days").format("YYYY/MM/DD")]
+        }), " ", require$$0.moment(duration.from, "x").format("YYYY/MM/DD"), " to", " ", require$$0.moment(duration.to, "x").add(1, "days").format("YYYY/MM/DD")]
       }) : null, /* @__PURE__ */ jsxs("div", {
         className: "filter-item-container " + (textQuery ? "" : "hidden"),
         onClick: () => {
@@ -38043,7 +37103,7 @@ const DeletedMemo = (props) => {
     try {
       await memoService.restoreMemoById(memo2.id);
       handleDeletedMemoAction(memo2.id);
-      new require$$0.Notice(t("RESTORE SUCCEED"));
+      new require$$0.Notice("RESTORE SUCCEED");
     } catch (error) {
       new require$$0.Notice(error.message);
     }
@@ -38060,7 +37120,7 @@ const DeletedMemo = (props) => {
       className: "memo-top-wrapper",
       children: [/* @__PURE__ */ jsxs("span", {
         className: "time-text",
-        children: [t("DELETE AT"), " ", memo2.deletedAtStr]
+        children: ["DELETE AT ", memo2.deletedAtStr]
       }), /* @__PURE__ */ jsxs("div", {
         className: "btns-container",
         children: [/* @__PURE__ */ jsx("span", {
@@ -38075,11 +37135,11 @@ const DeletedMemo = (props) => {
             children: [/* @__PURE__ */ jsx("span", {
               className: "btn restore-btn",
               onClick: handleRestoreMemoClick,
-              children: t("RESTORE")
+              children: "RESTORE"
             }), /* @__PURE__ */ jsx("span", {
               className: `btn delete-btn ${showConfirmDeleteBtn ? "final-confirm" : ""}`,
               onClick: handleDeleteMemoClick,
-              children: showConfirmDeleteBtn ? t("CONFIRM\uFF01") : t("DELETE")
+              children: showConfirmDeleteBtn ? "CONFIRM\uFF01" : "DELETE"
             })]
           })
         })]
@@ -38118,8 +37178,8 @@ const MemoTrash = () => {
     let shouldShow = true;
     if (tagQuery) {
       const tagsSet = /* @__PURE__ */ new Set();
-      for (const t2 of Array.from((_a = memo2.content.match(TAG_REG)) != null ? _a : [])) {
-        const tag = t2.replace(TAG_REG, "$1").trim();
+      for (const t of Array.from((_a = memo2.content.match(TAG_REG)) != null ? _a : [])) {
+        const tag = t.replace(TAG_REG, "$1").trim();
         const items = tag.split("/");
         let temp = "";
         for (const i of items) {
@@ -38128,8 +37188,8 @@ const MemoTrash = () => {
           temp += "/";
         }
       }
-      for (const t2 of Array.from((_b = memo2.content.match(NOP_FIRST_TAG_REG)) != null ? _b : [])) {
-        const tag = t2.replace(NOP_FIRST_TAG_REG, "$1").trim();
+      for (const t of Array.from((_b = memo2.content.match(NOP_FIRST_TAG_REG)) != null ? _b : [])) {
+        const tag = t.replace(NOP_FIRST_TAG_REG, "$1").trim();
         const items = tag.split("/");
         let temp = "";
         for (const i of items) {
@@ -38168,7 +37228,7 @@ const MemoTrash = () => {
         setDeletedMemos(result);
       }
     }).catch((error) => {
-      new require$$0.Notice(t("Failed to fetch deleted memos: ") + error);
+      new require$$0.Notice("Failed to fetch deleted memos: " + error);
     }).finally(() => {
       loadingState.setFinish();
     });
@@ -38197,20 +37257,20 @@ const MemoTrash = () => {
           })
         }), /* @__PURE__ */ jsx("span", {
           className: "normal-text",
-          children: t("Recycle bin")
+          children: "Recycle bin"
         })]
       })
     }), /* @__PURE__ */ jsx(MemoFilter, {}), loadingState.isLoading ? /* @__PURE__ */ jsx("div", {
       className: "tip-text-container",
       children: /* @__PURE__ */ jsx("p", {
         className: "tip-text",
-        children: t("Fetching data...")
+        children: "Fetching data..."
       })
     }) : deletedMemos.length === 0 ? /* @__PURE__ */ jsx("div", {
       className: "tip-text-container",
       children: /* @__PURE__ */ jsx("p", {
         className: "tip-text",
-        children: t("Here is No Zettels.")
+        children: "Here is No Zettels."
       })
     }) : /* @__PURE__ */ jsx("div", {
       className: "deleted-memos-container",
@@ -38420,7 +37480,7 @@ function App() {
     }
   } = react.exports.useContext(appContext);
   if (!appHasDailyNotesPluginLoaded_1() && !window.app.plugins.getPlugin("periodic-notes")) {
-    new require$$0.Notice(t("Check if you opened Daily Notes Plugin Or Periodic Notes Plugin"));
+    new require$$0.Notice("Check if you opened Daily Notes Plugin Or Periodic Notes Plugin");
   }
   return /* @__PURE__ */ jsx(Fragment, {
     children: appRouterSwitch(pathname)
@@ -38592,90 +37652,84 @@ class MemosSettingTab extends require$$0.PluginSettingTab {
     const { containerEl } = this;
     this.containerEl.empty();
     let dropdown;
-    this.containerEl.createEl("h2", { text: t("Storage & Content") });
+    this.containerEl.createEl("h2", { text: "Storage & Content" });
     containerEl.createEl("p", {
-      text: t("Configure where and how your memos are stored"),
+      text: "Configure where and how your memos are stored",
       cls: "setting-item-description"
     });
-    new require$$0.Setting(containerEl).setName(t("Memo storage mode")).setDesc(
-      t(
-        "Choose where to store memos: in daily notes (one file per day) or as individual files (one file per memo)."
-      )
+    new require$$0.Setting(containerEl).setName("Memo storage mode").setDesc(
+      "Choose where to store memos: in daily notes (one file per day) or as individual files (one file per memo)."
     ).addDropdown((dropdownComponent) => {
       dropdown = dropdownComponent;
-      dropdown.addOption("daily-notes", t("Daily Notes")).addOption("individual-files", t("Individual Files")).setValue(this.plugin.settings.MemoStorageMode).onChange(async (value) => {
+      dropdown.addOption("daily-notes", "Daily Notes").addOption("individual-files", "Individual Files").setValue(this.plugin.settings.MemoStorageMode).onChange(async (value) => {
         this.plugin.settings.MemoStorageMode = value;
         this.applySettingsUpdate();
       });
     });
-    new require$$0.Setting(containerEl).setName(t("Insert after heading")).setDesc(t('Heading in daily notes where memos will be inserted (e.g., "# Journal"). Only used in daily notes mode.')).addText(
+    new require$$0.Setting(containerEl).setName("Insert after heading").setDesc('Heading in daily notes where memos will be inserted (e.g., "# Journal"). Only used in daily notes mode.').addText(
       (text) => text.setPlaceholder(DEFAULT_SETTINGS.InsertAfter).setValue(this.plugin.settings.InsertAfter).onChange(async (value) => {
         this.plugin.settings.InsertAfter = value;
         this.applySettingsUpdate();
       })
     );
-    new require$$0.Setting(containerEl).setName(t("Individual memo folder")).setDesc(t("Folder path for individual memo files. Only used in individual files mode.")).addText(
+    new require$$0.Setting(containerEl).setName("Individual memo folder").setDesc("Folder path for individual memo files. Only used in individual files mode.").addText(
       (text) => text.setPlaceholder(DEFAULT_SETTINGS.IndividualMemoFolder).setValue(this.plugin.settings.IndividualMemoFolder).onChange(async (value) => {
         this.plugin.settings.IndividualMemoFolder = value;
         this.applySettingsUpdate();
       })
     );
-    new require$$0.Setting(containerEl).setName(t("Default memo type")).setDesc(t("Choose whether new memos are list items or tasks (with checkbox).")).addDropdown((dropdownComponent) => {
+    new require$$0.Setting(containerEl).setName("Default memo type").setDesc("Choose whether new memos are list items or tasks (with checkbox).").addDropdown((dropdownComponent) => {
       dropdown = dropdownComponent;
-      dropdown.addOption("List", t("List")).addOption("Task", t("Task")).setValue(this.plugin.settings.DefaultPrefix).onChange(async (value) => {
+      dropdown.addOption("List", "List").addOption("Task", "Task").setValue(this.plugin.settings.DefaultPrefix).onChange(async (value) => {
         this.plugin.settings.DefaultPrefix = value;
         this.applySettingsUpdate();
       });
     });
-    new require$$0.Setting(containerEl).setName(t("Memo format template")).setDesc(
-      t(
-        'Template for how memos are formatted. Use {TIME} for timestamp and {CONTENT} for memo text. Example: "{TIME} {CONTENT}"'
-      )
+    new require$$0.Setting(containerEl).setName("Memo format template").setDesc(
+      'Template for how memos are formatted. Use {TIME} for timestamp and {CONTENT} for memo text. Example: "{TIME} {CONTENT}"'
     ).addText(
       (text) => text.setPlaceholder(DEFAULT_SETTINGS.DefaultMemoComposition).setValue(this.plugin.settings.DefaultMemoComposition).onChange(async (value) => {
         this.plugin.settings.DefaultMemoComposition = value;
         this.applySettingsUpdate();
       })
     );
-    this.containerEl.createEl("h2", { text: t("User Interface") });
+    this.containerEl.createEl("h2", { text: "User Interface" });
     containerEl.createEl("p", {
-      text: t("Configure how Lethe looks and behaves"),
+      text: "Configure how Lethe looks and behaves",
       cls: "setting-item-description"
     });
-    new require$$0.Setting(containerEl).setName(t("User name")).setDesc(t('Your display name in memos. Default: "MEMO \u{1F609}"')).addText(
+    new require$$0.Setting(containerEl).setName("User name").setDesc('Your display name in memos. Default: "MEMO \u{1F609}"').addText(
       (text) => text.setPlaceholder(DEFAULT_SETTINGS.UserName).setValue(this.plugin.settings.UserName).onChange(async (value) => {
         this.plugin.settings.UserName = value;
         this.applySettingsUpdate();
       })
     );
-    new require$$0.Setting(containerEl).setName(t("Show in sidebar")).setDesc(t("Open Lethe in the sidebar instead of as a tab.")).addToggle(
+    new require$$0.Setting(containerEl).setName("Show in sidebar").setDesc("Open Lethe in the sidebar instead of as a tab.").addToggle(
       (toggle) => toggle.setValue(this.plugin.settings.ShowInSidebar).onChange(async (value) => {
         this.plugin.settings.ShowInSidebar = value;
         this.applySettingsUpdate();
       })
     );
-    new require$$0.Setting(containerEl).setName(t("Sidebar location")).setDesc(t('Which sidebar to use when "Show in sidebar" is enabled.')).addDropdown((dropdownComponent) => {
+    new require$$0.Setting(containerEl).setName("Sidebar location").setDesc('Which sidebar to use when "Show in sidebar" is enabled.').addDropdown((dropdownComponent) => {
       dropdown = dropdownComponent;
-      dropdown.addOption("left", t("Left")).addOption("right", t("Right")).setValue(this.plugin.settings.SidebarLocation).onChange(async (value) => {
+      dropdown.addOption("left", "Left").addOption("right", "Right").setValue(this.plugin.settings.SidebarLocation).onChange(async (value) => {
         this.plugin.settings.SidebarLocation = value;
         this.applySettingsUpdate();
       });
     });
-    new require$$0.Setting(containerEl).setName(t("Focus on editor when opening")).setDesc(t("Automatically focus the editor when Lethe opens for quick memo capture.")).addToggle(
+    new require$$0.Setting(containerEl).setName("Focus on editor when opening").setDesc("Automatically focus the editor when Lethe opens for quick memo capture.").addToggle(
       (toggle) => toggle.setValue(this.plugin.settings.FocusOnEditor).onChange(async (value) => {
         this.plugin.settings.FocusOnEditor = value;
         this.applySettingsUpdate();
       })
     );
-    this.containerEl.createEl("h2", { text: t("Performance") });
+    this.containerEl.createEl("h2", { text: "Performance" });
     containerEl.createEl("p", {
-      text: t("Optional optimizations for faster memo capture"),
+      text: "Optional optimizations for faster memo capture",
       cls: "setting-item-description"
     });
-    new require$$0.Setting(containerEl).setName(t("Pre-create daily notes")).setDesc(
-      t(
-        "Automatically create today and tomorrow's daily notes in the background. Eliminates 200-500ms delay on first memo save of the day. Only affects daily notes mode."
-      )
+    new require$$0.Setting(containerEl).setName("Pre-create daily notes").setDesc(
+      "Automatically create today and tomorrow's daily notes in the background. Eliminates 200-500ms delay on first memo save of the day. Only affects daily notes mode."
     ).addToggle(
       (toggle) => toggle.setValue(this.plugin.settings.PreCreateDailyNotes).onChange(async (value) => {
         this.plugin.settings.PreCreateDailyNotes = value;
@@ -38909,7 +37963,7 @@ class MemosPlugin extends require$$0.Plugin {
     await this.loadSettings();
     this.registerView(MEMOS_VIEW_TYPE, (leaf) => new Memos(leaf, this));
     this.app.workspace.onLayoutReady(this.onLayoutReady.bind(this));
-    console.log(t("welcome"));
+    console.log("Welcome to Lethe");
   }
   async loadSettings() {
     const loadedData = await this.loadData();
@@ -38952,13 +38006,13 @@ class MemosPlugin extends require$$0.Plugin {
   }
   onunload() {
     this.app.workspace.detachLeavesOfType(MEMOS_VIEW_TYPE);
-    new require$$0.Notice(t("Close Lethe Successfully"));
+    new require$$0.Notice("Close Lethe Successfully");
   }
   registerMobileEvent() {
     this.registerEvent(
       this.app.workspace.on("receive-text-menu", (menu, source) => {
         menu.addItem((item) => {
-          item.setIcon("popup-open").setTitle(t("Insert as Memo")).onClick(async () => {
+          item.setIcon("popup-open").setTitle("Insert as Memo").onClick(async () => {
             const newMemo = await memoService.createMemo(source, false);
             memoService.pushMemo(newMemo);
           });
@@ -38968,7 +38022,7 @@ class MemosPlugin extends require$$0.Plugin {
     this.registerEvent(
       this.app.workspace.on("receive-files-menu", (menu, source) => {
         menu.addItem((item) => {
-          item.setIcon("popup-open").setTitle(t("Insert file as memo content")).onClick(async () => {
+          item.setIcon("popup-open").setTitle("Insert file as memo content").onClick(async () => {
             const fileName = source.map((file) => {
               return this.app.fileManager.generateMarkdownLink(file, file.path);
             });
@@ -39053,7 +38107,7 @@ class MemosPlugin extends require$$0.Plugin {
     if (require$$0.Platform.isMobile) {
       this.registerMobileEvent();
     }
-    this.addRibbonIcon("Memos", t("ribbonIconTitle"), () => {
+    this.addRibbonIcon("Memos", "Lethe", () => {
       this.openMemos();
     });
     const leaves = this.app.workspace.getLeavesOfType(MEMOS_VIEW_TYPE);
@@ -39112,7 +38166,7 @@ class MemosPlugin extends require$$0.Plugin {
     const workspace = this.app.workspace;
     const leaves = workspace.getLeavesOfType(MEMOS_VIEW_TYPE);
     if (!(leaves.length > 0)) {
-      new require$$0.Notice(t("Please Open Lethe First"));
+      new require$$0.Notice("Please Open Lethe First");
       return;
     }
     const leaf = leaves[0];
@@ -39123,7 +38177,7 @@ class MemosPlugin extends require$$0.Plugin {
     const workspace = this.app.workspace;
     const leaves = workspace.getLeavesOfType(MEMOS_VIEW_TYPE);
     if (!(leaves.length > 0)) {
-      new require$$0.Notice(t("Please Open Lethe First"));
+      new require$$0.Notice("Please Open Lethe First");
       return;
     }
     const leaf = leaves[0];
