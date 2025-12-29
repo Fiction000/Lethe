@@ -1,7 +1,7 @@
-import React, { useCallback, useContext, useEffect, useState } from 'react';
+import React, { useCallback, useContext } from 'react';
 import appContext from '../stores/appContext';
 import SearchBar from './SearchBar';
-import { globalStateService, memoService, queryService } from '../services';
+import { globalStateService, memoService } from '../services';
 import Only from './common/OnlyWhen';
 import '../less/memos-header.less';
 import MenuSvg from '../icons/menu.svg?react';
@@ -10,23 +10,8 @@ interface Props {}
 
 const MemosHeader: React.FC<Props> = () => {
   const {
-    locationState: {
-      query: { filter },
-    },
     globalState: { isMobileView },
-    queryState: { queries },
   } = useContext(appContext);
-
-  const [titleText, setTitleText] = useState('MEMOS');
-
-  useEffect(() => {
-    const query = queryService.getQueryById(filter);
-    if (query) {
-      setTitleText(query.title);
-    } else {
-      setTitleText('MEMOS');
-    }
-  }, [filter, queries]);
 
   const handleMemoTextClick = useCallback(() => {
     // Force refresh when user clicks header
@@ -54,7 +39,7 @@ const MemosHeader: React.FC<Props> = () => {
             <MenuSvg className="icon-img" />
           </button>
         </Only>
-        <span className="normal-text">{titleText}</span>
+        <span className="normal-text">MEMOS</span>
         {/*<span className="refresh-icon" onClick={handleRefreshClick}>*/}
         {/*  🔄*/}
         {/*</span>*/}
