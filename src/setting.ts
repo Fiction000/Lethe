@@ -11,27 +11,20 @@ export interface MemosSettings {
   Language: string;
   SaveMemoButtonLabel: string;
   SaveMemoButtonIcon: string;
-  ShareFooterStart: string;
-  ShareFooterEnd: string;
   UseDailyOrPeriodic: string;
   DefaultPrefix: string;
   InsertDateFormat: string;
   DefaultEditorLocation: string;
   UseButtonToShowEditor: boolean;
   FocusOnEditor: boolean;
-  OpenDailyMemosWithMemos: boolean;
   HideDoneTasks: boolean;
   OpenMemosAutomatically: boolean;
   // EditorMaxHeight: string;
   ShowTime: boolean;
   ShowDate: boolean;
   AddBlankLineWhenDate: boolean;
-  AutoSaveWhenOnMobile: boolean;
   DeleteFileName: string;
-  QueryFileName: string;
   UseVaultTags: boolean;
-  DefaultLightBackgroundImage: string;
-  DefaultDarkBackgroundImage: string;
   DefaultMemoComposition: string;
   ShowTaskLabel: boolean;
   CommentOnMemos: boolean;
@@ -56,15 +49,12 @@ export const DEFAULT_SETTINGS: MemosSettings = {
   Language: 'en',
   SaveMemoButtonLabel: 'NOTEIT',
   SaveMemoButtonIcon: '✍️',
-  ShareFooterStart: '{MemosNum} Memos {UsedDay} Day',
-  ShareFooterEnd: '✍️ by {UserName}',
   DefaultPrefix: 'List',
   UseDailyOrPeriodic: 'Daily',
   InsertDateFormat: 'Tasks',
   DefaultEditorLocation: 'Top',
   UseButtonToShowEditor: false,
   FocusOnEditor: true,
-  OpenDailyMemosWithMemos: true,
   HideDoneTasks: false,
   ShowTaskLabel: false,
   OpenMemosAutomatically: false,
@@ -72,12 +62,8 @@ export const DEFAULT_SETTINGS: MemosSettings = {
   ShowTime: true,
   ShowDate: true,
   AddBlankLineWhenDate: false,
-  AutoSaveWhenOnMobile: false,
   DeleteFileName: 'delete',
-  QueryFileName: 'query',
   UseVaultTags: false,
-  DefaultLightBackgroundImage: '',
-  DefaultDarkBackgroundImage: '',
   DefaultMemoComposition: '{TIME} {CONTENT}',
   CommentOnMemos: false,
   CommentsInOriginalNotes: false,
