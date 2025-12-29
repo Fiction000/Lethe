@@ -2,14 +2,15 @@ import { moment, normalizePath, Notice, TFile } from 'obsidian';
 import appStore from '../stores/appStore';
 import { createDailyNote, getAllDailyNotes, getDailyNote } from 'obsidian-daily-notes-interface';
 import { insertAfterHandler } from './obCreateMemo';
-import { DeleteFileName, InsertAfter } from '../memos';
+import { InsertAfter } from '../memos';
+// DeleteFileName removed - hardcoded to 'delete' (Phase 3)
 import { getDailyNotePath } from '../helpers/utils';
 
 export async function restoreDeletedMemo(deletedMemoid: string): Promise<any[]> {
   const { vault, metadataCache } = appStore.getState().dailyNotesState.app;
   if (/\d{14,}/.test(deletedMemoid)) {
     const filePath = getDailyNotePath();
-    const absolutePath = filePath + '/' + DeleteFileName + '.md';
+    const absolutePath = filePath + '/delete.md'; // DeleteFileName hardcoded
     const deleteFile = metadataCache.getFirstLinkpathDest('', absolutePath);
 
     if (deleteFile instanceof TFile) {
@@ -63,7 +64,7 @@ export async function deleteForever(deletedMemoid: string): Promise<void> {
   const { vault, metadataCache } = appStore.getState().dailyNotesState.app;
   if (/\d{14,}/.test(deletedMemoid)) {
     const filePath = getDailyNotePath();
-    const absolutePath = filePath + '/' + DeleteFileName + '.md';
+    const absolutePath = filePath + '/delete.md'; // DeleteFileName hardcoded
     const deleteFile = metadataCache.getFirstLinkpathDest('', absolutePath);
 
     if (deleteFile instanceof TFile) {
@@ -91,7 +92,7 @@ export async function getDeletedMemos(): Promise<any[]> {
   const { vault, metadataCache } = appStore.getState().dailyNotesState.app;
 
   const filePath = getDailyNotePath();
-  const absolutePath = filePath + '/' + DeleteFileName + '.md';
+  const absolutePath = filePath + '/delete.md'; // DeleteFileName hardcoded
   const deletedMemos: any[] | PromiseLike<any[]> = [];
   const deleteFile = metadataCache.getFirstLinkpathDest('', absolutePath);
   if (deleteFile instanceof TFile) {
@@ -134,7 +135,7 @@ export const sendMemoToDelete = async (memoContent: string): Promise<any> => {
   const { metadataCache, vault } = appStore.getState().dailyNotesState.app;
 
   const filePath = getDailyNotePath();
-  const absolutePath = filePath + '/' + DeleteFileName + '.md';
+  const absolutePath = filePath + '/delete.md'; // DeleteFileName hardcoded
 
   const deleteFile = metadataCache.getFirstLinkpathDest('', absolutePath);
 

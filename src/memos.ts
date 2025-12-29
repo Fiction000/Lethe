@@ -31,46 +31,16 @@ export class Memos extends ItemView {
   }
 
   private onMemosSettingsUpdate(): void {
-    // Update all exported settings
-    InsertAfter = this.plugin.settings.InsertAfter;
-    UserName = this.plugin.settings.UserName;
-    ProcessEntriesBelow = this.plugin.settings.ProcessEntriesBelow;
-    SaveMemoButtonLabel = this.plugin.settings.SaveMemoButtonLabel;
-    SaveMemoButtonIcon = this.plugin.settings.SaveMemoButtonIcon;
-    DefaultPrefix = this.plugin.settings.DefaultPrefix;
-    InsertDateFormat = this.plugin.settings.InsertDateFormat;
-    DefaultEditorLocation = this.plugin.settings.DefaultEditorLocation;
-    UseButtonToShowEditor = this.plugin.settings.UseButtonToShowEditor;
-    FocusOnEditor = this.plugin.settings.FocusOnEditor;
-    OpenDailyMemosWithMemos = this.plugin.settings.OpenDailyMemosWithMemos;
-    HideDoneTasks = this.plugin.settings.HideDoneTasks;
-    ShareFooterStart = this.plugin.settings.ShareFooterStart;
-    ShareFooterEnd = this.plugin.settings.ShareFooterEnd;
-    OpenMemosAutomatically = this.plugin.settings.OpenMemosAutomatically;
-    ShowTime = this.plugin.settings.ShowTime;
-    ShowDate = this.plugin.settings.ShowDate;
-    AddBlankLineWhenDate = this.plugin.settings.AddBlankLineWhenDate;
-    AutoSaveWhenOnMobile = this.plugin.settings.AutoSaveWhenOnMobile;
-    QueryFileName = this.plugin.settings.QueryFileName;
-    DeleteFileName = this.plugin.settings.DeleteFileName;
-    UseVaultTags = this.plugin.settings.UseVaultTags;
-    DefaultDarkBackgroundImage = this.plugin.settings.DefaultDarkBackgroundImage;
-    DefaultLightBackgroundImage = this.plugin.settings.DefaultLightBackgroundImage;
-    DefaultMemoComposition = this.plugin.settings.DefaultMemoComposition;
-    ShowTaskLabel = this.plugin.settings.ShowTaskLabel;
-    CommentOnMemos = this.plugin.settings.CommentOnMemos;
-    CommentsInOriginalNotes = this.plugin.settings.CommentsInOriginalNotes;
-    FetchMemosMark = this.plugin.settings.FetchMemosMark;
-    FetchMemosFromNote = this.plugin.settings.FetchMemosFromNote;
-    ShowCommentOnMemos = this.plugin.settings.ShowCommentOnMemos;
-    UseDailyOrPeriodic = this.plugin.settings.UseDailyOrPeriodic;
-    ShowLeftSideBar = this.plugin.settings.ShowLeftSideBar;
+    // Update all exported settings (Phase 3: reduced to 10 essential settings)
     MemoStorageMode = this.plugin.settings.MemoStorageMode;
+    InsertAfter = this.plugin.settings.InsertAfter;
     IndividualMemoFolder = this.plugin.settings.IndividualMemoFolder;
-    IndividualMemoFileNameLength = this.plugin.settings.IndividualMemoFileNameLength;
-    IndividualMemoTags = this.plugin.settings.IndividualMemoTags;
+    DefaultPrefix = this.plugin.settings.DefaultPrefix;
+    DefaultMemoComposition = this.plugin.settings.DefaultMemoComposition;
+    UserName = this.plugin.settings.UserName;
     ShowInSidebar = this.plugin.settings.ShowInSidebar;
     SidebarLocation = this.plugin.settings.SidebarLocation;
+    FocusOnEditor = this.plugin.settings.FocusOnEditor;
 
     memoService.clearMemos();
     memoService.fetchAllMemos(true); // Force refetch on settings change
@@ -117,9 +87,7 @@ export class Memos extends ItemView {
         return;
       }
 
-      if (ShowLeftSideBar && !Platform.isMobile) {
-        return;
-      }
+      // ShowLeftSideBar removed in Phase 3 - simplified mobile view logic
 
       globalStateService.setIsMobileView(true);
       leaf.view.containerEl.classList.add('mobile-view');
@@ -167,46 +135,16 @@ export class Memos extends ItemView {
 
     dailyNotesService.getApp(this.app);
 
-    InsertAfter = this.plugin.settings.InsertAfter;
-    UserName = this.plugin.settings.UserName;
-    ProcessEntriesBelow = this.plugin.settings.ProcessEntriesBelow;
-    SaveMemoButtonLabel = this.plugin.settings.SaveMemoButtonLabel;
-    SaveMemoButtonIcon = this.plugin.settings.SaveMemoButtonIcon;
-    DefaultPrefix = this.plugin.settings.DefaultPrefix;
-    InsertDateFormat = this.plugin.settings.InsertDateFormat;
-    DefaultEditorLocation = this.plugin.settings.DefaultEditorLocation;
-    UseButtonToShowEditor = this.plugin.settings.UseButtonToShowEditor;
-    FocusOnEditor = this.plugin.settings.FocusOnEditor;
-    OpenDailyMemosWithMemos = this.plugin.settings.OpenDailyMemosWithMemos;
-    HideDoneTasks = this.plugin.settings.HideDoneTasks;
-    ShareFooterStart = this.plugin.settings.ShareFooterStart;
-    ShareFooterEnd = this.plugin.settings.ShareFooterEnd;
-    OpenMemosAutomatically = this.plugin.settings.OpenMemosAutomatically;
-    // EditorMaxHeight = this.plugin.settings.EditorMaxHeight;
-    ShowTime = this.plugin.settings.ShowTime;
-    ShowDate = this.plugin.settings.ShowDate;
-    AddBlankLineWhenDate = this.plugin.settings.AddBlankLineWhenDate;
-    AutoSaveWhenOnMobile = this.plugin.settings.AutoSaveWhenOnMobile;
-    QueryFileName = this.plugin.settings.QueryFileName;
-    DeleteFileName = this.plugin.settings.DeleteFileName;
-    UseVaultTags = this.plugin.settings.UseVaultTags;
-    DefaultDarkBackgroundImage = this.plugin.settings.DefaultDarkBackgroundImage;
-    DefaultLightBackgroundImage = this.plugin.settings.DefaultLightBackgroundImage;
-    DefaultMemoComposition = this.plugin.settings.DefaultMemoComposition;
-    ShowTaskLabel = this.plugin.settings.ShowTaskLabel;
-    CommentOnMemos = this.plugin.settings.CommentOnMemos;
-    CommentsInOriginalNotes = this.plugin.settings.CommentsInOriginalNotes;
-    FetchMemosMark = this.plugin.settings.FetchMemosMark;
-    FetchMemosFromNote = this.plugin.settings.FetchMemosFromNote;
-    ShowCommentOnMemos = this.plugin.settings.ShowCommentOnMemos;
-    UseDailyOrPeriodic = this.plugin.settings.UseDailyOrPeriodic;
-    ShowLeftSideBar = this.plugin.settings.ShowLeftSideBar;
+    // Initialize exported settings (Phase 3: reduced to 9 essential settings)
     MemoStorageMode = this.plugin.settings.MemoStorageMode;
+    InsertAfter = this.plugin.settings.InsertAfter;
     IndividualMemoFolder = this.plugin.settings.IndividualMemoFolder;
-    IndividualMemoFileNameLength = this.plugin.settings.IndividualMemoFileNameLength;
-    IndividualMemoTags = this.plugin.settings.IndividualMemoTags;
+    DefaultPrefix = this.plugin.settings.DefaultPrefix;
+    DefaultMemoComposition = this.plugin.settings.DefaultMemoComposition;
+    UserName = this.plugin.settings.UserName;
     ShowInSidebar = this.plugin.settings.ShowInSidebar;
     SidebarLocation = this.plugin.settings.SidebarLocation;
+    FocusOnEditor = this.plugin.settings.FocusOnEditor;
 
     this.memosComponent = React.createElement(App);
 
@@ -224,43 +162,13 @@ export class Memos extends ItemView {
   }
 }
 
-export let InsertAfter: string;
-export let UserName: string;
-export let ProcessEntriesBelow: string;
-export let SaveMemoButtonLabel: string;
-export let SaveMemoButtonIcon: string;
-export let DefaultPrefix: string;
-export let InsertDateFormat: string;
-export let DefaultEditorLocation: string;
-export let UseButtonToShowEditor: boolean;
-export let FocusOnEditor: boolean;
-export let OpenDailyMemosWithMemos: boolean;
-export let HideDoneTasks: boolean;
-export let ShareFooterStart: string;
-export let ShareFooterEnd: string;
-export let OpenMemosAutomatically: boolean;
-// export let EditorMaxHeight: string;
-export let ShowTime: boolean;
-export let ShowDate: boolean;
-export let AddBlankLineWhenDate: boolean;
-export let AutoSaveWhenOnMobile: boolean;
-export let QueryFileName: string;
-export let DeleteFileName: string;
-export let UseVaultTags: boolean;
-export let DefaultDarkBackgroundImage: string;
-export let DefaultLightBackgroundImage: string;
-export let DefaultMemoComposition: string;
-export let ShowTaskLabel: boolean;
-export let CommentOnMemos: boolean;
-export let CommentsInOriginalNotes: boolean;
-export let FetchMemosMark: string;
-export let FetchMemosFromNote: boolean;
-export let ShowCommentOnMemos: boolean;
-export let UseDailyOrPeriodic: string;
-export let ShowLeftSideBar: boolean;
+// Phase 3: Reduced to 9 essential setting exports
 export let MemoStorageMode: 'daily-notes' | 'individual-files';
+export let InsertAfter: string;
 export let IndividualMemoFolder: string;
-export let IndividualMemoFileNameLength: number;
-export let IndividualMemoTags: string;
+export let DefaultPrefix: string;
+export let DefaultMemoComposition: string;
+export let UserName: string;
 export let ShowInSidebar: boolean;
 export let SidebarLocation: 'left' | 'right';
+export let FocusOnEditor: boolean;

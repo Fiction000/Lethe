@@ -4,11 +4,11 @@ import appStore from '../stores/appStore';
 import {
   DefaultMemoComposition,
   IndividualMemoFolder,
-  IndividualMemoFileNameLength,
-  IndividualMemoTags,
   InsertAfter,
   MemoStorageMode,
 } from '../memos';
+// IndividualMemoFileNameLength removed - hardcoded to 30 (Phase 3)
+// IndividualMemoTags removed - hardcoded to '' (Phase 3)
 import { dailyNotesService } from '../services';
 import utils from '../helpers/utils';
 
@@ -267,14 +267,12 @@ export async function createIndividualMemoFile(
   }
 
   // Generate filename from content
-  const sanitizedName = utils.sanitizeFilename(MemoContent, IndividualMemoFileNameLength);
+  const sanitizedName = utils.sanitizeFilename(MemoContent, 30); // IndividualMemoFileNameLength hardcoded
   const timestamp = date.format('YYYYMMDDHHmmss');
   const filename = await utils.generateUniqueFilename(vault, folderPath, sanitizedName, timestamp);
 
-  // Parse tags from settings (comma-separated)
-  const tags = IndividualMemoTags.split(',')
-    .map((t) => t.trim())
-    .filter((t) => t.length > 0);
+  // Parse tags from settings (hardcoded to empty - IndividualMemoTags removed)
+  const tags: string[] = []; // No tags by default
 
   // Build frontmatter
   let frontmatter = `---\ncreated: ${date.format('YYYY-MM-DD HH:mm:ss')}\ntype: ${isTASK ? 'task' : 'memo'}`;

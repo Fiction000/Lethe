@@ -6,7 +6,6 @@ import MenuBtnsPopup from './MenuBtnsPopup';
 import '../less/user-banner.less';
 import { UserName } from '../memos';
 import More from '../icons/more.svg?react';
-import { t } from '../translations/helper';
 
 interface Props {}
 
@@ -59,11 +58,11 @@ const UserBanner: React.FC<Props> = () => {
         </div>
         <div className="status-text tags-text">
           <span className="amount-text">{tags.length}</span>
-          <span className="type-text">{t('TAG')}</span>
+          <span className="type-text">TAG</span>
         </div>
         <div className="status-text duration-text">
           <span className="amount-text">{createdDays ?? 0}</span>
-          <span className="type-text">{t('DAY')}</span>
+          <span className="type-text">DAY</span>
         </div>
       </div>
     </div>

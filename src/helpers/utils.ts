@@ -1,8 +1,7 @@
 import { moment, normalizePath, Notice, TFile, Vault } from 'obsidian';
 import { createDailyNote } from 'obsidian-daily-notes-interface';
 import { getDailyNoteSettings } from 'obsidian-daily-notes-interface';
-import { t } from '../translations/helper';
-import { UseDailyOrPeriodic } from '../memos';
+// UseDailyOrPeriodic setting removed - auto-detect which plugin is installed
 
 namespace utils {
   export function getNowTimeStamp(): number {
@@ -342,34 +341,24 @@ namespace utils {
 }
 
 export function getDailyNoteFormat(): string {
-  let dailyNoteFormat = '';
+  // Auto-detect: check if Periodic Notes plugin is active, otherwise use Daily Notes
+  const periodicNotesPlugin = window.app.plugins.getPlugin('periodic-notes');
 
-  let dailyNoteTempForPeriodicNotes = '';
-  const folderFromPeriodicNotesNew = window.app.plugins
-    .getPlugin('periodic-notes')
-    ?.calendarSetManager?.getActiveConfig('day')?.folder;
-  const folderFromPeriodicNotes = window.app.plugins.getPlugin('periodic-notes')?.settings?.daily?.format;
-
-  if (folderFromPeriodicNotesNew === undefined) {
-    dailyNoteTempForPeriodicNotes = folderFromPeriodicNotes;
+  if (periodicNotesPlugin?.calendarSetManager?.getActiveConfig('day')?.enabled) {
+    // Periodic Notes is active - use its format
+    const format = periodicNotesPlugin.calendarSetManager.getActiveConfig('day')?.format;
+    return format || 'YYYY-MM-DD';
+  } else if (periodicNotesPlugin?.settings?.daily?.format) {
+    // Periodic Notes plugin exists with daily settings
+    return periodicNotesPlugin.settings.daily.format || 'YYYY-MM-DD';
   } else {
-    dailyNoteTempForPeriodicNotes = folderFromPeriodicNotesNew;
+    // Fall back to Daily Notes plugin
+    const dailyNoteFormat = getDailyNoteSettings().format || 'YYYY-MM-DD';
+    if (!dailyNoteFormat) {
+      new Notice("You didn't set format for daily notes in both periodic-notes and daily-notes plugins.");
+    }
+    return dailyNoteFormat;
   }
-  switch (UseDailyOrPeriodic) {
-    case 'Daily':
-      dailyNoteFormat = getDailyNoteSettings().format || 'YYYY-MM-DD';
-      break;
-    case 'Periodic':
-      dailyNoteFormat = dailyNoteTempForPeriodicNotes || 'YYYY-MM-DD';
-      break;
-    default:
-      dailyNoteFormat = getDailyNoteSettings().format || 'YYYY-MM-DD';
-      break;
-  }
-  if (dailyNoteFormat === '' || dailyNoteFormat === undefined) {
-    new Notice(t("You didn't set format for daily notes in both periodic-notes and daily-notes plugins."));
-  }
-  return dailyNoteFormat;
   // if (window.app.plugins.getPlugin('periodic-notes')?.calendarSetManager?.getActiveConfig('day').enabled) {
   //   const periodicNotes = window.app.plugins.getPlugin('periodic-notes');
   //   dailyNoteFormat = periodicNotes.calendarSetManager.getActiveConfig('day').format || 'YYYY-MM-DD';
@@ -386,28 +375,19 @@ export function getDailyNoteFormat(): string {
 }
 
 export function getDailyNotePath(): string {
-  let dailyNotePath = '';
-  let dailyNoteTempForPeriodicNotes = '';
-  const folderFromPeriodicNotesNew = window.app.plugins
-    .getPlugin('periodic-notes')
-    ?.calendarSetManager?.getActiveConfig('day')?.folder;
-  const folderFromPeriodicNotes = window.app.plugins.getPlugin('periodic-notes')?.settings?.daily?.folder;
+  // Auto-detect: check if Periodic Notes plugin is active, otherwise use Daily Notes
+  const periodicNotesPlugin = window.app.plugins.getPlugin('periodic-notes');
 
-  if (folderFromPeriodicNotesNew === undefined) {
-    dailyNoteTempForPeriodicNotes = folderFromPeriodicNotes;
+  let dailyNotePath = '';
+  if (periodicNotesPlugin?.calendarSetManager?.getActiveConfig('day')?.enabled) {
+    // Periodic Notes is active - use its folder
+    dailyNotePath = periodicNotesPlugin.calendarSetManager.getActiveConfig('day')?.folder || '';
+  } else if (periodicNotesPlugin?.settings?.daily?.folder) {
+    // Periodic Notes plugin exists with daily settings
+    dailyNotePath = periodicNotesPlugin.settings.daily.folder || '';
   } else {
-    dailyNoteTempForPeriodicNotes = folderFromPeriodicNotesNew;
-  }
-  switch (UseDailyOrPeriodic) {
-    case 'Daily':
-      dailyNotePath = getDailyNoteSettings().folder || '';
-      break;
-    case 'Periodic':
-      dailyNotePath = dailyNoteTempForPeriodicNotes || '';
-      break;
-    default:
-      dailyNotePath = getDailyNoteSettings().folder || '';
-      break;
+    // Fall back to Daily Notes plugin
+    dailyNotePath = getDailyNoteSettings().folder || '';
   }
   // console.log(window.app.plugins.getPlugin('periodic-notes'));
   // const periodicNotes = window.app.plugins.getPlugin('periodic-notes');
@@ -425,7 +405,7 @@ export function getDailyNotePath(): string {
   // const dailyNotesSetting = getDailyNoteSettings();
   // dailyNotePath = dailyNotesSetting.folder;
   if (dailyNotePath === '' || dailyNotePath === undefined) {
-    new Notice(t("You didn't set folder for daily notes in both periodic-notes and daily-notes plugins."));
+    new Notice("You didn't set folder for daily notes in both periodic-notes and daily-notes plugins.");
   }
   return dailyNotePath;
 }

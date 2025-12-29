@@ -2,7 +2,6 @@ import React, { memo, useEffect, useRef } from 'react';
 import useToggle from '../../hooks/useToggle';
 import '../../less/common/selector.less';
 // import arrowLeft from '../../icons/arrow-left.svg';
-import { t } from '../../translations/helper';
 import ArrowRight from '../../icons/arrow-right.svg?react';
 
 interface TVObject {
@@ -18,7 +17,7 @@ interface Props {
 }
 
 const nullItem = {
-  text: t('SELECT'),
+  text: 'SELECT',
   value: '',
 };
 

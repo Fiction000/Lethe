@@ -9,7 +9,6 @@ import '../less/memo-card-dialog.less';
 import { Notice } from 'obsidian';
 import Close from '../icons/close.svg?react';
 import Edit from '../icons/edit.svg?react';
-import { t } from '../translations/helper';
 import MemoImage from './MemoImage';
 
 // import Share from "*.svg?react";
@@ -173,7 +172,7 @@ const MemoCardDialog: React.FC<Props> = (props: Props) => {
       {linkMemos.length > 0 ? (
         <div className="linked-memos-wrapper">
           <p className="normal-text">
-            {t('LINKED')} {linkMemos.length} MEMO{' '}
+            LINKED {linkMemos.length} MEMO{' '}
           </p>
           {linkMemos.map((m) => {
             const rawtext = parseHtmlToRawText(formatMemoContent(m.content)).replaceAll('\n', ' ');
@@ -189,7 +188,7 @@ const MemoCardDialog: React.FC<Props> = (props: Props) => {
       {linkedMemos.length > 0 ? (
         <div className="linked-memos-wrapper">
           <p className="normal-text">
-            {linkedMemos.length} MEMO {t('LINK TO THE')} MEMO
+            {linkedMemos.length} MEMO LINK TO THE MEMO
           </p>
           {linkedMemos.map((m) => {
             const rawtext = parseHtmlToRawText(formatMemoContent(m.content)).replaceAll('\n', ' ');

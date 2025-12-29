@@ -6,7 +6,6 @@ import Only from './common/OnlyWhen';
 import utils from '../helpers/utils';
 import '../less/tag-list.less';
 import ArrowRight from '../icons/arrow-right.svg?react';
-import { t } from '../translations/helper';
 
 interface Tag {
   key: string;
@@ -74,7 +73,7 @@ const TagList: React.FC<Props> = () => {
 
   return (
     <div className="tags-wrapper">
-      <p className="title-text">{t('Frequently Used Tags')}</p>
+      <p className="title-text">Frequently Used Tags</p>
       <div className="tags-container">
         {tags.map((t, idx) => (
           <TagItemContainer key={t.text + '-' + idx} tag={t} tagQuery={tagQuery} />

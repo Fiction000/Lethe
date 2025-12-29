@@ -1,10 +1,10 @@
 import { Notice, Platform, Plugin, TFile } from 'obsidian';
-import { FocusOnEditor, Memos, OpenDailyMemosWithMemos } from './memos';
+import { FocusOnEditor, Memos } from './memos';
+// OpenDailyMemosWithMemos removed - was Phase 2 orphaned setting
 import { MEMOS_VIEW_TYPE } from './constants';
 import addIcons from './obComponents/customIcons';
 import { DEFAULT_SETTINGS, MemosSettings, MemosSettingTab } from './setting';
 import { QuickCaptureModal } from './obComponents/QuickCaptureModal';
-import { t } from './translations/helper';
 import { memoService } from './services';
 import { dailyNotePreCreationService } from './services/dailyNotePreCreationService';
 
@@ -18,11 +18,50 @@ export default class MemosPlugin extends Plugin {
     this.registerView(MEMOS_VIEW_TYPE, (leaf) => new Memos(leaf, this));
 
     this.app.workspace.onLayoutReady(this.onLayoutReady.bind(this));
-    console.log(t('welcome'));
+    console.log('Welcome to Lethe');
   }
 
   public async loadSettings() {
-    this.settings = Object.assign({}, DEFAULT_SETTINGS, await this.loadData());
+    const loadedData = await this.loadData();
+
+    // Clean up removed settings from old versions (Phase 2 + Phase 3)
+    if (loadedData) {
+      // Phase 2 orphaned settings
+      delete loadedData.OpenDailyMemosWithMemos;
+      delete loadedData.ShareFooterStart;
+      delete loadedData.ShareFooterEnd;
+      delete loadedData.AutoSaveWhenOnMobile;
+      delete loadedData.QueryFileName;
+      delete loadedData.DefaultDarkBackgroundImage;
+      delete loadedData.DefaultLightBackgroundImage;
+
+      // Phase 3 settings to be removed
+      delete loadedData.SaveMemoButtonLabel;
+      delete loadedData.SaveMemoButtonIcon;
+      delete loadedData.ShowTaskLabel;
+      delete loadedData.ShowLeftSideBar;
+      delete loadedData.UseButtonToShowEditor;
+      delete loadedData.DefaultEditorLocation;
+      delete loadedData.UseDailyOrPeriodic;
+      delete loadedData.CommentOnMemos;
+      delete loadedData.ShowCommentOnMemos;
+      delete loadedData.CommentsInOriginalNotes;
+      delete loadedData.OpenMemosAutomatically;
+      delete loadedData.IndividualMemoFileNameLength;
+      delete loadedData.ProcessEntriesBelow;
+      delete loadedData.Language;
+      delete loadedData.UseVaultTags;
+      delete loadedData.InsertDateFormat;
+      delete loadedData.DeleteFileName;
+      delete loadedData.FetchMemosMark;
+      delete loadedData.FetchMemosFromNote;
+      delete loadedData.AddBlankLineWhenDate;
+      delete loadedData.HideDoneTasks;
+      delete loadedData.ShowTime;
+      delete loadedData.ShowDate;
+    }
+
+    this.settings = Object.assign({}, DEFAULT_SETTINGS, loadedData);
   }
 
   async saveSettings() {
@@ -31,7 +70,7 @@ export default class MemosPlugin extends Plugin {
 
   onunload() {
     this.app.workspace.detachLeavesOfType(MEMOS_VIEW_TYPE);
-    new Notice(t('Close Lethe Successfully'));
+    new Notice('Close Lethe Successfully');
   }
 
   registerMobileEvent() {
@@ -40,7 +79,7 @@ export default class MemosPlugin extends Plugin {
         menu.addItem((item: any) => {
           item
             .setIcon('popup-open')
-            .setTitle(t('Insert as Memo'))
+            .setTitle('Insert as Memo')
             .onClick(async () => {
               const newMemo = await memoService.createMemo(source, false);
               memoService.pushMemo(newMemo);
@@ -54,7 +93,7 @@ export default class MemosPlugin extends Plugin {
         menu.addItem((item) => {
           item
             .setIcon('popup-open')
-            .setTitle(t('Insert file as memo content'))
+            .setTitle('Insert file as memo content')
             .onClick(async () => {
               const fileName = source.map((file: TFile) => {
                 return this.app.fileManager.generateMarkdownLink(file, file.path);
@@ -161,7 +200,7 @@ export default class MemosPlugin extends Plugin {
       this.registerMobileEvent();
     }
 
-    this.addRibbonIcon('Memos', t('ribbonIconTitle'), () => {
+    this.addRibbonIcon('Memos', 'Lethe', () => {
       this.openMemos();
     });
 
@@ -174,10 +213,8 @@ export default class MemosPlugin extends Plugin {
       leaf.view.containerEl.querySelector('textarea').focus();
       return;
     }
-    if (!this.settings.OpenMemosAutomatically) {
-      return;
-    }
-    this.openMemos();
+    // OpenMemosAutomatically removed - hardcoded to false (don't auto-open)
+    return;
   }
 
   async openMemos() {
@@ -241,7 +278,7 @@ export default class MemosPlugin extends Plugin {
     const workspace = this.app.workspace;
     const leaves = workspace.getLeavesOfType(MEMOS_VIEW_TYPE);
     if (!(leaves.length > 0)) {
-      new Notice(t('Please Open Lethe First'));
+      new Notice('Please Open Lethe First');
       return;
       // this.openMemos();
     }
@@ -255,7 +292,7 @@ export default class MemosPlugin extends Plugin {
     const workspace = this.app.workspace;
     const leaves = workspace.getLeavesOfType(MEMOS_VIEW_TYPE);
     if (!(leaves.length > 0)) {
-      new Notice(t('Please Open Lethe First'));
+      new Notice('Please Open Lethe First');
       return;
       // this.openMemos();
     }

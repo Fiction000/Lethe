@@ -10,9 +10,8 @@ import '../less/memolist.less';
 import dailyNotesService from '../services/dailyNotesService';
 import appStore from '../stores/appStore';
 import { Notice, Platform } from 'obsidian';
-import { HideDoneTasks } from '../memos';
+// HideDoneTasks setting removed in Phase 3
 // import {moment} from 'obsidian';
-import { t } from '../translations/helper';
 
 // import { DefaultEditorLocation } from '../memos';
 
@@ -37,15 +36,11 @@ const MemoList: React.FC<Props> = () => {
   );
 
   const shownMemos =
-    showMemoFilter || HideDoneTasks
+    showMemoFilter
       ? memos.filter((memo) => {
           let shouldShow = true;
 
-          if (memo.memoType !== undefined) {
-            if (HideDoneTasks && memo.memoType === 'TASK-DONE') {
-              shouldShow = false;
-            }
-          }
+          // HideDoneTasks feature removed - all memos shown regardless of task status
 
           if (memo.content.contains('comment:')) {
             shouldShow = false;
@@ -130,7 +125,7 @@ const MemoList: React.FC<Props> = () => {
       })
       .catch((err) => {
         console.error('[Lethe] Failed to fetch memos:', err);
-        new Notice(t('Fetch Error'));
+        new Notice('😭 Fetch Error');
       });
 
     // Also ensure daily notes are loaded
@@ -178,12 +173,12 @@ const MemoList: React.FC<Props> = () => {
       <div className="status-text-container">
         <p className="status-text">
           {isFetching
-            ? t('Fetching data...')
+            ? 'Fetching data...'
             : shownMemos.length === 0
-            ? t('Noooop!')
+            ? 'Noooop!'
             : showMemoFilter
             ? ''
-            : t('All Data is Loaded 🎉')}
+            : 'All Data is Loaded 🎉'}
         </p>
       </div>
     </div>

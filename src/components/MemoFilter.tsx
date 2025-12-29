@@ -8,7 +8,6 @@ import { moment, Notice } from 'obsidian';
 import Copy from '../icons/copy.svg?react';
 import { copyShownMemos } from './MemoList';
 import { getMemosByDate, transferMemosIntoText } from '../obComponents/obCopyMemos';
-import { t } from '../translations/helper';
 
 interface FilterProps {}
 
@@ -31,7 +30,7 @@ const MemoFilter: React.FC<FilterProps> = () => {
     const memosByDate = getMemosByDate(copyShownMemos);
     const queryDailyMemos = transferMemosIntoText(memosByDate);
     await utils.copyTextToClipboard(queryDailyMemos);
-    new Notice(t('Copied to clipboard Successfully'));
+    new Notice('Copied to clipboard Successfully');
   };
 
   return (
@@ -61,7 +60,7 @@ const MemoFilter: React.FC<FilterProps> = () => {
               locationService.setFromAndToQuery(0, 0);
             }}
           >
-            <span className="icon-text">🗓️</span> {moment(duration.from, 'x').format('YYYY/MM/DD')} {t('to')}{' '}
+            <span className="icon-text">🗓️</span> {moment(duration.from, 'x').format('YYYY/MM/DD')} to{' '}
             {moment(duration.to, 'x').add(1, 'days').format('YYYY/MM/DD')}
           </div>
         ) : null}
