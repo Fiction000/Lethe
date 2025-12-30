@@ -14,8 +14,6 @@ interface Props {
 }
 
 const DeletedMemo: React.FC<Props> = (props: Props) => {
-  // const { app }  = appStore.getState().dailyNotesState;
-
   const { memo: propsMemo, handleDeletedMemoAction } = props;
   const memo: FormattedMemo = {
     ...propsMemo,
