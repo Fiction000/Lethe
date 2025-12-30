@@ -14,7 +14,8 @@ interface Props extends DialogProps {
 const PreviewImageDialog: React.FC<Props> = ({ destroy, imgUrl, filepath }: Props) => {
   const imgRef = useRef<HTMLImageElement>(null);
   const [imgWidth, setImgWidth] = useState<number>(-1);
-  const { vault } = appStore.getState().dailyNotesState.app;
+  const app = appStore.getState().dailyNotesState?.app;
+  const vault = app?.vault;
 
   useEffect(() => {
     utils.getImageSize(imgUrl).then(({ width }) => {

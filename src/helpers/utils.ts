@@ -129,8 +129,6 @@ namespace utils {
       }
     }
 
-    console.log('hi');
-
     _debounce.cancel = function () {
       if (timer) clearTimeout(timer);
       timer = null;

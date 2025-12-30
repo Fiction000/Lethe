@@ -1,11 +1,11 @@
 import { Notice, Platform, Plugin, TFile } from 'obsidian';
-import { FocusOnEditor, Memos } from './memos';
+import { FocusOnEditor, Memos, initializeSettings } from './memos';
 // OpenDailyMemosWithMemos removed - was Phase 2 orphaned setting
 import { MEMOS_VIEW_TYPE } from './constants';
 import addIcons from './obComponents/customIcons';
 import { DEFAULT_SETTINGS, MemosSettings, MemosSettingTab } from './setting';
 import { QuickCaptureModal } from './obComponents/QuickCaptureModal';
-import { memoService } from './services';
+import { dailyNotesService, memoService } from './services';
 import { dailyNotePreCreationService } from './services/dailyNotePreCreationService';
 
 export default class MemosPlugin extends Plugin {
@@ -122,6 +122,14 @@ export default class MemosPlugin extends Plugin {
   async onLayoutReady(): Promise<void> {
     addIcons();
     this.addSettingTab(new MemosSettingTab(this.app, this));
+
+    // Initialize the app in the store BEFORE any commands can be used
+    // This ensures Quick Capture and other features work even if the main view hasn't been opened yet
+    dailyNotesService.getApp(this.app);
+
+    // Initialize exported settings EARLY so Quick Capture can access them
+    // This ensures MemoStorageMode and other settings are available before the main view opens
+    initializeSettings(this.settings);
 
     // Set plugin instance for daily note pre-creation service
     dailyNotePreCreationService.setPlugin(this);

@@ -19,7 +19,9 @@ class ResourceService {
    * @returns resource: id, filename
    */
   public async upload(file: File) {
-    const { vault, fileManager } = appStore.getState().dailyNotesState.app;
+    const app = appStore.getState().dailyNotesState?.app;
+    if (!app) throw new Error('Obsidian app not available');
+    const { vault, fileManager } = app;
 
     const fileArray = await file.arrayBuffer();
     const ext = getExt(file.type);

@@ -12,9 +12,8 @@ interface Props {}
 const UserBanner: React.FC<Props> = () => {
   const {
     memoState: { memos, tags },
-    userState: { user },
   } = useContext(appContext);
-  const username = user ? user.username : UserName;
+  const username = UserName;
   let memosLength;
   let createdDays;
   if (memos.length) {

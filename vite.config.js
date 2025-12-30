@@ -14,9 +14,16 @@ export default defineConfig(({ mode }) => {
         },
       })
     ],
+    css: {
+      preprocessorOptions: {
+        less: {
+          compress: true,
+        },
+      },
+    },
     build: {
       sourcemap: mode === 'development' ? 'inline' : false,
-      minify: false,
+      minify: mode === 'development' ? false : 'esbuild',
       // Use Vite lib mode https://vitejs.dev/guide/build.html#library-mode
       lib: {
         entry: path.resolve(__dirname, './src/index.ts'),

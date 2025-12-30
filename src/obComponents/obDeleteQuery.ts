@@ -4,7 +4,9 @@ import appStore from '../stores/appStore';
 import { getDailyNotePath } from '../helpers/utils';
 
 export async function deleteQueryForever(queryID: string): Promise<void> {
-  const { vault, metadataCache } = appStore.getState().dailyNotesState.app;
+  const app = appStore.getState().dailyNotesState?.app;
+  if (!app) return;
+  const { vault, metadataCache } = app;
   if (/\d{14,}/.test(queryID)) {
     const filePath = getDailyNotePath();
     const absolutePath = filePath + '/query.md'; // QueryFileName hardcoded

@@ -155,3 +155,17 @@ export let UserName: string;
 export let ShowInSidebar: boolean;
 export let SidebarLocation: 'left' | 'right';
 export let FocusOnEditor: boolean;
+
+// Initialize settings from plugin settings
+// Called early in plugin lifecycle so Quick Capture and other features can access settings
+export function initializeSettings(settings: any) {
+  MemoStorageMode = settings.MemoStorageMode;
+  InsertAfter = settings.InsertAfter;
+  IndividualMemoFolder = settings.IndividualMemoFolder;
+  DefaultPrefix = settings.DefaultPrefix;
+  DefaultMemoComposition = settings.DefaultMemoComposition;
+  UserName = settings.UserName;
+  ShowInSidebar = settings.ShowInSidebar;
+  SidebarLocation = settings.SidebarLocation;
+  FocusOnEditor = settings.FocusOnEditor;
+}

@@ -7,7 +7,9 @@ import { InsertAfter } from '../memos';
 import { getDailyNotePath } from '../helpers/utils';
 
 export async function restoreDeletedMemo(deletedMemoid: string): Promise<any[]> {
-  const { vault, metadataCache } = appStore.getState().dailyNotesState.app;
+  const app = appStore.getState().dailyNotesState?.app;
+  if (!app) return [];
+  const { vault, metadataCache } = app;
   if (/\d{14,}/.test(deletedMemoid)) {
     const filePath = getDailyNotePath();
     const absolutePath = filePath + '/delete.md'; // DeleteFileName hardcoded
@@ -61,7 +63,9 @@ export async function restoreDeletedMemo(deletedMemoid: string): Promise<any[]> 
 }
 
 export async function deleteForever(deletedMemoid: string): Promise<void> {
-  const { vault, metadataCache } = appStore.getState().dailyNotesState.app;
+  const app = appStore.getState().dailyNotesState?.app;
+  if (!app) return;
+  const { vault, metadataCache } = app;
   if (/\d{14,}/.test(deletedMemoid)) {
     const filePath = getDailyNotePath();
     const absolutePath = filePath + '/delete.md'; // DeleteFileName hardcoded
@@ -89,7 +93,9 @@ export async function deleteForever(deletedMemoid: string): Promise<void> {
 }
 
 export async function getDeletedMemos(): Promise<any[]> {
-  const { vault, metadataCache } = appStore.getState().dailyNotesState.app;
+  const app = appStore.getState().dailyNotesState?.app;
+  if (!app) return [];
+  const { vault, metadataCache } = app;
 
   const filePath = getDailyNotePath();
   const absolutePath = filePath + '/delete.md'; // DeleteFileName hardcoded
@@ -132,7 +138,9 @@ export async function getDeletedMemos(): Promise<any[]> {
 }
 
 export const sendMemoToDelete = async (memoContent: string): Promise<any> => {
-  const { metadataCache, vault } = appStore.getState().dailyNotesState.app;
+  const app = appStore.getState().dailyNotesState?.app;
+  if (!app) throw new Error('Obsidian app not available');
+  const { metadataCache, vault } = app;
 
   const filePath = getDailyNotePath();
   const absolutePath = filePath + '/delete.md'; // DeleteFileName hardcoded
@@ -177,7 +185,9 @@ export const createDeleteMemoInFile = async (
   memoContent: string,
   deleteDate: string,
 ): Promise<any> => {
-  const { vault } = appStore.getState().dailyNotesState.app;
+  const app = appStore.getState().dailyNotesState?.app;
+  if (!app) throw new Error('Obsidian app not available');
+  const { vault } = app;
   let newContent;
   if (fileContent === '') {
     newContent = memoContent + ' deletedAt: ' + deleteDate;
@@ -191,7 +201,9 @@ export const createDeleteMemoInFile = async (
 };
 
 export const createdeleteFile = async (path: string): Promise<TFile> => {
-  const { vault } = appStore.getState().dailyNotesState.app;
+  const app = appStore.getState().dailyNotesState?.app;
+  if (!app) throw new Error('Obsidian app not available');
+  const { vault } = app;
 
   try {
     const createdFile = await vault.create(path, '');

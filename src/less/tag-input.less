@@ -1,0 +1,98 @@
+@import './mixin.less';
+
+.tag-input-container {
+  position: relative;
+  width: 100%;
+  margin-bottom: var(--spacing-sm);
+
+  .tag-input-wrapper {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--spacing-xs);
+    padding: var(--spacing-xs);
+    border: 1px solid var(--color-border);
+    background-color: var(--color-bg);
+    min-height: 36px;
+
+    &:focus-within {
+      border-color: var(--color-accent);
+    }
+  }
+
+  .selected-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--spacing-xs);
+  }
+
+  .tag-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 2px 8px;
+    background-color: var(--color-accent);
+    color: var(--color-bg);
+    font-size: var(--font-size-sm);
+    white-space: nowrap;
+
+    .tag-remove {
+      background: none;
+      border: none;
+      color: var(--color-bg);
+      font-size: 18px;
+      line-height: 1;
+      cursor: pointer;
+      padding: 0;
+      width: 16px;
+      height: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      &:hover {
+        opacity: 0.7;
+      }
+    }
+  }
+
+  .tag-input-field {
+    flex: 1;
+    min-width: 120px;
+    border: none;
+    outline: none;
+    background: transparent;
+    padding: var(--spacing-xs);
+    font-size: var(--font-size-base);
+    color: var(--color-fg);
+
+    &::placeholder {
+      color: var(--color-muted);
+    }
+  }
+
+  .tag-suggestions {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    max-height: 200px;
+    overflow-y: auto;
+    background-color: var(--color-bg);
+    border: 1px solid var(--color-border);
+    margin-top: 2px;
+    z-index: 1000;
+
+    .tag-suggestion {
+      padding: var(--spacing-sm);
+      cursor: pointer;
+      color: var(--color-fg);
+
+      &:hover,
+      &.active {
+        background-color: var(--color-accent);
+        color: var(--color-bg);
+      }
+    }
+  }
+}

@@ -21,7 +21,7 @@ export interface MemosSettings {
 
 export const DEFAULT_SETTINGS: MemosSettings = {
   // Section 1: Storage & Content
-  MemoStorageMode: 'daily-notes',
+  MemoStorageMode: 'individual-files',
   InsertAfter: '# Journal',
   IndividualMemoFolder: 'Thino/Memos',
   DefaultPrefix: 'List',

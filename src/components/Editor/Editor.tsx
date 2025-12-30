@@ -191,7 +191,9 @@ const Editor = forwardRef((props: EditorProps, ref: React.ForwardedRef<EditorRef
       return;
     }
 
-    const { fileManager } = appStore.getState().dailyNotesState.app;
+    const app = appStore.getState().dailyNotesState?.app;
+    if (!app) return;
+    const { fileManager } = app;
 
     if (event.currentTrigger === '#') {
       const prevValue = editorRef.current.value;
@@ -253,16 +255,93 @@ const Editor = forwardRef((props: EditorProps, ref: React.ForwardedRef<EditorRef
     refresh();
   }, []);
 
+  const wrapSelection = useCallback((wrapper: string, placeholder: string = '') => {
+    if (!editorRef.current) return;
+
+    const textarea = editorRef.current;
+    const start = textarea.selectionStart;
+    const end = textarea.selectionEnd;
+    const selectedText = textarea.value.substring(start, end);
+    const textToWrap = selectedText || placeholder;
+
+    let wrappedText: string;
+    let cursorOffset: number;
+
+    // Handle different wrapper types
+    if (wrapper === 'link') {
+      wrappedText = `[${textToWrap}]()`;
+      cursorOffset = wrappedText.length - 1; // Position cursor inside ()
+    } else {
+      wrappedText = `${wrapper}${textToWrap}${wrapper}`;
+      cursorOffset = wrapper.length + textToWrap.length;
+    }
+
+    // Insert wrapped text
+    textarea.value =
+      textarea.value.substring(0, start) +
+      wrappedText +
+      textarea.value.substring(end);
+
+    // Set cursor position
+    if (selectedText) {
+      // If text was selected, select the wrapped result
+      textarea.selectionStart = start;
+      textarea.selectionEnd = start + wrappedText.length;
+    } else {
+      // If no selection, position cursor appropriately
+      textarea.selectionStart = textarea.selectionEnd = start + cursorOffset;
+    }
+
+    handleContentChangeCallback(textarea.value);
+    refresh();
+  }, []);
+
   const handleEditorKeyDown = useCallback((event: React.KeyboardEvent<HTMLTextAreaElement>) => {
     event.stopPropagation();
 
-    if (event.code === 'Enter') {
-      if (event.metaKey || event.ctrlKey) {
-        handleCommonConfirmBtnClick();
+    const isMod = event.metaKey || event.ctrlKey;
+    const isShift = event.shiftKey;
+
+    // Cmd/Ctrl + Enter to save
+    if (event.code === 'Enter' && isMod) {
+      handleCommonConfirmBtnClick();
+      return;
+    }
+
+    // Markdown formatting hotkeys
+    if (isMod && !isShift) {
+      switch (event.key.toLowerCase()) {
+        case 'b': // Bold
+          event.preventDefault();
+          wrapSelection('**', 'bold text');
+          return;
+        case 'i': // Italic
+          event.preventDefault();
+          wrapSelection('*', 'italic text');
+          return;
+        case 'k': // Link
+          event.preventDefault();
+          wrapSelection('link', 'link text');
+          return;
+        case 'e': // Inline code
+          event.preventDefault();
+          wrapSelection('`', 'code');
+          return;
       }
     }
+
+    // Cmd/Ctrl + Shift hotkeys
+    if (isMod && isShift) {
+      switch (event.key.toLowerCase()) {
+        case 'x': // Strikethrough
+          event.preventDefault();
+          wrapSelection('~~', 'strikethrough');
+          return;
+      }
+    }
+
     refresh();
-  }, []);
+  }, [wrapSelection]);
 
   const handleCommonConfirmBtnClick = useCallback(() => {
     if (!editorRef.current) {

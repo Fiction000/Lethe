@@ -1,11 +1,15 @@
 @import './mixin.less';
 
+// ============================================================================
+// Preferences Section - Minimal
+// ============================================================================
+
 .preferences-section-container {
   > .demo-content-container {
-    padding: 16px;
-    border-radius: 8px;
-    border: 2px solid @bg-gray;
-    margin: 12px 0;
+    padding: var(--spacing-md);
+    border-radius: 0;
+    border: 2px solid var(--color-border);
+    margin: var(--spacing-md) 0;
   }
 
   > .form-label {
@@ -15,7 +19,7 @@
     > .icon-img {
       width: 16px;
       height: 16px;
-      margin: 0 8px;
+      margin: 0 var(--spacing-sm);
     }
 
     &:hover {
@@ -26,14 +30,14 @@
   > .btn-container {
     .flex(row, flex-start, center);
     width: 100%;
-    margin: 4px 0;
+    margin: var(--spacing-xs) 0;
 
     .btn {
       height: 28px;
-      padding: 0 12px;
-      margin-right: 8px;
-      border: 1px solid gray;
-      border-radius: 8px;
+      padding: 0 var(--spacing-md);
+      margin-right: var(--spacing-sm);
+      border: 1px solid var(--color-border);
+      border-radius: 0;
       cursor: pointer;
 
       &:hover {

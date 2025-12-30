@@ -29,7 +29,7 @@ const appStore = createStore<AppState, AppStateActions>(
     globalState: globalStore.reducer,
     locationState: locationStore.reducer,
     memoState: memoStore.reducer,
-    dailyNotesStore: dailyNotesStore.reducer,
+    dailyNotesState: dailyNotesStore.reducer,  // Fixed: was dailyNotesStore
   }),
 );
 

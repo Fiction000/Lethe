@@ -3,7 +3,8 @@ import { TAbstractFile, TFile } from 'obsidian';
 import dailyNotesService from '../services/dailyNotesService';
 
 export const getSuggestions = (inputStr: string) => {
-  const { app } = dailyNotesService.getState();
+  const app = dailyNotesService.getState()?.app;
+  if (!app) return [];
 
   const abstractFiles = app.vault.getAllLoadedFiles();
   // const files: TFile[] = [];

@@ -4,7 +4,9 @@ import appStore from '../stores/appStore';
 import { getDailyNotePath } from '../helpers/utils';
 
 export const createObsidianQuery = async (title: string, querystring: string): Promise<any> => {
-  const { metadataCache, vault } = appStore.getState().dailyNotesState.app;
+  const app = appStore.getState().dailyNotesState?.app;
+  if (!app) throw new Error('Obsidian app not available');
+  const { metadataCache, vault } = app;
 
   const filePath = getDailyNotePath();
   const absolutePath = filePath + '/query.md'; // QueryFileName hardcoded to 'query'
@@ -72,7 +74,9 @@ export const createQueryInFile = async (
   title: string,
   queryString: string,
 ): Promise<any> => {
-  const { vault } = appStore.getState().dailyNotesState.app;
+  const app = appStore.getState().dailyNotesState?.app;
+  if (!app) throw new Error('Obsidian app not available');
+  const { vault } = app;
   let newContent;
   if (fileContent === '') {
     newContent = id + ' ' + title + ' ' + queryString;
@@ -86,7 +90,9 @@ export const createQueryInFile = async (
 };
 
 export const createQueryFile = async (path: string): Promise<TFile> => {
-  const { vault } = appStore.getState().dailyNotesState.app;
+  const app = appStore.getState().dailyNotesState?.app;
+  if (!app) throw new Error('Obsidian app not available');
+  const { vault } = app;
 
   try {
     const createdFile = await vault.create(path, '');

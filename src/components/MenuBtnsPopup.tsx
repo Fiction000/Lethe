@@ -12,7 +12,7 @@ interface Props {
 
 const MenuBtnsPopup: React.FC<Props> = (props: Props) => {
   const { shownStatus, setShownStatus } = props;
-  const { app } = dailyNotesService.getState();
+  const app = dailyNotesService.getState()?.app;
 
   const popupElRef = useRef<HTMLDivElement>(null);
 
@@ -65,6 +65,7 @@ const MenuBtnsPopup: React.FC<Props> = (props: Props) => {
   }, []);
 
   const handleMyAccountBtnClick = () => {
+    if (!app) return;
     //@ts-expect-error, private method
     app.setting.open();
     //@ts-expect-error, private method
