@@ -12,7 +12,9 @@ export async function changeMemo(
   path?: string,
 ): Promise<Model.Memo> {
   const { dailyNotes } = dailyNotesService.getState();
-  const { vault, metadataCache } = appStore.getState().dailyNotesState.app;
+  const app = appStore.getState().dailyNotesState?.app;
+  if (!app) throw new Error('Obsidian app not available');
+  const { vault, metadataCache } = app;
   const timeString = memoid.slice(0, 14);
   const idString = parseInt(memoid.slice(14));
   let changeDate: moment.Moment;

@@ -1,54 +1,65 @@
-# Lethe
+# Lethe - Instant Thought Capture for Obsidian
 
-A quick capture plugin for Obsidian. Capture ideas quickly and view them in a unified timeline.
+Capture ideas instantly with one hotkey. No friction, just capture.
 
-Based on the [memos](https://github.com/justmemos/memos) open source project.
+## Quick Start
 
-## Introduction
+1. Install Lethe from Community Plugins
+2. Choose your storage mode in settings:
+   - **Individual Files** (default): Each memo becomes its own file in `Thino/Memos/`
+   - **Daily Notes**: Memos are added to daily notes (requires Daily Notes plugin)
+3. Press the Quick Capture hotkey → type → save
 
-1. All memos come from your daily notes - requires the 'Daily Notes Plugin' to be enabled.
-2. Memos are taken from below the header you set in configuration under 'Process Memos below' (`# Journal` by default).
-3. Memos are created under the heading set as 'Insert After' (`# Journal` by default).
-4. Alternatively, memos can be stored as individual files in a configurable folder.
-5. Query files are generated in your daily note folder.
-6. Deleted memos are sent to a delete.md file in your daily note folder.
-
-## How to Use
-
-1. Enable the 'Daily notes' core plugin in Obsidian.
-2. Configure your header settings for processing and inserting memos.
-3. Open Lethe and click 'NOTEIT' to capture a memo.
-4. For comments on memos, enable the 'dataview' plugin.
-
-### Memo Format
-
-```markdown
-- 22:15 {Your memo content}
-```
-
-Supported formats:
-- `- 19:00` - Regular memo
-- `- [ ] 19:00` - Task memo
+Your memo is instantly saved with tags and Markdown formatting.
 
 ## Features
 
-- **Memos List** - View all memos from daily notes in one place
-- **Share** - Share memos and timelines as images
-- **Tag List** - Built-in tag list for memos
-- **Query List** - Create queries with multiple variables
-- **Heatmap** - GitHub-style heatmap showing memo activity
-- **Search & Filter** - Search and filter memos with built-in filters
+- **One-hotkey capture** - Global Quick Capture command works anywhere in Obsidian
+- **Tag autocomplete** - Add tags with vault-wide autocomplete (individual files mode)
+- **Markdown hotkeys** - Standard formatting shortcuts (Cmd+B for bold, etc.)
+- **Dual storage modes** - Individual files or daily notes integration
+- **Task support** - Create todos or list items
+- **Timeline view** - See all memos in unified timeline
 
-### Tips
+## Keyboard Shortcuts
 
-- Double-click a memo to edit it
-- Ctrl+click to jump to the memo source
+### Capture
+- Quick Capture hotkey - Open capture modal
+- `Cmd/Ctrl+Enter` - Save memo
+- `Escape` - Cancel
+
+### Markdown Formatting
+- `Cmd/Ctrl+B` - **Bold**
+- `Cmd/Ctrl+I` - *Italic*
+- `Cmd/Ctrl+K` - [Link]()
+- `Cmd/Ctrl+E` - `Inline code`
+- `Cmd/Ctrl+Shift+X` - ~~Strikethrough~~
+
+### Tag Input (Individual Files Mode)
+- Type to autocomplete from vault tags
+- `↑/↓` - Navigate suggestions
+- `Enter` - Select tag
+- `Backspace` on empty field - Remove last tag
+
+## Settings
+
+Only 10 essential settings:
+1. **Storage mode** - Individual files or daily notes
+2. **Insert after heading** - Where to add memos in daily notes
+3. **Individual memo folder** - Folder for individual files
+4. **Default prefix** - List or Task
+5. **Memo format template** - Template with {TIME} and {CONTENT}
+6. **User name** - Your display name
+7. **Show in sidebar** - Open in sidebar vs tab
+8. **Sidebar location** - Left or right
+9. **Focus on editor** - Auto-focus on open
+10. **Pre-create daily notes** - Performance optimization
 
 ## Installation
 
-### From Obsidian Community Plugins
+### From Community Plugins (Recommended)
 
-Search for "Lethe" in Settings > Community Plugins.
+Search for "Lethe" in Settings > Community Plugins > Browse.
 
 ### Manual Installation
 
@@ -56,6 +67,17 @@ Download the latest release and extract `main.js`, `manifest.json`, and `styles.
 ```
 {{your_vault}}/.obsidian/plugins/lethe/
 ```
+
+## Philosophy
+
+Lethe deliberately does NOT have:
+- Query builders
+- Heatmaps
+- Image sharing
+- Multi-language support
+- Complex workflows
+
+**One purpose: Capture thoughts instantly.**
 
 ## License
 

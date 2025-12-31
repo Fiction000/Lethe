@@ -1,51 +1,96 @@
-@text-black: #37352f;
-@text-gray: #52504b;
-@text-lightgray: #cac8c4;
-@text-blue: #5783f7;
-@text-unresolved-blue: #8fa2d6;
-@text-green: #55bb8e;
-@text-red: #d28653;
+// ============================================================================
+// CSS Custom Properties - Minimal Design System
+// ============================================================================
 
-@text-dark-black: #d2d1cd;
-@text-dark-gray: #c7c4bb;
-@text-dark-lightgray: #5e5b56;
-@text-dark-blue: #bbbec7;
-@text-dark-unresolved-blue: #8c92a1;
-@text-dark-green: #457560;
-@text-dark-red: #940b01;
-@text-dark-light-red: #d24c42;
+.theme-light {
+  // Colors (6 total)
+  --color-bg: #ffffff;           // Pure white background
+  --color-fg: #000000;           // Pure black text
+  --color-border: #e0e0e0;       // Minimal borders
+  --color-accent: #0066cc;       // Links, primary actions
+  --color-muted: #666666;        // Secondary text
+  --color-danger: #cc0000;       // Delete actions
 
-@bg-black: #2f3437;
-@bg-gray: #e4e4e4;
-@bg-whitegray: #f8f8f8;
-@bg-Searchbar-lightgray: #fcfcfc;
-@bg-lightgray: #eaeaea;
-@bg-blue: #1337a3;
-@bg-yellow: yellow;
-@bg-light-blue: #eef3fe;
-@bg-paper-yellow: #fbf4de;
+  // Spacing (3 values)
+  --spacing-xs: 4px;   // Minimal spacing
+  --spacing-sm: 8px;   // Compact spacing
+  --spacing-md: 16px;  // Standard spacing
 
-@bg-dark-black: #cacdcf;
-@bg-dark-gray: #353535;
-@bg-dark-whitegray: #808080;
-@bg-dark-lightgray: #727171;
-@bg-dark-Search-lightgray: #302e2e;
-@bg-dark-blue: #2c395a;
-@bg-dark-yellow: rgb(119, 119, 119);
-@bg-dark-light-blue: #616161;
-@bg-dark-paper-yellow: #5f5f5f;
+  // Typography (3 sizes)
+  --font-size-sm: 12px;    // Small text, timestamps
+  --font-size-base: 14px;  // Body text (default)
+  --font-size-lg: 18px;    // Headings, emphasis
+  --line-height: 1.6;      // Single line-height value
+
+  // Font stacks
+  --font-sans: system-ui, -apple-system, sans-serif;
+  --font-mono: 'SF Mono', Monaco, 'Courier New', monospace;
+
+  // Modern Design Tokens
+  --radius-sm: 4px;    // Small elements (buttons, tags)
+  --radius-md: 6px;    // Medium elements (inputs, cards)
+  --radius-lg: 8px;    // Large elements (modals, dialogs)
+
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.1);           // Subtle elevation
+  --shadow-md: 0 2px 8px rgba(0, 0, 0, 0.12);          // Card elevation
+  --shadow-lg: 0 4px 16px rgba(0, 0, 0, 0.15);         // Modal elevation
+  --shadow-focus: 0 0 0 3px rgba(0, 102, 204, 0.15);   // Focus rings
+}
+
+.theme-dark {
+  // Colors (6 total)
+  --color-bg: #1a1a1a;           // Near black background
+  --color-fg: #f0f0f0;           // Near white text
+  --color-border: #404040;       // Subtle borders
+  --color-accent: #4d94ff;       // Lighter blue for dark
+  --color-muted: #999999;        // Muted text
+  --color-danger: #ff4d4d;       // Lighter red for dark
+
+  // Spacing (same as light)
+  --spacing-xs: 4px;
+  --spacing-sm: 8px;
+  --spacing-md: 16px;
+
+  // Typography (same as light)
+  --font-size-sm: 12px;
+  --font-size-base: 14px;
+  --font-size-lg: 18px;
+  --line-height: 1.6;
+
+  // Font stacks (same as light)
+  --font-sans: system-ui, -apple-system, sans-serif;
+  --font-mono: 'SF Mono', Monaco, 'Courier New', monospace;
+
+  // Modern Design Tokens (same radius, darker shadows)
+  --radius-sm: 4px;
+  --radius-md: 6px;
+  --radius-lg: 8px;
+
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.3);           // More visible in dark
+  --shadow-md: 0 2px 8px rgba(0, 0, 0, 0.4);           // Card elevation
+  --shadow-lg: 0 4px 16px rgba(0, 0, 0, 0.5);          // Modal elevation
+  --shadow-focus: 0 0 0 3px rgba(77, 148, 255, 0.25);  // Accent focus ring
+}
+
+// ============================================================================
+// Utility Classes
+// ============================================================================
 
 .mono-font-family {
-  font-family: 'ubuntu-mono', SFMono-Regular, Menlo, Consolas, 'PT Mono', 'Liberation Mono', Courier, monospace;
+  font-family: var(--font-mono);
 }
 
 .hide-scroll-bar {
-  .pretty-scroll-bar(0, 0);
+  scrollbar-width: none;
 
   &::-webkit-scrollbar {
     display: none;
   }
 }
+
+// ============================================================================
+// Mixins
+// ============================================================================
 
 .pretty-scroll-bar(@width: 0px, @height: 0px) {
   scrollbar-width: none;
@@ -59,11 +104,11 @@
   &::-webkit-scrollbar-thumb {
     width: @width;
     height: @height;
-    border-radius: 8px;
-    background-color: #d5d5d5;
+    border-radius: 999px; // Fully rounded scrollbar thumb
+    background-color: var(--color-border);
 
     &:hover {
-      background-color: #ccc;
+      background-color: var(--color-muted);
     }
   }
 }

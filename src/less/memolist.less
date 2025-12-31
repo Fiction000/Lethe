@@ -1,18 +1,22 @@
 @import './mixin.less';
 
-.theme-light div[data-type='memos_view'] .memolist-wrapper {
+// ============================================================================
+// Memo List - Minimal, No Theme Duplication
+// ============================================================================
+
+div[data-type='memos_view'] .memolist-wrapper {
   .flex(column, flex-start, flex-start);
   flex-grow: 1;
   width: 100%;
   overflow-y: scroll;
-  gap: 8px;
+  gap: var(--spacing-sm);
   .hide-scroll-bar();
 
   > .status-text-container {
     .flex(column, flex-start, center);
     width: 100%;
-    margin-top: 16px;
-    margin-bottom: 16px;
+    margin-top: var(--spacing-md);
+    margin-bottom: var(--spacing-md);
 
     &.completed {
       margin-bottom: 64px;
@@ -23,8 +27,8 @@
     }
 
     > .status-text {
-      font-size: 13px;
-      color: gray;
+      font-size: var(--font-size-sm);
+      color: var(--color-muted);
     }
   }
 
@@ -32,60 +36,7 @@
     padding-bottom: 80px;
   }
 }
-
-//@media only screen and (max-width: 875px) {
-//  div[data-type='memos_view'] .memolist-wrapper {
-//    padding: 0 12px;
-//  }
-//}
 
 div[data-type='memos_view'].mobile-view .memolist-wrapper {
-  padding: 0 12px;
-}
-
-.theme-dark div[data-type='memos_view'] .memolist-wrapper {
-  .flex(column, flex-start, flex-start);
-  flex-grow: 1;
-  width: 100%;
-  overflow-y: scroll;
-  gap: 8px;
-  .hide-scroll-bar();
-
-  > .status-text-container {
-    .flex(column, flex-start, center);
-    width: 100%;
-    margin-top: 16px;
-    margin-bottom: 16px;
-
-    &.completed {
-      margin-bottom: 64px;
-    }
-
-    &.invisible {
-      visibility: hidden;
-    }
-
-    > .status-text {
-      font-size: 13px;
-      color: rgb(255, 255, 255);
-    }
-  }
-
-  &.completed {
-    padding-bottom: 80px;
-  }
-}
-
-//@media only screen and (max-width: 875px) {
-//  .theme-dark {
-//    div[data-type='memos_view'] .memolist-wrapper {
-//      padding: 0 12px;
-//    }
-//  }
-//}
-
-.theme-dark {
-  div[data-type='memos_view'].mobile-view .memolist-wrapper {
-    padding: 0 12px;
-  }
+  padding: 0 var(--spacing-md);
 }

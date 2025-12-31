@@ -38,7 +38,7 @@ export function getLinesInString(input: string) {
   return lines;
 }
 
-export async function waitForInsert(MemoContent: string, isTASK: boolean, insertDate?: any): Promise<Model.Memo> {
+export async function waitForInsert(MemoContent: string, isTASK: boolean, insertDate?: any, tags?: string[]): Promise<Model.Memo> {
   let date;
   if (insertDate !== undefined) {
     date = insertDate;
@@ -48,12 +48,16 @@ export async function waitForInsert(MemoContent: string, isTASK: boolean, insert
 
   // Check storage mode - if individual files, use that instead
   if (MemoStorageMode === 'individual-files') {
-    return await createIndividualMemoFile(MemoContent, isTASK, date);
+    return await createIndividualMemoFile(MemoContent, isTASK, date, tags);
   }
 
   // Otherwise, use daily notes (existing logic)
-  const { vault } =
-    appStore.getState().dailyNotesState.app === undefined ? app : appStore.getState().dailyNotesState.app;
+  const state = appStore.getState();
+  const app = state?.dailyNotesState?.app;
+  if (!app) {
+    throw new Error('Obsidian app not available');
+  }
+  const { vault } = app;
   const removeEnter = MemoContent.replace(/\n/g, '<br>');
 
   const timeHour = date.format('HH');
@@ -245,9 +249,11 @@ export async function createIndividualMemoFile(
   MemoContent: string,
   isTASK: boolean,
   date: moment.Moment,
+  tags?: string[],
 ): Promise<Model.Memo> {
-  const appState = appStore.getState().dailyNotesState.app;
-  const vault = appState?.vault ?? app.vault;
+  const app = appStore.getState().dailyNotesState?.app;
+  if (!app) throw new Error('Obsidian app not available');
+  const { vault } = app;
 
   // Validate date
   if (!date || !date.isValid()) {
@@ -271,13 +277,13 @@ export async function createIndividualMemoFile(
   const timestamp = date.format('YYYYMMDDHHmmss');
   const filename = await utils.generateUniqueFilename(vault, folderPath, sanitizedName, timestamp);
 
-  // Parse tags from settings (hardcoded to empty - IndividualMemoTags removed)
-  const tags: string[] = []; // No tags by default
+  // Use provided tags or empty array
+  const memoTags: string[] = tags || [];
 
   // Build frontmatter
   let frontmatter = `---\ncreated: ${date.format('YYYY-MM-DD HH:mm:ss')}\ntype: ${isTASK ? 'task' : 'memo'}`;
-  if (tags.length > 0) {
-    frontmatter += `\ntags:\n${tags.map((t) => `  - ${t}`).join('\n')}`;
+  if (memoTags.length > 0) {
+    frontmatter += `\ntags:\n${memoTags.map((t) => `  - ${t}`).join('\n')}`;
   }
   frontmatter += `\n---\n\n`;
 

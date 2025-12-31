@@ -1,7 +1,5 @@
-import React, { useCallback, useContext, useState } from 'react';
-import appContext from '../stores/appContext';
+import React, { useCallback, useState } from 'react';
 import { locationService } from '../services';
-import utils from '../helpers/utils';
 import MenuBtnsPopup from './MenuBtnsPopup';
 import '../less/user-banner.less';
 import { UserName } from '../memos';
@@ -10,21 +8,7 @@ import More from '../icons/more.svg?react';
 interface Props {}
 
 const UserBanner: React.FC<Props> = () => {
-  const {
-    memoState: { memos, tags },
-    userState: { user },
-  } = useContext(appContext);
-  const username = user ? user.username : UserName;
-  let memosLength;
-  let createdDays;
-  if (memos.length) {
-    memosLength = memos.length - 1;
-    createdDays = memos
-      ? Math.ceil((Date.now() - utils.getTimeStampByDate(memos[memosLength].createdAt)) / 1000 / 3600 / 24) + 1
-      : 0;
-  }
-  // const firstMemo = memos[] as Model.Memo;
-
+  const username = UserName;
   const [shouldShowPopupBtns, setShouldShowPopupBtns] = useState(false);
 
   const handleUsernameClick = useCallback(() => {
@@ -50,20 +34,6 @@ const UserBanner: React.FC<Props> = () => {
           <More className="icon-img" />
         </span>
         <MenuBtnsPopup shownStatus={shouldShowPopupBtns} setShownStatus={setShouldShowPopupBtns} />
-      </div>
-      <div className="status-text-container">
-        <div className="status-text memos-text">
-          <span className="amount-text">{memos.length}</span>
-          <span className="type-text">MEMO</span>
-        </div>
-        <div className="status-text tags-text">
-          <span className="amount-text">{tags.length}</span>
-          <span className="type-text">TAG</span>
-        </div>
-        <div className="status-text duration-text">
-          <span className="amount-text">{createdDays ?? 0}</span>
-          <span className="type-text">DAY</span>
-        </div>
       </div>
     </div>
   );

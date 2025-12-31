@@ -2,7 +2,8 @@ import { Platform } from 'obsidian';
 import dailyNotesService from '../services/dailyNotesService';
 
 export const showMemoInDailyNotes = async (memoId: string, memoPath: string): Promise<any> => {
-  const { app } = dailyNotesService.getState();
+  const app = dailyNotesService.getState()?.app;
+  if (!app) return;
 
   const lineNum = parseInt(memoId.slice(14));
   // const memoDateString = memoId.slice(0, 14);

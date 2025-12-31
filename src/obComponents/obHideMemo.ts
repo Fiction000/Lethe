@@ -15,7 +15,9 @@ export async function obHideMemo(memo: Model.Memo): Promise<Model.Memo> {
 }
 
 async function deleteIndividualFileMemo(memo: Model.Memo): Promise<Model.Memo> {
-  const { vault } = appStore.getState().dailyNotesState.app;
+  const app = appStore.getState().dailyNotesState?.app;
+  if (!app) throw new Error('Obsidian app not available');
+  const { vault } = app;
 
   // Get the file to delete
   const file = vault.getAbstractFileByPath(memo.path);
@@ -45,7 +47,9 @@ async function deleteDailyNoteMemo(memo: Model.Memo): Promise<Model.Memo> {
     throw new Error('Invalid memo ID format');
   }
 
-  const { vault } = appStore.getState().dailyNotesState.app;
+  const app = appStore.getState().dailyNotesState?.app;
+  if (!app) throw new Error('Obsidian app not available');
+  const { vault } = app;
   const timeString = memoid.slice(0, 13);
   const idString = parseInt(memoid.slice(14));
   const changeDate = moment(timeString, 'YYYYMMDDHHmmSS');

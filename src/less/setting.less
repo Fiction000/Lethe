@@ -1,6 +1,10 @@
 @import './mixin.less';
 @import './memos-header.less';
 
+// ============================================================================
+// Settings - Minimal
+// ============================================================================
+
 div[data-type='memos_view'] .preference-wrapper {
   .flex(column, flex-start, flex-start);
   width: 100%;
@@ -16,8 +20,8 @@ div[data-type='memos_view'] .preference-wrapper {
 
     > .title-text {
       font-weight: bold;
-      font-size: 18px;
-      color: @text-black;
+      font-size: var(--font-size-lg);
+      color: var(--color-fg);
     }
   }
 
@@ -38,25 +42,26 @@ div[data-type='memos_view'] .preference-wrapper {
     > .section-container {
       .flex(column, flex-start, flex-start);
       width: 100%;
-      background-color: white;
-      margin: 8px 0;
-      padding: 16px;
-      padding-bottom: 8px;
-      border-radius: 8px;
+      background-color: var(--color-bg);
+      border: 1px solid var(--color-border);
+      margin: var(--spacing-sm) 0;
+      padding: var(--spacing-md);
+      padding-bottom: var(--spacing-sm);
+      border-radius: 0;
 
       > .title-text {
-        font-size: 15px;
-        color: @text-black;
+        font-size: var(--font-size-base);
+        color: var(--color-fg);
         font-weight: bold;
-        margin-bottom: 8px;
+        margin-bottom: var(--spacing-sm);
       }
 
       > .form-label {
         .flex(row, flex-start, center);
         width: 100%;
-        font-size: 14px;
+        font-size: var(--font-size-base);
         line-height: 20px;
-        margin-bottom: 8px;
+        margin-bottom: var(--spacing-sm);
 
         > .normal-text {
           flex-shrink: 0;
@@ -68,6 +73,6 @@ div[data-type='memos_view'] .preference-wrapper {
 
 @media only screen and (max-width: 875px) {
   div[data-type='memos_view'] .sections-wrapper {
-    padding: 0 12px;
+    padding: 0 var(--spacing-md);
   }
 }

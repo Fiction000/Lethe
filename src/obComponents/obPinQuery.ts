@@ -4,7 +4,9 @@ import appStore from '../stores/appStore';
 import { getDailyNotePath } from '../helpers/utils';
 
 export const pinQueryInFile = async (queryID: string): Promise<any> => {
-  const { metadataCache, vault } = appStore.getState().dailyNotesState.app;
+  const app = appStore.getState().dailyNotesState?.app;
+  if (!app) return;
+  const { metadataCache, vault } = app;
   if (/\d{14,}/.test(queryID)) {
     const filePath = getDailyNotePath();
     const absolutePath = filePath + '/query.md'; // QueryFileName hardcoded
@@ -39,7 +41,9 @@ export const pinQueryInFile = async (queryID: string): Promise<any> => {
 };
 
 export const unpinQueryInFile = async (queryID: string): Promise<any> => {
-  const { metadataCache, vault } = appStore.getState().dailyNotesState.app;
+  const app = appStore.getState().dailyNotesState?.app;
+  if (!app) return;
+  const { metadataCache, vault } = app;
 
   const filePath = getDailyNotePath();
   const absolutePath = filePath + '/query.md'; // QueryFileName hardcoded
@@ -66,7 +70,9 @@ export const createDeleteMemoInFile = async (
   memoContent: string,
   pinnedAtDateID: string,
 ): Promise<any> => {
-  const { vault } = appStore.getState().dailyNotesState.app;
+  const app = appStore.getState().dailyNotesState?.app;
+  if (!app) throw new Error('Obsidian app not available');
+  const { vault } = app;
   let newContent;
   if (fileContent === '') {
     newContent = memoContent + ' pinnedAt: ' + pinnedAtDateID;
@@ -80,7 +86,9 @@ export const createDeleteMemoInFile = async (
 };
 
 export const createqueryFile = async (path: string): Promise<TFile> => {
-  const { vault } = appStore.getState().dailyNotesState.app;
+  const app = appStore.getState().dailyNotesState?.app;
+  if (!app) throw new Error('Obsidian app not available');
+  const { vault } = app;
 
   try {
     return await vault.create(path, '');

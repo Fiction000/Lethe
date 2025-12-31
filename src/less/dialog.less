@@ -1,6 +1,10 @@
 @import './mixin.less';
 
-.theme-light .dialog-wrapper {
+// ============================================================================
+// Dialog - Minimal, No Theme Duplication
+// ============================================================================
+
+.dialog-wrapper {
   .flex(column, flex-start, center);
   position: fixed;
   top: 0;
@@ -9,7 +13,7 @@
   height: 100%;
   background-color: transparent;
   z-index: 100;
-  transition: all 0.2s ease;
+  transition: background-color 0.2s ease; // Essential modal transition
   overflow-x: hidden;
   overflow-y: scroll;
   padding: 64px 0;
@@ -25,14 +29,16 @@
 
   > .dialog-container {
     .flex(column, flex-start, flex-start);
-    background-color: white;
-    padding: 16px;
-    border-radius: 8px;
+    background-color: var(--color-bg);
+    padding: var(--spacing-md);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg); // Modern rounded corners for modals
+    box-shadow: var(--shadow-lg); // Modal elevation
 
     > .dialog-header-container {
       .flex(row, space-between, center);
       width: 100%;
-      margin-bottom: 16px;
+      margin-bottom: var(--spacing-md);
 
       > .title-text {
         > .icon-text {
@@ -44,11 +50,11 @@
       .btn {
         width: 24px;
         height: 24px;
-        //padding: unset;
         padding: 0;
         margin-right: 0;
-        border-radius: 4px;
+        border-radius: var(--radius-sm); // Rounded close button
         background-color: transparent;
+        transition: background-color 0.2s ease, opacity 0.2s ease;
 
         > .icon-img {
           width: 20px;
@@ -56,7 +62,8 @@
         }
 
         &:hover {
-          background-color: lightgray;
+          opacity: 0.8;
+          background-color: rgba(0, 0, 0, 0.05);
         }
       }
     }
@@ -69,108 +76,19 @@
     > .dialog-footer-container {
       .flex(row, flex-end, center);
       width: 100%;
-      margin-top: 16px;
+      margin-top: var(--spacing-md);
     }
   }
 }
 
+// Mobile view
 @media only screen and (max-width: 875px) {
-  .theme-light {
-    .dialog-wrapper {
-      width: 100%;
-      padding: 0 16px;
+  .dialog-wrapper {
+    width: 100%;
+    padding: 0 var(--spacing-md);
 
-      > .dialog-container {
-        max-width: 100%;
-      }
-    }
-  }
-}
-
-.theme-dark .dialog-wrapper {
-  .flex(column, flex-start, center);
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-color: transparent;
-  z-index: 100;
-  transition: all 0.2s ease;
-  overflow-x: hidden;
-  overflow-y: scroll;
-  padding: 64px 0;
-  .hide-scroll-bar();
-
-  &.showup {
-    background-color: rgba(85, 85, 85, 0.6);
-  }
-
-  &.showoff {
-    display: none;
-  }
-
-  > .dialog-container {
-    .flex(column, flex-start, flex-start);
-    background-color: rgb(0, 0, 0);
-    padding: 16px;
-    border-radius: 8px;
-
-    > .dialog-header-container {
-      .flex(row, space-between, center);
-      width: 100%;
-      margin-bottom: 16px;
-
-      > .title-text {
-        > .icon-text {
-          margin-right: 6px;
-          font-size: 16px;
-        }
-      }
-
-      .btn {
-        width: 24px;
-        height: 24px;
-        //padding: 2px;
-        border-radius: 4px;
-        background-color: transparent;
-        padding: 0;
-        margin-right: 0;
-
-        > .icon-img {
-          width: 20px;
-          height: 20px;
-          fill: #cdcdcd;
-        }
-
-        &:hover {
-          background-color: rgb(73, 73, 73);
-        }
-      }
-    }
-
-    > .dialog-content-container {
-      .flex(column, flex-start, flex-start);
-      width: 100%;
-    }
-
-    > .dialog-footer-container {
-      .flex(row, flex-end, center);
-      width: 100%;
-      margin-top: 16px;
-    }
-  }
-}
-
-@media only screen and (max-width: 875px) {
-  .theme-dark {
-    .dialog-wrapper {
-      width: 100%;
-      padding: 0 16px;
-
-      > .dialog-container {
-        max-width: 100%;
-      }
+    > .dialog-container {
+      max-width: 100%;
     }
   }
 }

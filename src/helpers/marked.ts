@@ -75,7 +75,9 @@ const parseMarkedToHtml = (markedStr: string, memoid?: string): string => {
 };
 
 const replaceMd = (internalLink: string, label: string): string => {
-  const { metadataCache } = appStore.getState().dailyNotesState.app;
+  const app = appStore.getState().dailyNotesState?.app;
+  if (!app) return internalLink;
+  const { metadataCache } = app;
 
   const file = metadataCache.getFirstLinkpathDest(decodeURIComponent(internalLink), '');
 

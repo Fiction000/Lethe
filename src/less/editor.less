@@ -1,35 +1,48 @@
 @import './mixin.less';
 
-.theme-light div[data-type='memos_view'] .common-editor-wrapper {
+// ============================================================================
+// Editor - Minimal, No Theme Duplication
+// ============================================================================
+
+div[data-type='memos_view'] .common-editor-wrapper {
   .flex(column, flex-start, flex-start);
   position: relative;
   width: 100%;
   height: auto;
-  background-color: white;
+  background-color: var(--color-bg);
 
   > .common-editor-inputer {
     display: inline-block;
     width: 100%;
     min-height: 24px;
     max-height: 300px;
-    font-size: 15px;
+    font-size: var(--font-size-base);
     line-height: 24px;
     resize: none;
     overflow-x: hidden;
-    // overflow-y: scroll;
-    background-color: transparent;
+    background-color: var(--color-bg);
+    color: var(--color-fg);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md); // Modern rounded corners
+    padding: var(--spacing-sm);
     z-index: 1;
-    margin-bottom: 4px;
+    margin-bottom: var(--spacing-xs);
     white-space: pre-wrap;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
     .hide-scroll-bar();
 
     &::placeholder {
       padding-left: 2px;
+      color: var(--color-muted);
     }
 
     &:focus {
+      outline: none;
+      border-color: var(--color-accent);
+      box-shadow: var(--shadow-focus); // Focus ring
+
       &::placeholder {
-        color: lightgray;
+        opacity: 0.6;
       }
     }
   }
@@ -51,143 +64,55 @@
         border: none;
         user-select: none;
         cursor: pointer;
-        padding: 6px 12px;
-        border-radius: 6px;
+        padding: 6px var(--spacing-md);
+        border-radius: var(--radius-sm); // Modern rounded corners
         font-size: 13px;
         line-height: 32px;
+        transition: opacity 0.2s ease, box-shadow 0.2s ease;
 
         &:hover {
           opacity: 0.8;
         }
+
+        &:focus-visible {
+          outline: none;
+          box-shadow: var(--shadow-focus); // Focus ring
+        }
       }
 
       > .cancel-btn {
-        color: gray;
+        color: var(--color-muted);
         background-color: transparent;
-        margin-right: 8px;
+        margin-right: var(--spacing-sm);
         line-height: 18px;
       }
 
       > .confirm-btn {
         cursor: pointer;
-        padding: 0 12px;
-        background-color: @text-green;
-        color: white;
-
-        &:disabled {
-          cursor: not-allowed;
-          opacity: 0.6;
-        }
-
-        > .icon-text {
-          margin-left: 4px;
-        }
-      }
-    }
-  }
-}
-
-.theme-light div[data-type='memos_view'] .scroll::-webkit-scrollbar {
-  display: none;
-}
-
-.theme-dark div[data-type='memos_view'] .common-editor-wrapper {
-  .flex(column, flex-start, flex-start);
-  position: relative;
-  width: 100%;
-  height: auto;
-  background-color: rgb(59, 59, 59);
-
-  > .common-editor-inputer {
-    display: inline-block;
-    width: 100%;
-    min-height: 24px;
-    max-height: 300px;
-    font-size: 15px;
-    line-height: 24px;
-    resize: none;
-    overflow-x: hidden;
-    // overflow-y: scroll;
-    background-color: transparent;
-    z-index: 1;
-    margin-bottom: 4px;
-    white-space: pre-wrap;
-    .hide-scroll-bar();
-
-    &::placeholder {
-      padding-left: 2px;
-    }
-
-    &:focus {
-      &::placeholder {
-        color: rgb(54, 54, 54);
-      }
-    }
-  }
-
-  > .common-tools-wrapper {
-    .flex(row, space-between, center);
-    width: 100%;
-
-    > .common-tools-container {
-      .flex(row, flex-start, center);
-
-      > img {
-        filter: invert(0.8);
-        color: yellowgreen;
-      }
-    }
-
-    > .btns-container {
-      .flex(row, flex-end, center);
-      flex-grow: 0;
-      flex-shrink: 0;
-
-      > .action-btn {
-        border: none;
-        user-select: none;
-        cursor: pointer;
-        padding: 6px 12px;
-        border-radius: 6px;
-        font-size: 13px;
-        line-height: 32px;
-
-        > img {
-          filter: invert(0.8);
-        }
+        padding: 0 var(--spacing-md);
+        background-color: var(--color-accent);
+        color: var(--color-bg);
+        box-shadow: var(--shadow-sm); // Subtle elevation
 
         &:hover {
-          opacity: 0.8;
+          box-shadow: var(--shadow-md); // Elevated on hover
         }
-      }
-
-      > .cancel-btn {
-        color: gray;
-        background-color: transparent;
-        margin-right: 8px;
-        line-height: 18px;
-      }
-
-      > .confirm-btn {
-        cursor: pointer;
-        padding: 0 12px;
-        background-color: @text-dark-red;
-        color: white;
 
         &:disabled {
           cursor: not-allowed;
           opacity: 0.6;
+          box-shadow: none;
         }
 
         > .icon-text {
-          margin-left: 4px;
+          margin-left: var(--spacing-xs);
         }
       }
     }
   }
 }
 
-.theme-dark div[data-type='memos_view'] .scroll::-webkit-scrollbar {
+div[data-type='memos_view'] .scroll::-webkit-scrollbar {
   display: none;
 }
 
@@ -196,21 +121,3 @@ div[data-type='memos_view'] .memo-editor-wrapper {
     margin-right: unset;
   }
 }
-
-// @media only screen and (max-width: 875px) {
-//   .is-mobile div[data-type="memos_view"] .cancel-btn {
-//     background-color: white;
-
-//     > .tags-container {
-//       height: auto;
-
-//       &:last-child {
-//         flex-grow: 1;
-//       }
-//     }
-//   }
-
-//   .rename-tag-dialog {
-//     padding-top: 64px;
-//   }
-// }

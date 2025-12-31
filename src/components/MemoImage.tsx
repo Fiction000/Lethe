@@ -24,7 +24,9 @@ const MemoImage: React.FC<Props> = (props: Props) => {
   };
 
   const detectWikiInternalLink = (lineText: string): LinkMatch | null => {
-    const { metadataCache, vault } = appStore.getState().dailyNotesState.app;
+    const app = appStore.getState().dailyNotesState?.app;
+    if (!app) return null;
+    const { metadataCache, vault } = app;
     const internalFileName = WIKI_IMAGE_URL_REG.exec(lineText)?.[1];
     const internalAltName = WIKI_IMAGE_URL_REG.exec(lineText)?.[5];
     const file = metadataCache.getFirstLinkpathDest(decodeURIComponent(internalFileName), '');
@@ -59,7 +61,9 @@ const MemoImage: React.FC<Props> = (props: Props) => {
   };
 
   const detectMDInternalLink = (lineText: string): LinkMatch | null => {
-    const { metadataCache, vault } = appStore.getState().dailyNotesState.app;
+    const app = appStore.getState().dailyNotesState?.app;
+    if (!app) return null;
+    const { metadataCache, vault } = app;
     const internalFileName = MARKDOWN_URL_REG.exec(lineText)?.[5];
     const internalAltName = MARKDOWN_URL_REG.exec(lineText)?.[2];
     const file = metadataCache.getFirstLinkpathDest(decodeURIComponent(internalFileName), '');

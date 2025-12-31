@@ -78,9 +78,9 @@ const TagList: React.FC<Props> = () => {
         {tags.map((t, idx) => (
           <TagItemContainer key={t.text + '-' + idx} tag={t} tagQuery={tagQuery} />
         ))}
-        <Only when={tags.length < 5 && memoService.initialized}>
+        <Only when={tags.length === 0 && memoService.initialized}>
           <p className="tag-tip-container">
-            Input<span className="code-text">#Tag </span>to create tag...
+            Type <span className="code-text">#tag</span> in your memos to create tags
           </p>
         </Only>
       </div>

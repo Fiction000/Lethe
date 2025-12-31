@@ -36,7 +36,9 @@ export async function getRemainingMemos(note: TFile): Promise<number> {
   if (!note) {
     return 0;
   }
-  const { vault } = appStore.getState().dailyNotesState.app;
+  const app = appStore.getState().dailyNotesState?.app;
+  if (!app) return 0;
+  const { vault } = app;
   let fileContents = await vault.read(note);
   let regexMatch;
   if (
@@ -68,7 +70,9 @@ export async function getMemosFromDailyNote(
   if (!dailyNote) {
     return [];
   }
-  const { vault } = appStore.getState().dailyNotesState.app;
+  const app = appStore.getState().dailyNotesState?.app;
+  if (!app) return [];
+  const { vault } = app;
   const Memos = await getRemainingMemos(dailyNote);
 
   if (Memos === 0) return;
@@ -137,7 +141,7 @@ export async function getMemosFromDailyNote(
  * Get memos from individual memo files in the configured folder
  */
 export async function getMemosFromIndividualFiles(allMemos: any[], _commentMemos: any[]): Promise<void> {
-  const appState = appStore.getState().dailyNotesState.app;
+  const appState = appStore.getState().dailyNotesState?.app;
   if (!appState?.vault) {
     console.error('Vault not available');
     return;
@@ -158,7 +162,7 @@ export async function getMemosFromIndividualFiles(allMemos: any[], _commentMemos
   for (const file of files) {
     try {
       const content = await vault.read(file);
-      const metadata = app.metadataCache.getFileCache(file);
+      const metadata = appState.metadataCache.getFileCache(file);
 
       // Parse frontmatter for created date and type
       const frontmatter = metadata?.frontmatter;
@@ -212,7 +216,9 @@ export async function getMemosFromIndividualFiles(allMemos: any[], _commentMemos
 export async function getMemos(): Promise<allKindsofMemos> {
   const memos: any[] | PromiseLike<any[]> = [];
   const commentMemos: any[] | PromiseLike<any[]> = [];
-  const { vault } = appStore.getState().dailyNotesState.app;
+  const app = appStore.getState().dailyNotesState?.app;
+  if (!app) return { memos: [], commentMemos: [] };
+  const { vault } = app;
 
   // If using individual files mode, only fetch from individual files folder
   if (MemoStorageMode === 'individual-files') {

@@ -1,8 +1,12 @@
 @import '../mixin.less';
 
-.theme-light .date-picker-wrapper {
+// ============================================================================
+// Date Picker - Minimal, No Theme Duplication
+// ============================================================================
+
+.date-picker-wrapper {
   .flex(column, flex-start, flex-start);
-  padding: 16px;
+  padding: var(--spacing-md);
 
   > .date-picker-header {
     .flex(row, center, center);
@@ -11,7 +15,7 @@
     > .btn-text {
       width: 24px;
       height: 24px;
-      border-radius: 4px;
+      border-radius: 0;
       cursor: pointer;
       user-select: none;
 
@@ -21,12 +25,12 @@
       }
 
       &:hover {
-        background-color: @bg-whitegray;
+        background-color: var(--color-border);
       }
     }
 
     > .normal-text {
-      margin: 0 4px;
+      margin: 0 var(--spacing-xs);
       line-height: 24px;
     }
   }
@@ -45,8 +49,8 @@
         width: 36px;
         height: 36px;
         user-select: none;
-        color: gray;
-        font-size: 13px;
+        color: var(--color-muted);
+        font-size: var(--font-size-sm);
         margin: 2px 0;
       }
     }
@@ -55,20 +59,20 @@
       .flex(column, center, center);
       width: 36px;
       height: 36px;
-      border-radius: 50%;
-      font-size: 14px;
+      border-radius: 0;
+      font-size: var(--font-size-base);
       user-select: none;
       cursor: pointer;
       margin: 2px;
 
       &:hover {
-        background-color: @bg-whitegray;
+        background-color: var(--color-border);
       }
 
       &.current {
-        background-color: @bg-light-blue;
-        font-size: 16px;
-        color: @text-blue;
+        background-color: var(--color-accent);
+        font-size: var(--font-size-lg);
+        color: var(--color-bg);
         font-weight: bold;
       }
 
@@ -80,11 +84,11 @@
   }
 }
 
-.theme-light .editor-date-picker {
+.editor-date-picker {
   .flex(column, flex-start, flex-start);
   padding: unset;
-  background-color: white;
-  border: 1px dashed @bg-black;
+  background-color: var(--color-bg);
+  border: 1px dashed var(--color-border);
 
   > .date-picker-header {
     .flex(row, center, center);
@@ -93,7 +97,7 @@
     > .btn-text {
       width: 24px;
       height: 24px;
-      border-radius: 4px;
+      border-radius: 0;
       cursor: pointer;
       user-select: none;
 
@@ -103,12 +107,12 @@
       }
 
       &:hover {
-        background-color: @bg-whitegray;
+        background-color: var(--color-border);
       }
     }
 
     > .normal-text {
-      margin: 0 4px;
+      margin: 0 var(--spacing-xs);
       line-height: 24px;
     }
   }
@@ -127,8 +131,8 @@
         width: 36px;
         height: 36px;
         user-select: none;
-        color: gray;
-        font-size: 13px;
+        color: var(--color-muted);
+        font-size: var(--font-size-sm);
         margin: 2px 0;
       }
     }
@@ -137,184 +141,20 @@
       .flex(column, center, center);
       width: 36px;
       height: 36px;
-      border-radius: 50%;
-      font-size: 14px;
+      border-radius: 0;
+      font-size: var(--font-size-base);
       user-select: none;
       cursor: pointer;
       margin: 2px;
 
       &:hover {
-        background-color: @bg-whitegray;
+        background-color: var(--color-border);
       }
 
       &.current {
-        background-color: @bg-light-blue;
-        font-size: 16px;
-        color: @text-blue;
-        font-weight: bold;
-      }
-
-      &.null {
-        background-color: unset;
-        cursor: unset;
-      }
-    }
-  }
-}
-
-.theme-dark .date-picker-wrapper {
-  .flex(column, flex-start, flex-start);
-  padding: 16px;
-
-  > .date-picker-header {
-    .flex(row, center, center);
-    width: 100%;
-
-    > .btn-text {
-      width: 24px;
-      height: 24px;
-      border-radius: 4px;
-      cursor: pointer;
-      user-select: none;
-
-      > .icon-img {
-        width: 100%;
-        height: auto;
-        fill: #cdcdcd;
-      }
-
-      &:hover {
-        background-color: @bg-dark-whitegray;
-      }
-    }
-
-    > .normal-text {
-      margin: 0 4px;
-      line-height: 24px;
-    }
-  }
-
-  > .date-picker-day-container {
-    .flex(row, flex-start, flex-start);
-    width: 280px;
-    flex-wrap: wrap;
-
-    > .date-picker-day-header {
-      .flex(row, space-around, center);
-      width: 100%;
-
-      > .day-item {
-        .flex(column, center, center);
-        width: 36px;
-        height: 36px;
-        user-select: none;
-        color: rgb(184, 184, 184);
-        font-size: 13px;
-        margin: 2px 0;
-      }
-    }
-
-    > .day-item {
-      .flex(column, center, center);
-      width: 36px;
-      height: 36px;
-      border-radius: 50%;
-      font-size: 14px;
-      user-select: none;
-      cursor: pointer;
-      margin: 2px;
-
-      &:hover {
-        background-color: @bg-dark-whitegray;
-      }
-
-      &.current {
-        background-color: @bg-dark-light-blue;
-        font-size: 16px;
-        color: @text-blue;
-        font-weight: bold;
-      }
-
-      &.null {
-        background-color: unset;
-        cursor: unset;
-      }
-    }
-  }
-}
-
-.theme-dark .editor-date-picker {
-  .flex(column, flex-start, flex-start);
-  padding: unset;
-  background-color: @bg-black;
-  border: 1px dashed @bg-dark-black;
-
-  > .date-picker-header {
-    .flex(row, center, center);
-    width: 100%;
-
-    > .btn-text {
-      width: 24px;
-      height: 24px;
-      border-radius: 4px;
-      cursor: pointer;
-      user-select: none;
-
-      > .icon-img {
-        width: 100%;
-        height: auto;
-        fill: #cdcdcd;
-      }
-
-      &:hover {
-        background-color: @bg-dark-whitegray;
-      }
-    }
-
-    > .normal-text {
-      margin: 0 4px;
-      line-height: 24px;
-    }
-  }
-
-  > .date-picker-day-container {
-    .flex(row, flex-start, flex-start);
-    width: 280px;
-    flex-wrap: wrap;
-
-    > .date-picker-day-header {
-      .flex(row, space-around, center);
-      width: 100%;
-
-      > .day-item {
-        .flex(column, center, center);
-        width: 36px;
-        height: 36px;
-        user-select: none;
-        color: rgb(184, 184, 184);
-        font-size: 13px;
-        margin: 2px 0;
-      }
-    }
-
-    > .day-item {
-      .flex(column, center, center);
-      width: 36px;
-      height: 36px;
-      border-radius: 50%;
-      font-size: 14px;
-      user-select: none;
-      cursor: pointer;
-      margin: 2px;
-
-      &:hover {
-        background-color: @bg-dark-whitegray;
-      }
-
-      &.current {
-        background-color: @bg-dark-light-blue;
-        font-size: 16px;
-        color: @text-blue;
+        background-color: var(--color-accent);
+        font-size: var(--font-size-lg);
+        color: var(--color-bg);
         font-weight: bold;
       }
 

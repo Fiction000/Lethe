@@ -5,6 +5,7 @@ import { FIRST_TAG_REG, IMAGE_URL_REG, LINK_REG, MEMO_LINK_REG, NOP_FIRST_TAG_RE
 import utils from '../helpers/utils';
 import { checkShouldShowMemoWithFilters } from '../helpers/filter';
 import Memo from './Memo';
+import { LoadingSpinner } from './common/LoadingSpinner';
 // import toastHelper from "./Toast";
 import '../less/memolist.less';
 import dailyNotesService from '../services/dailyNotesService';
@@ -140,7 +141,9 @@ const MemoList: React.FC<Props> = () => {
   }, [query]);
 
   const handleMemoListClick = useCallback((event: React.MouseEvent) => {
-    const { workspace } = appStore.getState().dailyNotesState.app;
+    const app = appStore.getState().dailyNotesState?.app;
+    if (!app) return;
+    const { workspace } = app;
 
     const targetEl = event.target as HTMLElement;
     if (targetEl.tagName === 'SPAN' && targetEl.className === 'tag-span') {
@@ -171,15 +174,19 @@ const MemoList: React.FC<Props> = () => {
         <Memo key={`${memo.id}-${memo.updatedAt}`} memo={memo} />
       ))}
       <div className="status-text-container">
-        <p className="status-text">
-          {isFetching
-            ? 'Fetching data...'
-            : shownMemos.length === 0
-            ? 'Noooop!'
-            : showMemoFilter
-            ? ''
-            : 'All Data is Loaded 🎉'}
-        </p>
+        {isFetching ? (
+          <LoadingSpinner />
+        ) : (
+          <p className="status-text">
+            {shownMemos.length === 0
+              ? showMemoFilter
+                ? 'No memos match your filters'
+                : 'No memos yet. Press the hotkey to capture your first thought!'
+              : showMemoFilter
+              ? ''
+              : 'All Data is Loaded 🎉'}
+          </p>
+        )}
       </div>
     </div>
   );

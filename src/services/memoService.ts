@@ -262,8 +262,8 @@ class MemoService {
     return memos.filter((m) => m.content.includes('comment: ' + memoId));
   }
 
-  public async createMemo(text: string, isTASK: boolean): Promise<Model.Memo> {
-    const memo = await waitForInsert(text, isTASK);
+  public async createMemo(text: string, isTASK: boolean, tags?: string[]): Promise<Model.Memo> {
+    const memo = await waitForInsert(text, isTASK, undefined, tags);
     return memo;
   }
 

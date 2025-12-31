@@ -4,7 +4,9 @@ import appStore from '../stores/appStore';
 import { getDailyNotePath } from '../helpers/utils';
 
 export const updateObsidianQuery = async (queryId: string, title: string, queryString: string): Promise<any> => {
-  const { metadataCache, vault } = appStore.getState().dailyNotesState.app;
+  const app = appStore.getState().dailyNotesState?.app;
+  if (!app) return;
+  const { metadataCache, vault } = app;
 
   const filePath = getDailyNotePath();
   const absolutePath = filePath + '/query.md'; // QueryFileName hardcoded
