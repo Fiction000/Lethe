@@ -6,8 +6,6 @@ import { storage } from '../helpers/storage';
 import Editor, { EditorRefActions } from './Editor/Editor';
 import '../less/memo-editor.less';
 import '../less/select-date-picker.less';
-import Tag from '../icons/tag.svg?react';
-import ImageSvg from '../icons/image.svg?react';
 import JournalSvg from '../icons/journal.svg?react';
 import TaskSvg from '../icons/checkbox-active.svg?react';
 import { usePopper } from 'react-popper';
@@ -438,31 +436,6 @@ const MemoEditor: React.FC<Props> = () => {
     }
   };
 
-  const handleTagTextBtnClick = useCallback(() => {
-    if (!editorRef.current) {
-      return;
-    }
-
-    const currentValue = editorRef.current.getContent();
-    const selectionStart = editorRef.current.element.selectionStart;
-    const prevString = currentValue.slice(0, selectionStart);
-    const nextString = currentValue.slice(selectionStart);
-
-    let nextValue = prevString + '# ' + nextString;
-    let cursorIndex = prevString.length + 1;
-
-    if (prevString.endsWith('#') && nextString.startsWith(' ')) {
-      nextValue = prevString.slice(0, prevString.length - 1) + nextString.slice(1);
-      cursorIndex = prevString.length - 1;
-    }
-
-    editorRef.current.element.value = nextValue;
-    editorRef.current.element.setSelectionRange(cursorIndex, cursorIndex);
-
-    editorRef.current.focus();
-    handleContentChange(editorRef.current.element.value);
-  }, []);
-
   const updateDateSelectorPopupPosition = useCallback(() => {
     if (!editorRef.current || !popperRef.current || !app) {
       return;
@@ -506,27 +479,6 @@ const MemoEditor: React.FC<Props> = () => {
     popperRef.current.style.top = `${top}px`;
   }, []);
 
-  const handleUploadFileBtnClick = useCallback(() => {
-    const inputEl = document.createElement('input');
-    document.body.appendChild(inputEl);
-    inputEl.type = 'file';
-    inputEl.multiple = false;
-    inputEl.accept = 'image/png, image/gif, image/jpeg';
-    inputEl.onchange = async () => {
-      if (!inputEl.files || inputEl.files.length === 0) {
-        return;
-      }
-
-      const file = inputEl.files[0];
-      const url = await handleUploadFile(file);
-      if (url) {
-        editorRef.current?.insertText(url);
-      }
-      document.body.removeChild(inputEl);
-    };
-    inputEl.click();
-  }, []);
-
   const showEditStatus = Boolean(globalState.editMemoId);
 
   const editorConfig = useMemo(
@@ -561,21 +513,12 @@ const MemoEditor: React.FC<Props> = () => {
         {...editorConfig}
         tools={
           <>
-            {/*<img className="action-btn add-tag" src={tag}  />*/}
-            <Tag className="action-btn add-tag" onClick={handleTagTextBtnClick} />
-            {/*<img className="action-btn file-upload" src={imageSvg} onClick={handleUploadFileBtnClick} />*/}
-            <ImageSvg className="action-btn file-upload" onClick={handleUploadFileBtnClick} />
-            {/*<img*/}
-            {/*  className="action-btn list-or-task"*/}
-            {/*  src={`${!isListShown ? journalSvg : taskSvg}`}*/}
-            {/*  onClick={handleChangeStatus}*/}
-            {/*/>*/}
+            {/* Task/Note toggle only */}
             {!isListShown ? (
               <JournalSvg className="action-btn list-or-task" onClick={handleChangeStatus} />
             ) : (
               <TaskSvg className="action-btn list-or-task" onClick={handleChangeStatus} />
             )}
-            {/* <img className={`action-btn ${isListShown ? "" : "hidden"}`} src={taskSvg} onClick={handleChangeStatus} /> */}
           </>
         }
       />
