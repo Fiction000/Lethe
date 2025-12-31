@@ -6,8 +6,6 @@ import { storage } from '../helpers/storage';
 import Editor, { EditorRefActions } from './Editor/Editor';
 import '../less/memo-editor.less';
 import '../less/select-date-picker.less';
-import JournalSvg from '../icons/journal.svg?react';
-import TaskSvg from '../icons/checkbox-active.svg?react';
 import { usePopper } from 'react-popper';
 import useState from 'react-usestateref';
 import DatePicker from './common/DatePicker';
@@ -513,12 +511,13 @@ const MemoEditor: React.FC<Props> = () => {
         {...editorConfig}
         tools={
           <>
-            {/* Task/Note toggle only */}
-            {!isListShown ? (
-              <JournalSvg className="action-btn list-or-task" onClick={handleChangeStatus} />
-            ) : (
-              <TaskSvg className="action-btn list-or-task" onClick={handleChangeStatus} />
-            )}
+            {/* Task/Note text toggle */}
+            <button
+              className={`task-toggle-btn ${isListShown ? 'is-active' : ''}`}
+              onClick={handleChangeStatus}
+            >
+              {isListShown ? '☑ Task' : '☐ Task'}
+            </button>
           </>
         }
       />

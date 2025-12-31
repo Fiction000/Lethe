@@ -14,9 +14,12 @@
     border: 1px solid var(--color-border);
     background-color: var(--color-bg);
     min-height: 36px;
+    border-radius: var(--radius-md); // Modern rounded corners
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
 
     &:focus-within {
       border-color: var(--color-accent);
+      box-shadow: var(--shadow-focus);
     }
   }
 
@@ -35,6 +38,8 @@
     color: var(--color-bg);
     font-size: var(--font-size-sm);
     white-space: nowrap;
+    border-radius: var(--radius-sm); // Modern rounded corners for tags
+    transition: opacity 0.2s ease;
 
     .tag-remove {
       background: none;
@@ -80,6 +85,8 @@
     overflow-y: auto;
     background-color: var(--color-bg);
     border: 1px solid var(--color-border);
+    border-radius: var(--radius-md); // Modern rounded corners
+    box-shadow: var(--shadow-md); // Subtle elevation
     margin-top: 2px;
     z-index: 1000;
 

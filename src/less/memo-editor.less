@@ -46,3 +46,29 @@ img.memo-show-editor-button {
 .mobile-view img.memo-show-editor-button {
   display: block;
 }
+
+// ============================================================================
+// Task Toggle Button - Text-based toggle like Quick Capture
+// ============================================================================
+
+div[data-type='memos_view'] .task-toggle-btn {
+  background: transparent;
+  border: 1px solid var(--color-border);
+  padding: 6px 12px;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  color: var(--color-muted);
+  font-size: var(--font-size-base);
+  transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease, box-shadow 0.2s ease;
+
+  &:hover {
+    background: rgba(0, 0, 0, 0.05);
+  }
+
+  &.is-active {
+    background: var(--color-accent);
+    color: var(--color-bg);
+    border-color: var(--color-accent);
+    box-shadow: var(--shadow-sm);
+  }
+}
