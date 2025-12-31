@@ -42,11 +42,12 @@ div[data-type='memos_view'] .memo-comment-text {
     line-height: 24px;
     font-size: var(--font-size-sm);
     border: none;
-    border-radius: 0;
+    border-radius: var(--radius-sm); // Modern rounded corners
     color: var(--color-accent);
     background-color: var(--color-border);
     cursor: pointer;
     vertical-align: bottom;
+    transition: opacity 0.2s ease;
 
     &:hover {
       opacity: 0.8;
