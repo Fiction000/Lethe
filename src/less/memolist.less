@@ -1,7 +1,7 @@
 @import './mixin.less';
 
 // ============================================================================
-// Memo List - Minimal, No Theme Duplication
+// Memo List - Borderless, Divider-based Layout
 // ============================================================================
 
 div[data-type='memos_view'] .memolist-wrapper {
@@ -9,8 +9,26 @@ div[data-type='memos_view'] .memolist-wrapper {
   flex-grow: 1;
   width: 100%;
   overflow-y: scroll;
-  gap: var(--spacing-sm);
+  gap: 0; // Memos handle own spacing via padding + dividers
   .hide-scroll-bar();
+
+  > .memo-list-load-more {
+    width: 100%;
+    padding: var(--spacing-sm) 0;
+    margin: var(--spacing-sm) 0;
+    background: transparent;
+    border: 1px solid var(--color-separator);
+    border-radius: var(--radius-md);
+    color: var(--color-muted);
+    font-size: var(--font-size-sm);
+    cursor: pointer;
+    transition: color 0.15s ease, border-color 0.15s ease;
+
+    &:hover {
+      color: var(--color-fg);
+      border-color: var(--color-muted);
+    }
+  }
 
   > .status-text-container {
     .flex(column, flex-start, center);

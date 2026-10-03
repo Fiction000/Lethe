@@ -14,69 +14,38 @@ import utils from '../helpers/utils';
 import useToggle from '../hooks/useToggle';
 import { globalStateService, memoService, resourceService } from '../services';
 import showMemoCardDialog from './MemoCardDialog';
+import { sanitizeUnsafeAnchorHrefs } from '../helpers/timelineHtml';
 import '../less/memo.less';
 import { Notice } from 'obsidian';
 import { showMemoInDailyNotes } from '../obComponents/obShowMemo';
 import More from '../icons/more.svg?react';
-// Removed comment system and task label settings (Phase 3)
-// Removed: useEffect, useMemo, useRef, useState, getDailyNoteFormat, Platform, Editor
 import MemoImage from './MemoImage';
 import appContext from '../stores/appContext';
-
-// interface LinkedMemo extends FormattedMemo {
-//   dateStr: string;
-// }
 
 interface Props {
   memo: Model.Memo;
 }
 
-// Get Current Memos And Change it
-
 const Memo: React.FC<Props> = (props: Props) => {
   const { globalState } = useContext(appContext);
   const { memo: propsMemo } = props;
   const [showConfirmDeleteBtn, toggleConfirmDeleteBtn] = useToggle(false);
-  // Comment system removed in Phase 3
-
-  const handleUploadFile = useCallback(async (file: File) => {
-    const { type } = file;
-
-    if (!type.startsWith('image')) {
-      return;
-    }
-
-    try {
-      const image = await resourceService.upload(file);
-      const url = `${image}`;
-
-      return url;
-    } catch (error: any) {
-      new Notice(error);
-    }
-  }, []);
 
   const handleShowMemoStoryDialog = () => {
     showMemoCardDialog(propsMemo);
   };
 
   const handleMarkMemoClick = () => {
-    // UseButtonToShowEditor and DefaultEditorLocation removed - simplified
     globalStateService.setMarkMemoId(propsMemo.id);
   };
 
   const handleEditMemoClick = () => {
-    // UseButtonToShowEditor and DefaultEditorLocation removed - simplified
     globalStateService.setEditMemoId(propsMemo.id);
   };
 
   const handleSourceMemoClick = (m: Model.Memo) => {
     showMemoInDailyNotes(m.id, m.path);
   };
-
-  // const handleCreateNewNoteClick = () => {
-  //   turnIntoNote(memo.id);
-  // };
 
   const handleDeleteMemoClick = async () => {
     if (showConfirmDeleteBtn) {
@@ -99,8 +68,6 @@ const Memo: React.FC<Props> = (props: Props) => {
       toggleConfirmDeleteBtn(false);
     }
   };
-
-  // handleMemoTypeShow removed - ShowTaskLabel setting removed
 
   const handleMemoDoubleClick = useCallback((event: React.MouseEvent) => {
     if (event) {
@@ -130,8 +97,6 @@ const Memo: React.FC<Props> = (props: Props) => {
     }
   };
 
-  // Comment handlers and editor config removed - comment system removed in Phase 3
-
   const imageProps = {
     memo: propsMemo.content,
   };
@@ -154,7 +119,6 @@ const Memo: React.FC<Props> = (props: Props) => {
         <div className="memo-top-right-wrapper">
           <div className="btns-container">
             <span className="btn more-action-btn">
-              {/*<img className="icon-img" src={more} />*/}
               <More className="icon-img" />
             </span>
             <div className="more-action-btns-wrapper">
@@ -175,7 +139,7 @@ const Memo: React.FC<Props> = (props: Props) => {
                   className={`btn delete-btn ${showConfirmDeleteBtn ? 'final-confirm' : ''}`}
                   onClick={handleDeleteMemoClick}
                 >
-                  {showConfirmDeleteBtn ? 'CONFIRM！' : 'DELETE'}
+                  {showConfirmDeleteBtn ? 'CONFIRM!' : 'DELETE'}
                 </span>
               </div>
             </div>
@@ -189,6 +153,13 @@ const Memo: React.FC<Props> = (props: Props) => {
         dangerouslySetInnerHTML={{ __html: formatMemoContent(propsMemo.content, propsMemo.id) }}
       ></div>
       <MemoImage {...imageProps} />
+      {propsMemo.tags && propsMemo.tags.length > 0 && (
+        <div className="memo-bottom-tags">
+          {propsMemo.tags.map((tag) => (
+            <span key={tag} className="memo-tag">#{tag}</span>
+          ))}
+        </div>
+      )}
     </div>
   );
 };
@@ -212,15 +183,6 @@ export function formatMemoContent(content: string, memoid?: string) {
     content = content.replace(WIKI_IMAGE_URL_REG, '').replace(MARKDOWN_URL_REG, '').replace(IMAGE_URL_REG, '');
   }
 
-  // console.log(content);
-
-  // 中英文之间加空格
-  // if (shouldSplitMemoWord) {
-  //   content = content
-  //     .replace(/([\u4e00-\u9fa5])([A-Za-z0-9?.,;[\]]+)/g, "$1 $2")
-  //     .replace(/([A-Za-z0-9?.,;[\]]+)([\u4e00-\u9fa5])/g, "$1 $2");
-  // }
-
   content = content
     .replace(TAG_REG, "<span class='tag-span'>#$1</span>")
     .replace(FIRST_TAG_REG, "<p><span class='tag-span'>#$2</span>")
@@ -229,19 +191,9 @@ export function formatMemoContent(content: string, memoid?: string) {
     .replace(MEMO_LINK_REG, "<span class='memo-link-text' data-value='$2'>$1</span>")
     .replace(/\^\S{6}/g, '');
 
-  // const contentMark = content.split('');
-
-  // if(/(.*)<a(.*)/g.test(content)){
-
-  // }
-  //   for(let i=0; i<content.length;i++){
-  //     let mark = false;
-  //     let aMark = false;
-  //     if(contentMark[i])
-  //   }
-
   const tempDivContainer = document.createElement('div');
   tempDivContainer.innerHTML = content;
+  sanitizeUnsafeAnchorHrefs(tempDivContainer.querySelectorAll('a'));
   for (let i = 0; i < tempDivContainer.children.length; i++) {
     const c = tempDivContainer.children[i];
 

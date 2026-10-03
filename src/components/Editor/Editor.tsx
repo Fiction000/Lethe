@@ -1,38 +1,24 @@
-import React, { forwardRef, ReactNode, useCallback, useContext, useEffect, useImperativeHandle, useRef } from 'react';
-import TinyUndo from 'tiny-undo';
-import appContext from '../../stores/appContext';
-import { storage } from '../../helpers/storage';
-import useRefresh from '../../hooks/useRefresh';
+import React, { forwardRef, ReactNode, useCallback, useEffect, useImperativeHandle, useRef } from 'react';
 import Only from '../common/OnlyWhen';
 import '../../less/editor.less';
-import ReactTextareaAutocomplete from '@webscopeio/react-textarea-autocomplete';
-import { usedTags } from '../../obComponents/obTagSuggester';
-import '../../less/suggest.less';
 import { FocusOnEditor } from '../../memos';
-import { getSuggestions } from '../../obComponents/obFileSuggester';
-import { TFile } from 'obsidian';
-import appStore from '../../stores/appStore';
-import useState from 'react-usestateref';
+import { storage } from '../../helpers/storage';
 import { MEMOS_VIEW_TYPE } from '../../constants';
-
-type ItemProps = {
-  entity: {
-    char: string;
-    name: string;
-    file?: TFile;
-  };
-};
-
-type LoadingProps = {
-  data: Array<{ name: string; char: string }>;
-};
+import CMEditor, { CMEditorRefActions } from './CMEditor';
+import useState from 'react-usestateref';
+import { isSubmitShortcut } from '../../capture/composerActions';
 
 export interface EditorRefActions {
-  element: HTMLTextAreaElement;
+  /** The editor container element */
+  element: HTMLElement;
   focus: FunctionType;
   insertText: (text: string) => void;
   setContent: (text: string) => void;
   getContent: () => string;
+  confirm: () => Promise<void>;
+  setEditable: (editable: boolean) => void;
+  /** Get cursor offset from start of document */
+  getCursorPosition: () => number;
 }
 
 interface EditorProps {
@@ -42,32 +28,25 @@ interface EditorProps {
   placeholder: string;
   showConfirmBtn: boolean;
   showCancelBtn: boolean;
+  showTools: boolean;
   tools?: ReactNode;
-  onConfirmBtnClick: (content: string) => void;
+  onConfirmBtnClick: (content: string) => void | Promise<void>;
   onCancelBtnClick: () => void;
   onContentChange: (content: string) => void;
+  onPaste?: (event: ClipboardEvent) => void;
+  onDrop?: (event: DragEvent) => void;
+  onCompositionChange?: (composing: boolean) => void;
+  isSubmitting?: boolean;
+  isComposing?: boolean;
+  clearOnConfirm?: boolean;
+  useContentCache?: boolean;
+  focusOnMount?: boolean;
 }
-
-//eslint-disable-next-line
-const TItem = ({ entity: { name, char, file } }: ItemProps) => {
-  return <div>{`${char}`}</div>;
-};
-//eslint-disable-next-line
-const Loading = ({ data }: LoadingProps) => {
-  return <div>Loading</div>;
-};
-
-export let editorInput: HTMLTextAreaElement;
-let actualToken: string;
 
 // eslint-disable-next-line react/display-name
 const Editor = forwardRef((props: EditorProps, ref: React.ForwardedRef<EditorRefActions>) => {
   const {
-    globalState: { useTinyUndoHistoryCache },
-  } = useContext(appContext);
-  const {
     className,
-    inputerType,
     initialContent,
     placeholder,
     showConfirmBtn,
@@ -75,376 +54,265 @@ const Editor = forwardRef((props: EditorProps, ref: React.ForwardedRef<EditorRef
     onConfirmBtnClick: handleConfirmBtnClickCallback,
     onCancelBtnClick: handleCancelBtnClickCallback,
     onContentChange: handleContentChangeCallback,
+    onPaste,
+    onDrop,
+    onCompositionChange,
+    isSubmitting = false,
+    isComposing = false,
+    clearOnConfirm = true,
+    useContentCache = true,
+    focusOnMount = FocusOnEditor,
   } = props;
-  const editorRef = useRef<HTMLTextAreaElement>(null);
-  const tinyUndoRef = useRef<TinyUndo | null>(null);
-  const refresh = useRefresh();
-  // const [value, setValue] = useState("")
 
+  const cmRef = useRef<CMEditorRefActions>(null);
+  const submitLockRef = useRef(false);
+  const [hasContent, setHasContent] = useState(initialContent.length > 0);
   const [, setHeight, currentHeightRef] = useState(0);
-  // const [showDatePicker, toggleShowDatePicker] = useToggle(false);
 
   useEffect(() => {
-    const leaves = app.workspace.getLeavesOfType(MEMOS_VIEW_TYPE);
+    const leaves = typeof app === 'undefined' ? [] : app.workspace.getLeavesOfType(MEMOS_VIEW_TYPE);
     let memosHeight;
-    let leafView;
-
     if (leaves.length > 0) {
       const leaf = leaves[0];
-      leafView = leaf.view.containerEl;
-      memosHeight = leafView.offsetHeight;
+      memosHeight = leaf.view.containerEl.offsetHeight;
     } else {
-      leafView = document;
-      memosHeight = window.outerHeight;
+      memosHeight = typeof window === 'undefined' ? 300 : window.outerHeight;
     }
-
     setHeight(memosHeight);
-  }, []);
+  }, [setHeight]);
+
+  // Set initial content from cache on mount
+  useEffect(() => {
+    if (!useContentCache) return;
+    const cached = getEditorContentCache();
+    if (cached && cmRef.current) {
+      cmRef.current.setContent(cached);
+      setHasContent(cached.length > 0);
+    }
+  }, [useContentCache]);
 
   useEffect(() => {
-    if (!editorRef.current) {
-      return;
-    }
+    if (!focusOnMount) return;
+    cmRef.current?.focus();
+  }, [focusOnMount]);
 
-    if (initialContent) {
-      editorRef.current.value = initialContent;
-      refresh();
-    }
-  }, []);
+  const handleConfirmClick = useCallback(async () => {
+    if (!cmRef.current || isSubmitting || submitLockRef.current) return;
 
-  useEffect(() => {
-    if (useTinyUndoHistoryCache) {
-      if (!editorRef.current) {
-        return;
+    // Lock in the same event turn before reading content or starting async work.
+    submitLockRef.current = true;
+    try {
+      cmRef.current.setEditable(false);
+      const cached = useContentCache ? getEditorContentCache() : '';
+      const content = cached || cmRef.current.getContent();
+
+      await handleConfirmBtnClickCallback(content);
+
+      if (clearOnConfirm) {
+        cmRef.current.setContent('');
+        setHasContent(false);
       }
-
-      const { tinyUndoActionsCache, tinyUndoIndexCache } = storage.get(['tinyUndoActionsCache', 'tinyUndoIndexCache']);
-
-      tinyUndoRef.current = new TinyUndo(editorRef.current, {
-        interval: 5000,
-        initialActions: tinyUndoActionsCache,
-        initialIndex: tinyUndoIndexCache,
-      });
-
-      tinyUndoRef.current.subscribe((actions, index) => {
-        storage.set({
-          tinyUndoActionsCache: actions,
-          tinyUndoIndexCache: index,
-        });
-      });
-
-      return () => {
-        tinyUndoRef.current?.destroy();
-      };
-    } else {
-      tinyUndoRef.current?.destroy();
-      tinyUndoRef.current = null;
-      storage.remove(['tinyUndoActionsCache', 'tinyUndoIndexCache']);
+    } catch {
+      return;
+    } finally {
+      submitLockRef.current = false;
+      try {
+        cmRef.current?.setEditable(true);
+      } catch {
+        // Unlocking is best effort when the editor is being unmounted.
+      }
     }
-  }, [useTinyUndoHistoryCache]);
-
-  useEffect(() => {
-    if (editorRef.current) {
-      editorRef.current.style.height = 'auto';
-      editorRef.current.style.height = (editorRef.current.scrollHeight ?? 0) + 'px';
-    }
-  }, [editorRef.current?.value]);
+  }, [clearOnConfirm, handleConfirmBtnClickCallback, isSubmitting, useContentCache]);
 
   useImperativeHandle(
     ref,
     () => ({
-      element: editorRef.current as HTMLTextAreaElement,
+      get element() {
+        return cmRef.current?.element as HTMLElement;
+      },
       focus: () => {
-        if (FocusOnEditor) {
-          editorRef.current?.focus();
+        if (focusOnMount || FocusOnEditor) {
+          cmRef.current?.focus();
         }
       },
-      insertText: (rawText: string) => {
-        if (!editorRef.current) {
-          return;
-        }
-
-        const prevValue = editorRef.current.value;
-        editorRef.current.value =
-          prevValue.slice(0, editorRef.current.selectionStart) +
-          rawText +
-          prevValue.slice(editorRef.current.selectionStart);
-        handleContentChangeCallback(editorRef.current.value);
-        refresh();
+      insertText: (text: string) => {
+        cmRef.current?.insertText(text);
       },
       setContent: (text: string) => {
-        if (editorRef.current) {
-          editorRef.current.value = text;
-          handleContentChangeCallback(editorRef.current.value);
-          refresh();
-        }
+        cmRef.current?.setContent(text);
+        setHasContent(text.length > 0);
       },
       getContent: (): string => {
-        return editorRef.current?.value ?? '';
+        return cmRef.current?.getContent() ?? '';
+      },
+      confirm: () => handleConfirmClick(),
+      setEditable: (editable: boolean) => {
+        cmRef.current?.setEditable(editable);
+      },
+      getCursorPosition: (): number => {
+        const view = cmRef.current?.view;
+        if (!view) return 0;
+        return view.state.selection.main.from;
       },
     }),
-    [],
+    [focusOnMount, handleConfirmClick],
   );
 
-  const handleInsertTrigger = (event: { currentTrigger: string; item: any }) => {
-    if (!editorRef.current) {
-      return;
-    }
+  const handleContentChange = useCallback(
+    (content: string) => {
+      setHasContent(content.length > 0);
+      handleContentChangeCallback(content);
+    },
+    [handleContentChangeCallback],
+  );
 
-    const app = appStore.getState().dailyNotesState?.app;
-    if (!app) return;
-    const { fileManager } = app;
-
-    if (event.currentTrigger === '#') {
-      const prevValue = editorRef.current.value;
-      let removeCharNum;
-      if (actualToken !== null && actualToken !== undefined) {
-        removeCharNum = actualToken.length;
-      } else {
-        removeCharNum = 0;
-      }
-      let behindCharNum = editorRef.current.selectionStart;
-      for (let i = 0; i < prevValue.length; i++) {
-        if (!/\s/g.test(prevValue[behindCharNum])) {
-          behindCharNum++;
-        }
-      }
-
-      editorRef.current.value =
-        //eslint-disable-next-line
-        prevValue.slice(0, editorRef.current.selectionStart - removeCharNum) +
-        event.item.char +
-        prevValue.slice(behindCharNum);
-      handleContentChangeCallback(editorRef.current.value);
-      refresh();
-    } else if (event.currentTrigger === '[[') {
-      const filePath = fileManager.generateMarkdownLink(event.item.file, event.item.file.path, '', '');
-
-      const prevValue = editorRef.current.value;
-      let removeCharNum;
-      if (actualToken !== null && actualToken !== undefined) {
-        if (filePath.contains('[[')) {
-          removeCharNum = actualToken.length + 1;
-        } else if (event.item.file.extension !== 'md') {
-          removeCharNum = actualToken.length + 1;
-        } else {
-          removeCharNum = actualToken.length + 2;
-        }
-      } else {
-        removeCharNum = 2;
-      }
-      let behindCharNum = editorRef.current.selectionStart;
-      for (let i = 0; i < prevValue.length; i++) {
-        if (!/\s/g.test(prevValue[behindCharNum])) {
-          behindCharNum++;
-        }
-      }
-
-      editorRef.current.value =
-        //eslint-disable-next-line
-        prevValue.slice(0, editorRef.current.selectionStart - removeCharNum) +
-        filePath +
-        prevValue.slice(behindCharNum);
-      handleContentChangeCallback(editorRef.current.value);
-      refresh();
-    }
-  };
-
-  const handleEditorInput = useCallback(() => {
-    handleContentChangeCallback(editorRef.current?.value ?? '');
-    refresh();
-  }, []);
-
-  const wrapSelection = useCallback((wrapper: string, placeholder: string = '') => {
-    if (!editorRef.current) return;
-
-    const textarea = editorRef.current;
-    const start = textarea.selectionStart;
-    const end = textarea.selectionEnd;
-    const selectedText = textarea.value.substring(start, end);
-    const textToWrap = selectedText || placeholder;
-
-    let wrappedText: string;
-    let cursorOffset: number;
-
-    // Handle different wrapper types
-    if (wrapper === 'link') {
-      wrappedText = `[${textToWrap}]()`;
-      cursorOffset = wrappedText.length - 1; // Position cursor inside ()
-    } else {
-      wrappedText = `${wrapper}${textToWrap}${wrapper}`;
-      cursorOffset = wrapper.length + textToWrap.length;
-    }
-
-    // Insert wrapped text
-    textarea.value =
-      textarea.value.substring(0, start) +
-      wrappedText +
-      textarea.value.substring(end);
-
-    // Set cursor position
-    if (selectedText) {
-      // If text was selected, select the wrapped result
-      textarea.selectionStart = start;
-      textarea.selectionEnd = start + wrappedText.length;
-    } else {
-      // If no selection, position cursor appropriately
-      textarea.selectionStart = textarea.selectionEnd = start + cursorOffset;
-    }
-
-    handleContentChangeCallback(textarea.value);
-    refresh();
-  }, []);
-
-  const handleEditorKeyDown = useCallback((event: React.KeyboardEvent<HTMLTextAreaElement>) => {
-    event.stopPropagation();
-
-    const isMod = event.metaKey || event.ctrlKey;
-    const isShift = event.shiftKey;
-
-    // Cmd/Ctrl + Enter to save
-    if (event.code === 'Enter' && isMod) {
-      handleCommonConfirmBtnClick();
-      return;
-    }
-
-    // Markdown formatting hotkeys
-    if (isMod && !isShift) {
-      switch (event.key.toLowerCase()) {
-        case 'b': // Bold
-          event.preventDefault();
-          wrapSelection('**', 'bold text');
-          return;
-        case 'i': // Italic
-          event.preventDefault();
-          wrapSelection('*', 'italic text');
-          return;
-        case 'k': // Link
-          event.preventDefault();
-          wrapSelection('link', 'link text');
-          return;
-        case 'e': // Inline code
-          event.preventDefault();
-          wrapSelection('`', 'code');
-          return;
-      }
-    }
-
-    // Cmd/Ctrl + Shift hotkeys
-    if (isMod && isShift) {
-      switch (event.key.toLowerCase()) {
-        case 'x': // Strikethrough
-          event.preventDefault();
-          wrapSelection('~~', 'strikethrough');
-          return;
-      }
-    }
-
-    refresh();
-  }, [wrapSelection]);
-
-  const handleCommonConfirmBtnClick = useCallback(() => {
-    if (!editorRef.current) {
-      return;
-    }
-
-    if (inputerType === 'memo') {
-      editorRef.current.value = getEditorContentCache();
-    }
-
-    handleConfirmBtnClickCallback(editorRef.current.value);
-    editorRef.current.value = '';
-
-    refresh();
-    // After confirm btn clicked, tiny-undo should reset state(clear actions and index)
-    tinyUndoRef.current?.resetState();
-  }, []);
-
-  const handleCommonCancelBtnClick = useCallback(() => {
+  const handleCancelClick = useCallback(() => {
     handleCancelBtnClickCallback();
+  }, [handleCancelBtnClickCallback]);
+
+  /** Wrap selected text (or insert placeholder) with before/after markers in CM6 */
+  const wrapCMSelection = useCallback((before: string, after: string, placeholderText: string) => {
+    const view = cmRef.current?.view;
+    if (!view) return;
+
+    const { from, to } = view.state.selection.main;
+    const selectedText = view.state.sliceDoc(from, to);
+    const textToWrap = selectedText || placeholderText;
+    const wrapped = before + textToWrap + after;
+
+    view.dispatch({
+      changes: { from, to, insert: wrapped },
+      selection: selectedText
+        ? { anchor: from, head: from + wrapped.length }
+        : { anchor: from + before.length, head: from + before.length + textToWrap.length },
+    });
+    view.focus();
   }, []);
 
-  const getEditorContentCache = (): string => {
-    return storage.get(['editorContentCache']).editorContentCache ?? '';
-  };
+  // CM6 keydown handler — return true to prevent CM6 default handling
+  const handleKeyDown = useCallback(
+    (event: KeyboardEvent) => {
+      event.stopPropagation();
 
-  const getEditorContent = (): string => {
-    if (!editorRef.current) {
-      return;
-    }
+      const isMod = event.metaKey || event.ctrlKey;
+      const isShift = event.shiftKey;
 
-    editorRef.current.value = getEditorContentCache();
-    // if( FocusOnEditor ){
-    //   editorRef.current?.focus();
-    // }
+      const view = cmRef.current?.view;
+      const isEditorComposing = Boolean(view?.composing);
 
-    return editorRef.current.value;
-  };
+      if (isSubmitting || submitLockRef.current) {
+        event.preventDefault();
+        return true;
+      }
+
+      // Cmd/Ctrl+Enter submits only after IME composition has settled.
+      if (isSubmitShortcut(event, isEditorComposing)) {
+        event.preventDefault();
+        void handleConfirmClick();
+        return true;
+      }
+
+      if (event.isComposing || isEditorComposing || event.keyCode === 229 || event.which === 229) {
+        return false;
+      }
+
+      // Ctrl+Shift+Enter to insert task checkbox
+      if (event.code === 'Enter' && (event.ctrlKey || event.metaKey) && isShift) {
+        event.preventDefault();
+        if (view) {
+          const { from } = view.state.selection.main;
+          const insert = '- [ ] ';
+          view.dispatch({ changes: { from, insert }, selection: { anchor: from + insert.length } });
+        }
+        return true;
+      }
+
+      // Markdown formatting hotkeys
+      if (isMod && !isShift) {
+        switch (event.key.toLowerCase()) {
+          case 'b':
+            event.preventDefault();
+            wrapCMSelection('**', '**', 'bold text');
+            return true;
+          case 'i':
+            event.preventDefault();
+            wrapCMSelection('*', '*', 'italic text');
+            return true;
+          case 'k':
+            event.preventDefault();
+            wrapCMSelection('[', ']()', 'link text');
+            return true;
+          case 'e':
+            event.preventDefault();
+            wrapCMSelection('`', '`', 'code');
+            return true;
+        }
+      }
+
+      if (isMod && isShift) {
+        switch (event.key.toLowerCase()) {
+          case 'x':
+            event.preventDefault();
+            wrapCMSelection('~~', '~~', 'strikethrough');
+            return true;
+        }
+      }
+
+      return false;
+    },
+    [handleConfirmClick, isSubmitting, wrapCMSelection],
+  );
+
+  // Handle paste events for image upload
+  const handlePaste = useCallback(
+    (event: ClipboardEvent) => {
+      if (isSubmitting) {
+        event.preventDefault();
+        return true;
+      }
+      if (onPaste && event.clipboardData && event.clipboardData.files.length > 0) {
+        event.preventDefault();
+        onPaste(event);
+        return true;
+      }
+      return false;
+    },
+    [isSubmitting, onPaste],
+  );
+
+  // Handle drop events for image upload
+  const handleDrop = useCallback(
+    (event: DragEvent) => {
+      if (isSubmitting) {
+        event.preventDefault();
+        return true;
+      }
+      if (onDrop && event.dataTransfer && event.dataTransfer.files.length > 0) {
+        event.preventDefault();
+        onDrop(event);
+        return true;
+      }
+      return false;
+    },
+    [isSubmitting, onDrop],
+  );
+
+  const maxHeight = currentHeightRef.current > 400 ? currentHeightRef.current - 400 : 300;
 
   return (
     <div className={'common-editor-wrapper ' + className}>
-      {inputerType === 'memo' ? (
-        <ReactTextareaAutocomplete
-          className="common-editor-inputer scroll"
-          loadingComponent={Loading}
-          placeholder={placeholder}
-          movePopupAsYouType={true}
-          value={getEditorContent()}
-          innerRef={(textarea) => {
-            editorRef.current = textarea;
-          }}
-          onInput={handleEditorInput}
-          onKeyDown={handleEditorKeyDown}
-          style={{
-            minHeight: 48,
-            maxHeight: `${currentHeightRef.current > 400 ? currentHeightRef.current - 400 : 100}px`,
-          }}
-          dropdownStyle={{
-            minWidth: 180,
-            maxHeight: 250,
-            overflowY: 'auto',
-          }}
-          minChar={0}
-          onItemSelected={handleInsertTrigger}
-          scrollToItem={true}
-          trigger={{
-            '#': {
-              dataProvider: (token) => {
-                actualToken = token;
-                return usedTags(token).map(({ name, char }) => ({ name, char }));
-              },
-              //eslint-disable-next-line
-              component: TItem,
-              afterWhitespace: true,
-              output: (item) => item.char,
-            },
-            '[[': {
-              dataProvider: (token) => {
-                actualToken = token;
-                return getSuggestions(token)
-                  .slice(0, 10)
-                  .map(({ name, char, file }) => ({ name, char, file }));
-              },
-              //eslint-disable-next-line
-              component: TItem,
-              afterWhitespace: true,
-              output: (item: string) => item.char,
-            },
-          }}
-        />
-      ) : (
-        <textarea
-          style={{
-            minHeight: 48,
-          }}
-          className="common-editor-inputer scroll"
-          rows={1}
-          placeholder={placeholder}
-          ref={editorRef}
-          onInput={handleEditorInput}
-          onKeyDown={handleEditorKeyDown}
-        ></textarea>
-      )}
+      <CMEditor
+        ref={cmRef}
+        initialContent={initialContent}
+        placeholder={placeholder}
+        onContentChange={handleContentChange}
+        onKeyDown={handleKeyDown}
+        onPaste={handlePaste}
+        onDrop={handleDrop}
+        onCompositionChange={onCompositionChange}
+        editable={!isSubmitting}
+        maxHeight={maxHeight}
+      />
 
       <div className="common-tools-wrapper">
         <div className="common-tools-container">
@@ -452,18 +320,19 @@ const Editor = forwardRef((props: EditorProps, ref: React.ForwardedRef<EditorRef
         </div>
         <div className="btns-container">
           <Only when={showCancelBtn}>
-            <button className="action-btn cancel-btn" onClick={handleCommonCancelBtnClick}>
+            <button className="action-btn cancel-btn" onClick={handleCancelClick}>
               CANCEL EDIT
             </button>
           </Only>
           <Only when={showConfirmBtn}>
             <button
               className="action-btn confirm-btn"
-              disabled={!editorRef.current?.value}
-              onClick={handleCommonConfirmBtnClick}
+              disabled={!hasContent || isSubmitting || isComposing}
+              onClick={() => void handleConfirmClick()}
+              title="Submit (⌘+Enter)"
             >
-              NOTEIT
-              <span className="icon-text">✍️</span>
+              NOTE
+              <span className="shortcut-hint">⌘↵</span>
             </button>
           </Only>
         </div>
@@ -471,5 +340,9 @@ const Editor = forwardRef((props: EditorProps, ref: React.ForwardedRef<EditorRef
     </div>
   );
 });
+
+function getEditorContentCache(): string {
+  return storage.get(['editorContentCache']).editorContentCache ?? '';
+}
 
 export default Editor;

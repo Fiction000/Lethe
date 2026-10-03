@@ -79,10 +79,10 @@ export const TagInput: React.FC<TagInputProps> = ({
     const cleanTag = tag.trim().replace(/^#/, '');
     if (cleanTag && !selectedTags.includes(cleanTag)) {
       onTagsChange([...selectedTags, cleanTag]);
-      setInputValue('');
-      setShowSuggestions(false);
-      inputRef.current?.focus();
     }
+    setInputValue('');
+    setShowSuggestions(false);
+    inputRef.current?.focus();
   };
 
   const removeTag = (tagToRemove: string) => {
@@ -94,6 +94,9 @@ export const TagInput: React.FC<TagInputProps> = ({
   };
 
   const handleInputKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    // Ignore Enter during IME composition (e.g. Japanese henkan)
+    if (e.nativeEvent.isComposing) return;
+
     if (e.key === 'Enter') {
       e.preventDefault();
       if (showSuggestions && suggestions.length > 0) {

@@ -12,11 +12,7 @@ interface AppState {
   dailyNotesState: dailyNotesStore.State;
 }
 
-type AppStateActions =
-  | globalStore.Actions
-  | locationStore.Actions
-  | memoStore.Actions
-  | dailyNotesStore.Actions;
+type AppStateActions = globalStore.Actions | locationStore.Actions | memoStore.Actions | dailyNotesStore.Actions;
 
 const appStore = createStore<AppState, AppStateActions>(
   {
@@ -29,7 +25,7 @@ const appStore = createStore<AppState, AppStateActions>(
     globalState: globalStore.reducer,
     locationState: locationStore.reducer,
     memoState: memoStore.reducer,
-    dailyNotesState: dailyNotesStore.reducer,  // Fixed: was dailyNotesStore
+    dailyNotesState: dailyNotesStore.reducer, // Fixed: was dailyNotesStore
   }),
 );
 

@@ -179,7 +179,7 @@ class LocationService {
   };
 
   public getValidPathname = (pathname: string): AppRouter => {
-    if (['/', '/homeboard', '/recycle', '/setting'].includes(pathname)) {
+    if (['/', '/homeboard', '/recycle', '/setting', '/timeline'].includes(pathname)) {
       return pathname as AppRouter;
     } else {
       return '/';

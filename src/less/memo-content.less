@@ -1,7 +1,7 @@
 @import './mixin.less';
 
 // ============================================================================
-// Memo Content - Minimal, No Theme Duplication
+// Memo Content - Editorial Typography
 // ============================================================================
 
 div[data-type='memos_view'] .memo-content-text,
@@ -19,8 +19,8 @@ div[data-type='memos_view'] .memo-comment-text {
     height: auto;
     margin-bottom: var(--spacing-xs);
     margin-top: -2px;
-    font-size: 15px;
-    line-height: 24px;
+    font-size: var(--font-size-base);
+    line-height: 1.65;
     min-height: 24px;
     white-space: pre-wrap;
     color: var(--color-fg);
@@ -38,16 +38,16 @@ div[data-type='memos_view'] .memo-comment-text {
     width: auto;
     padding-left: var(--spacing-xs);
     padding-right: 6px;
-    margin-left: var(--spacing-xs);
-    line-height: 24px;
+    margin-left: 2px;
+    line-height: 22px;
     font-size: var(--font-size-sm);
     border: none;
-    border-radius: var(--radius-sm); // Modern rounded corners
+    border-radius: var(--radius-sm);
     color: var(--color-accent);
-    background-color: var(--color-border);
+    background-color: var(--color-separator);
     cursor: pointer;
     vertical-align: bottom;
-    transition: opacity 0.2s ease;
+    transition: opacity 0.15s ease;
 
     &:hover {
       opacity: 0.8;
@@ -57,7 +57,7 @@ div[data-type='memos_view'] .memo-comment-text {
   .memo-link-text {
     display: inline-block;
     color: var(--color-accent);
-    font-weight: bold;
+    font-weight: 500;
     border-bottom: none;
     text-decoration: none;
     cursor: pointer;
@@ -79,24 +79,24 @@ div[data-type='memos_view'] .memo-comment-text {
     width: 100%;
     margin: var(--spacing-xs) 0;
     padding: var(--spacing-sm) var(--spacing-md);
-    border-radius: 0;
-    font-size: 15px;
+    border-radius: var(--radius-sm);
+    font-size: 14px;
     line-height: 1.5;
-    background-color: var(--color-border);
+    background-color: var(--color-surface);
     white-space: pre-wrap;
   }
 }
 
 div[data-type='memos_view'].mobile-view .memo-content-text {
   > p {
-    font-size: 15px;
-    line-height: 26px;
+    font-size: var(--font-size-base);
+    line-height: 1.7;
     min-height: 26px;
     white-space: pre-wrap;
   }
 
   .tag-span {
-    line-height: 26px;
-    font-size: var(--font-size-base);
+    line-height: 24px;
+    font-size: var(--font-size-sm);
   }
 }

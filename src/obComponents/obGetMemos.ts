@@ -1,15 +1,12 @@
 import { moment, normalizePath, Notice, TFile, TFolder } from 'obsidian';
 import { getAllDailyNotes, getDateFromFile } from 'obsidian-daily-notes-interface';
 import appStore from '../stores/appStore';
-import {
-  DefaultMemoComposition,
-  IndividualMemoFolder,
-  MemoStorageMode,
-} from '../memos';
+import { DefaultMemoComposition, IndividualMemoFolder, MemoStorageMode } from '../memos';
 // Removed in Phase 3: CommentOnMemos, CommentsInOriginalNotes, FetchMemosFromNote,
 // FetchMemosMark, ProcessEntriesBelow, QueryFileName, DeleteFileName (now hardcoded)
 // Dataview import removed - global fetch feature removed
 import { getDailyNotePath } from '../helpers/utils';
+import memoIndexService from '../services/memoIndexService';
 
 export class DailyNotesFolderMissingError extends Error {}
 
@@ -65,7 +62,7 @@ export async function getRemainingMemos(note: TFile): Promise<number> {
 export async function getMemosFromDailyNote(
   dailyNote: TFile | null,
   allMemos: any[],
-  commentMemos: any[],
+  _commentMemos: any[],
 ): Promise<any[]> {
   if (!dailyNote) {
     return [];
@@ -155,61 +152,73 @@ export async function getMemosFromIndividualFiles(allMemos: any[], _commentMemos
     return;
   }
 
-  const files = folder.children.filter(
-    (file): file is TFile => file instanceof TFile && file.extension === 'md',
-  );
+  const files = folder.children.filter((file): file is TFile => file instanceof TFile && file.extension === 'md');
 
-  for (const file of files) {
-    try {
-      const content = await vault.read(file);
-      const metadata = appState.metadataCache.getFileCache(file);
+  const results = await Promise.all(
+    files.map(async (file) => {
+      try {
+        const content = await vault.read(file);
+        const metadata = appState.metadataCache.getFileCache(file);
 
-      // Parse frontmatter for created date and type
-      const frontmatter = metadata?.frontmatter;
-      const createdAtStr = frontmatter?.created;
-      const memoTypeFromFrontmatter = frontmatter?.type;
+        // Parse frontmatter for created date and type
+        const frontmatter = metadata?.frontmatter;
+        const memoTypeFromFrontmatter = frontmatter?.type;
 
-      // Determine created date
-      let createDate: moment.Moment;
-      if (createdAtStr) {
-        createDate = moment(createdAtStr, 'YYYY-MM-DD HH:mm:ss');
-        // Validate parsed date
-        if (!createDate.isValid()) {
+        // Skip files not created by Lethe (must have type: "memo" or "task")
+        if (memoTypeFromFrontmatter !== 'memo' && memoTypeFromFrontmatter !== 'task') {
+          return null;
+        }
+
+        const createdAtStr = frontmatter?.created;
+
+        // Determine created date
+        let createDate: moment.Moment;
+        if (createdAtStr) {
+          createDate = moment(createdAtStr, 'YYYY-MM-DD HH:mm:ss');
+          if (!createDate.isValid()) {
+            createDate = moment(file.stat.ctime);
+          }
+        } else {
           createDate = moment(file.stat.ctime);
         }
-      } else {
-        createDate = moment(file.stat.ctime);
-      }
 
-      // Determine memo type
-      let memoType = 'JOURNAL';
-      if (memoTypeFromFrontmatter === 'task') {
-        // Check if task is done by looking for [x] or [X] in content
-        if (/- \[[xX]\]/.test(content)) {
-          memoType = 'TASK-DONE';
-        } else {
-          memoType = 'TASK-TODO';
+        // Determine memo type
+        let memoType = 'JOURNAL';
+        if (memoTypeFromFrontmatter === 'task') {
+          if (/- \[[xX]\]/.test(content)) {
+            memoType = 'TASK-DONE';
+          } else {
+            memoType = 'TASK-TODO';
+          }
         }
+
+        // Get content without frontmatter
+        const contentWithoutFrontmatter = content.replace(/^---[\s\S]*?---\n*/m, '').trim();
+
+        // Extract tags from frontmatter
+        const fmTags: string[] = Array.isArray(frontmatter?.tags) ? frontmatter.tags : [];
+
+        return {
+          id: createDate.format('YYYYMMDDHHmmss') + '001',
+          content: contentWithoutFrontmatter,
+          user_id: 1,
+          createdAt: createDate.format('YYYY/MM/DD HH:mm:ss'),
+          updatedAt: moment(file.stat.mtime).format('YYYY/MM/DD HH:mm:ss'),
+          memoType: memoType,
+          hasId: '',
+          linkId: '',
+          path: file.path,
+          tags: fmTags,
+        };
+      } catch (error) {
+        console.error(`Failed to read memo file ${file.path}:`, error);
+        return null;
       }
+    }),
+  );
 
-      // Get content without frontmatter
-      const contentWithoutFrontmatter = content.replace(/^---[\s\S]*?---\n*/m, '').trim();
-
-      allMemos.push({
-        id: createDate.format('YYYYMMDDHHmmss') + '001',
-        content: contentWithoutFrontmatter,
-        user_id: 1,
-        createdAt: createDate.format('YYYY/MM/DD HH:mm:ss'),
-        updatedAt: moment(file.stat.mtime).format('YYYY/MM/DD HH:mm:ss'),
-        memoType: memoType,
-        hasId: '',
-        linkId: '',
-        path: file.path,
-      });
-    } catch (error) {
-      console.error(`Failed to read memo file ${file.path}:`, error);
-      // Continue with other files
-    }
+  for (const memo of results) {
+    if (memo) allMemos.push(memo);
   }
 }
 
@@ -223,6 +232,15 @@ export async function getMemos(): Promise<allKindsofMemos> {
   // If using individual files mode, only fetch from individual files folder
   if (MemoStorageMode === 'individual-files') {
     await getMemosFromIndividualFiles(memos, commentMemos);
+
+    // Index migration/sync
+    const index = memoIndexService.getIndex();
+    if (Object.keys(index.entries).length === 0 && memos.length > 0) {
+      memoIndexService.rebuildFromMemos(memos);
+    } else if (Object.keys(index.entries).length > 0) {
+      memoIndexService.syncFromMemos(memos);
+    }
+
     return { memos, commentMemos };
   }
 
