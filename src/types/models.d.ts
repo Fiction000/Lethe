@@ -17,6 +17,7 @@ declare namespace Model {
     linkId?: string;
     hasId?: string;
     path?: string;
+    tags?: string[];
   }
 
   interface Query extends BaseModel {
@@ -31,5 +32,20 @@ declare namespace Model {
     type: string;
     size: string;
     createdAt: string;
+  }
+
+  interface MemoIndexEntry {
+    id: string;
+    createdAt: string;
+    updatedAt: string;
+    memoType: string;
+    tags: string[];
+    contentPreview: string;
+    path: string;
+  }
+
+  interface MemoIndex {
+    version: number;
+    entries: Record<string, MemoIndexEntry>;
   }
 }

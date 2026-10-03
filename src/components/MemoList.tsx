@@ -16,6 +16,8 @@ import { Notice, Platform } from 'obsidian';
 
 // import { DefaultEditorLocation } from '../memos';
 
+const PAGE_SIZE = 10;
+
 interface Props {}
 
 export let copyShownMemos: Model.Memo[];
@@ -25,11 +27,8 @@ const MemoList: React.FC<Props> = () => {
     locationState: { query },
     memoState: { memos },
   } = useContext(appContext);
-  // let reverseMemos: Model.Memo[];
-  // if(DefaultEditorLocation === "Bottom" && window.innerWidth < 875 && Platform.isMobile){
-  //   reverseMemos = memos.reverse();
-  // }
   const [isFetching, setFetchStatus] = useState(true);
+  const [displayCount, setDisplayCount] = useState(PAGE_SIZE);
   const wrapperElement = useRef<HTMLDivElement>(null);
   const { tag: tagQuery, duration, type: memoContentType, text: textQuery } = query;
   const showMemoFilter = Boolean(
@@ -117,6 +116,9 @@ const MemoList: React.FC<Props> = () => {
 
   copyShownMemos = shownMemos;
 
+  const paginatedMemos = shownMemos.slice(0, displayCount);
+  const hasMore = displayCount < shownMemos.length;
+
   useEffect(() => {
     // Fetch memos (uses cache if already loaded)
     memoService
@@ -137,6 +139,7 @@ const MemoList: React.FC<Props> = () => {
   }, []);
 
   useEffect(() => {
+    setDisplayCount(PAGE_SIZE);
     wrapperElement.current?.scrollTo({ top: 0 });
   }, [query]);
 
@@ -170,9 +173,20 @@ const MemoList: React.FC<Props> = () => {
       onClick={handleMemoListClick}
       ref={wrapperElement}
     >
-      {shownMemos.map((memo) => (
+      {paginatedMemos.map((memo) => (
         <Memo key={`${memo.id}-${memo.updatedAt}`} memo={memo} />
       ))}
+      {hasMore && (
+        <button
+          className="memo-list-load-more"
+          onClick={(e) => {
+            e.stopPropagation();
+            setDisplayCount((c) => c + PAGE_SIZE);
+          }}
+        >
+          Load more ({shownMemos.length - displayCount} remaining)
+        </button>
+      )}
       <div className="status-text-container">
         {isFetching ? (
           <LoadingSpinner />
@@ -182,9 +196,9 @@ const MemoList: React.FC<Props> = () => {
               ? showMemoFilter
                 ? 'No memos match your filters'
                 : 'No memos yet. Press the hotkey to capture your first thought!'
-              : showMemoFilter
-              ? ''
-              : 'All Data is Loaded 🎉'}
+              : !hasMore && !showMemoFilter
+              ? 'All Data is Loaded'
+              : ''}
           </p>
         )}
       </div>

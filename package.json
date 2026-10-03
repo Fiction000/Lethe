@@ -13,27 +13,30 @@
     "format": "npm run prettier:fix && npm run lint:fix",
     "build:nolint": "NODE_ENV=production rollup -c",
     "build": "vite build",
-    "test": "jest",
-    "test:watch": "yarn test -- --watch"
+    "test": "node --import tsx --test test/*.test.ts",
+    "test:watch": "node --import tsx --test --watch test/*.test.ts"
   },
   "dependencies": {
+    "@codemirror/autocomplete": "^6.20.1",
+    "@codemirror/commands": "^6.10.3",
+    "@codemirror/lang-markdown": "^6.5.0",
+    "@codemirror/language": "^6.12.2",
+    "@codemirror/state": "^6.6.0",
+    "@codemirror/view": "^6.38.6",
+    "@lezer/highlight": "^1.2.3",
     "obsidian": "0.16.3",
     "obsidian-daily-notes-interface": "^0.9.4",
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
-    "react-popper": "^2.3.0",
-    "tiny-undo": "^0.0.10"
+    "react-popper": "^2.3.0"
   },
   "devDependencies": {
-    "vite-plugin-svgr": "^4.2.0",
     "@popperjs/core": "^2.11.2",
     "@types/react": "^17.0.39",
     "@types/react-dom": "^17.0.11",
-    "@types/webscopeio__react-textarea-autocomplete": "^4.7.2",
     "@typescript-eslint/eslint-plugin": "^5.12.1",
     "@typescript-eslint/parser": "^5.12.1",
     "@vitejs/plugin-react": "^1.2.0",
-    "@webscopeio/react-textarea-autocomplete": "^4.9.1",
     "babel": "^6.23.0",
     "eslint": "^8.10.0",
     "eslint-config-prettier": "^8.4.0",
@@ -43,8 +46,10 @@
     "less": "^4.1.2",
     "prettier": "2.7.1",
     "react-usestateref": "^1.0.8",
+    "tsx": "^4.23.15",
     "typescript": "^4.5.5",
-    "vite": "^3.2.0"
+    "vite": "^3.2.0",
+    "vite-plugin-svgr": "^4.2.0"
   },
   "license": "MIT"
 }

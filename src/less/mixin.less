@@ -1,75 +1,91 @@
 // ============================================================================
-// CSS Custom Properties - Minimal Design System
+// CSS Custom Properties - Minimal Editorial Design System
 // ============================================================================
 
 .theme-light {
-  // Colors (6 total)
-  --color-bg: #ffffff;           // Pure white background
-  --color-fg: #000000;           // Pure black text
-  --color-border: #e0e0e0;       // Minimal borders
-  --color-accent: #0066cc;       // Links, primary actions
-  --color-muted: #666666;        // Secondary text
-  --color-danger: #cc0000;       // Delete actions
+  // Colors — warm editorial palette
+  --color-bg: #fafaf8;              // Warm off-white (not sterile)
+  --color-fg: #1a1a1a;              // Near-black text
+  --color-surface: #f3f2ef;         // Subtle surface for inputs/sidebar
+  --color-separator: #e8e6e1;       // Warm separator lines
+  --color-border: #e0ddd8;          // Slightly warmer borders
+  --color-accent: #4a6fa5;          // Muted steel blue
+  --color-muted: #8a8a82;           // Warm gray secondary text
+  --color-danger: #b44;             // Muted red
 
-  // Spacing (3 values)
-  --spacing-xs: 4px;   // Minimal spacing
-  --spacing-sm: 8px;   // Compact spacing
-  --spacing-md: 16px;  // Standard spacing
-
-  // Typography (3 sizes)
-  --font-size-sm: 12px;    // Small text, timestamps
-  --font-size-base: 14px;  // Body text (default)
-  --font-size-lg: 18px;    // Headings, emphasis
-  --line-height: 1.6;      // Single line-height value
-
-  // Font stacks
-  --font-sans: system-ui, -apple-system, sans-serif;
-  --font-mono: 'SF Mono', Monaco, 'Courier New', monospace;
-
-  // Modern Design Tokens
-  --radius-sm: 4px;    // Small elements (buttons, tags)
-  --radius-md: 6px;    // Medium elements (inputs, cards)
-  --radius-lg: 8px;    // Large elements (modals, dialogs)
-
-  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.1);           // Subtle elevation
-  --shadow-md: 0 2px 8px rgba(0, 0, 0, 0.12);          // Card elevation
-  --shadow-lg: 0 4px 16px rgba(0, 0, 0, 0.15);         // Modal elevation
-  --shadow-focus: 0 0 0 3px rgba(0, 102, 204, 0.15);   // Focus rings
-}
-
-.theme-dark {
-  // Colors (6 total)
-  --color-bg: #1a1a1a;           // Near black background
-  --color-fg: #f0f0f0;           // Near white text
-  --color-border: #404040;       // Subtle borders
-  --color-accent: #4d94ff;       // Lighter blue for dark
-  --color-muted: #999999;        // Muted text
-  --color-danger: #ff4d4d;       // Lighter red for dark
-
-  // Spacing (same as light)
+  // Spacing
   --spacing-xs: 4px;
   --spacing-sm: 8px;
   --spacing-md: 16px;
+  --spacing-lg: 24px;
+  --spacing-xl: 32px;
 
-  // Typography (same as light)
-  --font-size-sm: 12px;
-  --font-size-base: 14px;
-  --font-size-lg: 18px;
+  // Typography
+  --font-size-xs: 11px;     // Labels, counters
+  --font-size-sm: 12px;     // Timestamps, captions
+  --font-size-base: 15px;   // Body text
+  --font-size-lg: 22px;     // Section headings
+  --font-size-title: 28px;  // Page titles
   --line-height: 1.6;
 
-  // Font stacks (same as light)
-  --font-sans: system-ui, -apple-system, sans-serif;
-  --font-mono: 'SF Mono', Monaco, 'Courier New', monospace;
+  // Font stacks — inherit Obsidian's fonts with refined fallbacks
+  --font-sans: var(--font-interface, system-ui, -apple-system, 'Segoe UI', sans-serif);
+  --font-text: var(--font-text, Georgia, 'Times New Roman', serif);
+  --font-mono: var(--font-monospace, 'SF Mono', 'Fira Code', 'Cascadia Code', monospace);
 
-  // Modern Design Tokens (same radius, darker shadows)
-  --radius-sm: 4px;
-  --radius-md: 6px;
+  // Radii — slightly tighter
+  --radius-sm: 3px;
+  --radius-md: 5px;
   --radius-lg: 8px;
 
-  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.3);           // More visible in dark
-  --shadow-md: 0 2px 8px rgba(0, 0, 0, 0.4);           // Card elevation
-  --shadow-lg: 0 4px 16px rgba(0, 0, 0, 0.5);          // Modal elevation
-  --shadow-focus: 0 0 0 3px rgba(77, 148, 255, 0.25);  // Accent focus ring
+  // Shadows — flattened, editorial feel
+  --shadow-sm: none;
+  --shadow-md: 0 1px 4px rgba(0, 0, 0, 0.06);
+  --shadow-lg: 0 4px 12px rgba(0, 0, 0, 0.08);
+  --shadow-focus: 0 0 0 2px rgba(74, 111, 165, 0.12);
+}
+
+.theme-dark {
+  // Colors — dark editorial
+  --color-bg: #1e1e1c;
+  --color-fg: #e8e6e1;
+  --color-surface: #282826;
+  --color-separator: #3a3a36;
+  --color-border: #444440;
+  --color-accent: #7da3d4;
+  --color-muted: #9a9a92;
+  --color-danger: #d47070;
+
+  // Spacing (same)
+  --spacing-xs: 4px;
+  --spacing-sm: 8px;
+  --spacing-md: 16px;
+  --spacing-lg: 24px;
+  --spacing-xl: 32px;
+
+  // Typography (same)
+  --font-size-xs: 11px;
+  --font-size-sm: 12px;
+  --font-size-base: 15px;
+  --font-size-lg: 22px;
+  --font-size-title: 28px;
+  --line-height: 1.6;
+
+  // Font stacks (same)
+  --font-sans: var(--font-interface, system-ui, -apple-system, 'Segoe UI', sans-serif);
+  --font-text: var(--font-text, Georgia, 'Times New Roman', serif);
+  --font-mono: var(--font-monospace, 'SF Mono', 'Fira Code', 'Cascadia Code', monospace);
+
+  // Radii (same)
+  --radius-sm: 3px;
+  --radius-md: 5px;
+  --radius-lg: 8px;
+
+  // Shadows — slightly more visible for dark
+  --shadow-sm: none;
+  --shadow-md: 0 1px 4px rgba(0, 0, 0, 0.2);
+  --shadow-lg: 0 4px 12px rgba(0, 0, 0, 0.3);
+  --shadow-focus: 0 0 0 2px rgba(125, 163, 212, 0.2);
 }
 
 // ============================================================================
@@ -104,7 +120,7 @@
   &::-webkit-scrollbar-thumb {
     width: @width;
     height: @height;
-    border-radius: 999px; // Fully rounded scrollbar thumb
+    border-radius: 999px;
     background-color: var(--color-border);
 
     &:hover {

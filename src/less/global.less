@@ -1,12 +1,14 @@
 @import './mixin.less';
 
 // ============================================================================
-// Global Styles - Minimal, No Duplication
+// Global Styles - Minimal Editorial
 // ============================================================================
 
 div[data-type='memos_view'] {
   font-family: var(--font-sans);
-  -webkit-font-smoothing: subpixel-antialiased;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
   margin: 0;
   padding: 0;
   box-sizing: border-box;
@@ -29,9 +31,9 @@ div[data-type='memos_view'] html {
 
 div[data-type='memos_view'] code {
   .mono-font-family();
-  background-color: var(--color-border);
-  padding: var(--spacing-xs) var(--spacing-sm);
-  border-radius: var(--radius-sm); // Modern rounded inline code
+  background-color: var(--color-surface);
+  padding: 1px 5px;
+  border-radius: var(--radius-sm);
 }
 
 div[data-type='memos_view'] pre {
@@ -59,21 +61,21 @@ div[data-type='memos_view'] img {
 .theme-light div[data-type='memos_view'] input:-webkit-autofill:hover,
 .theme-light div[data-type='memos_view'] input:-webkit-autofill:focus,
 .theme-light div[data-type='memos_view'] input:-webkit-autofill:active {
-  box-shadow: 0 0 0 30px white inset !important;
+  box-shadow: 0 0 0 30px var(--color-bg) inset !important;
 }
 
 .theme-dark div[data-type='memos_view'] input:-webkit-autofill,
 .theme-dark div[data-type='memos_view'] input:-webkit-autofill:hover,
 .theme-dark div[data-type='memos_view'] input:-webkit-autofill:focus,
 .theme-dark div[data-type='memos_view'] input:-webkit-autofill:active {
-  box-shadow: 0 0 0 30px rgb(0, 0, 0) inset !important;
+  box-shadow: 0 0 0 30px var(--color-bg) inset !important;
 }
 
 div[data-type='memos_view'] li:not(.rta__item) {
   list-style-type: none;
 
   &::before {
-    content: '•';
+    content: '\2022';
     font-weight: bold;
     margin-right: var(--spacing-xs);
   }
@@ -85,7 +87,7 @@ div[data-type='memos_view'] a {
   text-underline-offset: 2px;
 
   &:hover {
-    opacity: 0.8; // Minimal hover effect
+    opacity: 0.8;
   }
 }
 

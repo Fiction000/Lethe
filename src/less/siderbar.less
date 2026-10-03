@@ -1,21 +1,45 @@
 @import './mixin.less';
 
 // ============================================================================
-// Sidebar - Minimal, No Theme Duplication
+// Sidebar - Editorial Surface
 // ============================================================================
 
 .memos-sidebar-wrapper {
   .flex(column, flex-start, flex-start);
   width: 240px;
   height: 100%;
-  padding: var(--spacing-md) 0;
+  padding: var(--spacing-lg) 0;
   overflow-x: hidden;
   overflow-y: auto;
   flex-shrink: 0;
+  background-color: var(--color-surface);
+  border-right: 1px solid var(--color-separator);
   .hide-scroll-bar();
 
   > * {
     flex-shrink: 0;
+  }
+}
+
+// Inline nav links
+.sidebar-nav {
+  .flex(column, flex-start, flex-start);
+  width: 100%;
+  padding: 0 var(--spacing-lg);
+  margin-bottom: var(--spacing-lg);
+  gap: 2px;
+
+  > .sidebar-nav-item {
+    display: block;
+    font-size: var(--font-size-sm);
+    color: var(--color-muted);
+    cursor: pointer;
+    padding: var(--spacing-xs) 0;
+    transition: color 0.15s ease;
+
+    &:hover {
+      color: var(--color-fg);
+    }
   }
 }
 
@@ -26,10 +50,12 @@
   align-items: flex-start;
   width: 240px;
   height: 100%;
-  padding: var(--spacing-md) 0;
+  padding: var(--spacing-lg) 0;
   overflow-x: hidden;
   overflow-y: auto;
   flex-shrink: 0;
+  background-color: var(--color-surface);
+  border-right: 1px solid var(--color-separator);
 }
 
 .mobile-show-sidebar .mobile-view {
@@ -49,13 +75,13 @@
   width: 320px;
   height: 100%;
   padding: 0;
-  background-color: var(--color-bg);
+  background-color: var(--color-surface);
   transform: translateX(-320px);
 
   > * {
     width: 320px;
     max-width: 95%;
     flex-shrink: 0;
-    padding-left: 32px;
+    padding-left: var(--spacing-xl);
   }
 }

@@ -1,0 +1,265 @@
+@import './mixin.less';
+
+// ============================================================================
+// Timeline Page - Inherits Editorial Tokens
+// ============================================================================
+
+div[data-type='memos_view'] .timeline-page {
+  .flex(column, flex-start, flex-start);
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+
+  > .timeline-header {
+    .flex(row, flex-start, center);
+    width: 100%;
+    padding: var(--spacing-sm) 0;
+    gap: var(--spacing-sm);
+    flex-shrink: 0;
+
+    > .timeline-back-btn {
+      background: transparent;
+      border: none;
+      color: var(--color-muted);
+      font-size: var(--font-size-base);
+      cursor: pointer;
+      padding: var(--spacing-xs) var(--spacing-sm);
+      border-radius: var(--radius-sm);
+      transition: color 0.15s ease;
+
+      &:hover {
+        color: var(--color-fg);
+      }
+    }
+
+    > .timeline-title {
+      font-size: var(--font-size-lg);
+      font-weight: 300;
+      letter-spacing: -0.3px;
+      color: var(--color-fg);
+      margin: 0;
+    }
+
+    > .timeline-count {
+      font-size: var(--font-size-sm);
+      color: var(--color-muted);
+      margin-left: auto;
+    }
+  }
+
+  > .timeline-content {
+    .flex(column, flex-start, flex-start);
+    width: 100%;
+    flex: 1;
+    overflow-y: auto;
+    padding-bottom: 80px;
+    .hide-scroll-bar();
+  }
+
+  .timeline-loading,
+  .timeline-empty {
+    .flex(column, center, center);
+    width: 100%;
+    padding: var(--spacing-md) 0;
+
+    > p {
+      color: var(--color-muted);
+      font-size: var(--font-size-base);
+    }
+  }
+}
+
+// ============================================================================
+// Date Groups
+// ============================================================================
+
+div[data-type='memos_view'] .timeline-date-group {
+  width: 100%;
+  margin-bottom: var(--spacing-md);
+
+  > .timeline-date-header {
+    .flex(row, flex-start, center);
+    gap: var(--spacing-sm);
+    padding: var(--spacing-sm) 0;
+    position: sticky;
+    top: 0;
+    background-color: var(--color-bg);
+    z-index: 1;
+
+    > .timeline-date {
+      font-size: var(--font-size-sm);
+      font-weight: 600;
+      color: var(--color-muted);
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+    }
+
+    > .timeline-date-count {
+      font-size: var(--font-size-xs);
+      color: var(--color-muted);
+      background-color: var(--color-separator);
+      padding: 1px 6px;
+      border-radius: 100px;
+    }
+  }
+
+  > .timeline-entries {
+    .flex(column, flex-start, flex-start);
+    width: 100%;
+    gap: 0;
+    padding-left: var(--spacing-xs);
+    border-left: 1px solid var(--color-separator);
+  }
+}
+
+// ============================================================================
+// Individual Entry
+// ============================================================================
+
+div[data-type='memos_view'] .timeline-entry {
+  .flex(row, flex-start, flex-start);
+  width: 100%;
+  padding: var(--spacing-sm) var(--spacing-sm) var(--spacing-sm) var(--spacing-md);
+  border-radius: var(--radius-sm);
+  transition: background-color 0.15s ease;
+  position: relative;
+
+  // Dot on the timeline line
+  &::before {
+    content: '';
+    position: absolute;
+    left: -5px;
+    top: 14px;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background-color: var(--color-separator);
+    border: 2px solid var(--color-bg);
+    transition: background-color 0.15s ease;
+  }
+
+  &:hover {
+    background-color: var(--color-surface);
+
+    &::before {
+      background-color: var(--color-accent);
+    }
+
+    .timeline-entry-actions {
+      opacity: 1;
+    }
+  }
+
+  > .timeline-entry-time {
+    flex-shrink: 0;
+    width: 56px;
+    padding-top: 2px;
+
+    > .time-text {
+      font-size: var(--font-size-sm);
+      color: var(--color-muted);
+      font-family: var(--font-mono);
+      letter-spacing: 0.3px;
+    }
+
+    > .timeline-entry-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 2px;
+      margin-top: 4px;
+
+      > .memo-tag {
+        font-size: 10px;
+        line-height: 16px;
+        padding: 0 4px;
+        border-radius: var(--radius-sm);
+        color: var(--color-muted);
+        background-color: var(--color-separator);
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        max-width: 56px;
+      }
+    }
+  }
+
+  > .timeline-entry-body {
+    .flex(column, flex-start, flex-start);
+    flex: 1;
+    min-width: 0;
+
+    > .timeline-entry-content {
+      width: 100%;
+    }
+
+    > .timeline-entry-actions {
+      .flex(row, flex-start, center);
+      gap: var(--spacing-sm);
+      margin-top: var(--spacing-xs);
+      opacity: 0;
+      transition: opacity 0.15s ease;
+
+      > .timeline-action-btn {
+        background: transparent;
+        border: none;
+        color: var(--color-muted);
+        font-size: var(--font-size-xs);
+        letter-spacing: 0.5px;
+        cursor: pointer;
+        padding: 2px var(--spacing-xs);
+        border-radius: var(--radius-sm);
+        transition: color 0.15s ease, background-color 0.15s ease;
+
+        &:hover {
+          color: var(--color-fg);
+          background-color: var(--color-separator);
+        }
+      }
+    }
+  }
+}
+
+// ============================================================================
+// Archived (index-only) entries
+// ============================================================================
+
+div[data-type='memos_view'] .timeline-entry-archived {
+  opacity: 0.55;
+
+  &::before {
+    background-color: var(--color-separator);
+    border-style: dashed;
+  }
+}
+
+// ============================================================================
+// Load More Button
+// ============================================================================
+
+div[data-type='memos_view'] .timeline-load-more {
+  width: 100%;
+  padding: var(--spacing-sm) 0;
+  margin: var(--spacing-sm) 0;
+  background: transparent;
+  border: 1px solid var(--color-separator);
+  border-radius: var(--radius-md);
+  color: var(--color-muted);
+  font-size: var(--font-size-sm);
+  cursor: pointer;
+  transition: color 0.15s ease, border-color 0.15s ease;
+
+  &:hover {
+    color: var(--color-fg);
+    border-color: var(--color-muted);
+  }
+}
+
+// ============================================================================
+// Dark theme adjustments
+// ============================================================================
+
+.theme-dark div[data-type='memos_view'] .timeline-entry {
+  &:hover {
+    background-color: var(--color-surface);
+  }
+}

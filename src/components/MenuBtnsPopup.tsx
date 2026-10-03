@@ -72,6 +72,10 @@ const MenuBtnsPopup: React.FC<Props> = (props: Props) => {
     app.setting.openTabById('lethe');
   };
 
+  const handleTimelineBtnClick = () => {
+    locationService.pushHistory('/timeline');
+  };
+
   const handleMemosTrashBtnClick = () => {
     locationService.pushHistory('/recycle');
   };
@@ -86,6 +90,9 @@ const MenuBtnsPopup: React.FC<Props> = (props: Props) => {
 
   return (
     <div className={`menu-btns-popup ${shownStatus ? '' : 'hidden'}`} ref={popupElRef}>
+      <button className="btn action-btn" onClick={handleTimelineBtnClick}>
+        <span className="icon">📅</span> Timeline
+      </button>
       <button className="btn action-btn" onClick={handleMyAccountBtnClick}>
         <span className="icon">👤</span> Settings
       </button>

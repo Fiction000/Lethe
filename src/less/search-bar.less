@@ -1,7 +1,7 @@
 @import './mixin.less';
 
 // ============================================================================
-// Search Bar - Minimal, No Duplication
+// Search Bar - Borderless, Surface Background
 // ============================================================================
 
 div[data-type='memos_view'] .search-bar-container {
@@ -9,29 +9,28 @@ div[data-type='memos_view'] .search-bar-container {
 
   > .search-bar-inputer {
     .flex(row, flex-start, center);
-    background-color: var(--color-bg);
-    border: 1px solid var(--color-border);
+    background-color: var(--color-surface);
+    border: none;
     width: 100%;
-    height: 40px;
+    height: 36px;
     padding: var(--spacing-xs) var(--spacing-md);
-    border-radius: var(--radius-md); // Modern rounded corners
-    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    border-radius: var(--radius-md);
+    transition: background-color 0.15s ease;
 
     &:focus-within {
-      border-color: var(--color-accent);
-      box-shadow: var(--shadow-focus);
+      background-color: var(--color-separator);
     }
 
     > .icon-img {
       margin-right: var(--spacing-sm);
       width: 14px;
       height: auto;
-      opacity: 0.6;
+      opacity: 0.5;
     }
 
     > .text-input {
       width: 100%;
-      font-size: var(--font-size-base);
+      font-size: var(--font-size-sm);
       color: var(--color-fg);
     }
 
@@ -55,10 +54,10 @@ div[data-type='memos_view'] .search-bar-container {
       .flex(column, flex-start, flex-start);
       width: 100%;
       background-color: var(--color-bg);
-      border: 1px solid var(--color-border);
+      border: 1px solid var(--color-separator);
       padding: var(--spacing-sm) var(--spacing-md);
-      border-radius: var(--radius-md); // Modern rounded corners
-      box-shadow: var(--shadow-md); // Dropdown elevation
+      border-radius: var(--radius-md);
+      box-shadow: var(--shadow-lg);
 
       > .title-text {
         color: var(--color-muted);
@@ -90,12 +89,12 @@ div[data-type='memos_view'] .search-bar-container {
             .type-item {
               cursor: pointer;
               padding: 0 var(--spacing-xs);
-              border-radius: var(--radius-sm); // Modern pill shape
-              transition: opacity 0.2s ease, background-color 0.2s ease;
+              border-radius: var(--radius-sm);
+              transition: opacity 0.15s ease, background-color 0.15s ease;
 
               &:hover {
                 opacity: 0.8;
-                background-color: rgba(0, 0, 0, 0.05);
+                background-color: var(--color-surface);
               }
 
               &.selected {
@@ -110,7 +109,7 @@ div[data-type='memos_view'] .search-bar-container {
             }
 
             .split-text {
-              color: var(--color-border);
+              color: var(--color-separator);
               margin: 0 2px;
             }
           }
