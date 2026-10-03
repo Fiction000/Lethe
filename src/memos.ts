@@ -1,4 +1,4 @@
-import { debounce, HoverPopover, ItemView, Platform, TFile, WorkspaceLeaf } from 'obsidian';
+import { debounce, HoverPopover, ItemView, normalizePath, TFile, WorkspaceLeaf } from 'obsidian';
 import { MEMOS_VIEW_TYPE } from './constants';
 import React from 'react';
 import ReactDOM from 'react-dom';
@@ -41,35 +41,48 @@ export class Memos extends ItemView {
     ShowInSidebar = this.plugin.settings.ShowInSidebar;
     SidebarLocation = this.plugin.settings.SidebarLocation;
     FocusOnEditor = this.plugin.settings.FocusOnEditor;
+    DefaultTag = this.plugin.settings.DefaultTag;
 
     memoService.clearMemos();
     memoService.fetchAllMemos(true); // Force refetch on settings change
   }
 
+  private isIndividualMemoFile(file: TFile): boolean {
+    if (MemoStorageMode !== 'individual-files') return false;
+    const folderPath = normalizePath(IndividualMemoFolder);
+    return file.path.startsWith(folderPath + '/') && file.extension === 'md';
+  }
+
   private async onFileDeleted(file: TFile): Promise<void> {
-    if (getDateFromFile(file, 'day')) {
+    if (getDateFromFile(file, 'day') || this.isIndividualMemoFile(file)) {
       await dailyNotesService.getMyAllDailyNotes();
-      memoService.clearMemos();
-      memoService.fetchAllMemos(true); // Force refetch on file delete
+      // No clearMemos() — fetchAllMemos dispatches SET_MEMOS atomically,
+      // avoiding a flash of empty state that hides archived index entries.
+      memoService.fetchAllMemos(true);
     }
   }
 
   private async onFileModified(file: TFile): Promise<void> {
-    const date = getDateFromFile(file, 'day');
     if (globalStateService.getState().changedByMemos) {
       globalStateService.setChangedByMemos(false);
       return;
     }
-    if (date && this.memosComponent) {
-      memoService.fetchAllMemos(true); // Force refetch on file modify
+    const isDailyNote = !!getDateFromFile(file, 'day');
+    if ((isDailyNote || this.isIndividualMemoFile(file)) && this.memosComponent) {
+      memoService.fetchAllMemos(true);
     }
   }
 
   private onFileCreated(file: TFile): void {
+    // Skip refetch if Lethe itself created the file (memo already pushed to store)
+    if (globalStateService.getState().changedByMemos) {
+      globalStateService.setChangedByMemos(false);
+      return;
+    }
     if (this.app.workspace.layoutReady && this.memosComponent) {
-      if (getDateFromFile(file, 'day')) {
+      if (getDateFromFile(file, 'day') || this.isIndividualMemoFile(file)) {
         dailyNotesService.getMyAllDailyNotes();
-        memoService.fetchAllMemos(true); // Force refetch on file create
+        memoService.fetchAllMemos(true);
       }
     }
   }
@@ -128,6 +141,7 @@ export class Memos extends ItemView {
     ShowInSidebar = this.plugin.settings.ShowInSidebar;
     SidebarLocation = this.plugin.settings.SidebarLocation;
     FocusOnEditor = this.plugin.settings.FocusOnEditor;
+    DefaultTag = this.plugin.settings.DefaultTag;
 
     this.memosComponent = React.createElement(App);
 
@@ -155,6 +169,7 @@ export let UserName: string;
 export let ShowInSidebar: boolean;
 export let SidebarLocation: 'left' | 'right';
 export let FocusOnEditor: boolean;
+export let DefaultTag: string;
 
 // Initialize settings from plugin settings
 // Called early in plugin lifecycle so Quick Capture and other features can access settings
@@ -168,4 +183,5 @@ export function initializeSettings(settings: any) {
   ShowInSidebar = settings.ShowInSidebar;
   SidebarLocation = settings.SidebarLocation;
   FocusOnEditor = settings.FocusOnEditor;
+  DefaultTag = settings.DefaultTag;
 }

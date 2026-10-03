@@ -1,7 +1,7 @@
 @import './mixin.less';
 
 // ============================================================================
-// Menu Buttons Popup - Minimal, No Theme Duplication
+// Menu Buttons Popup - Editorial Dropdown
 // ============================================================================
 
 div[data-type='memos_view'] .menu-btns-popup {
@@ -11,10 +11,11 @@ div[data-type='memos_view'] .menu-btns-popup {
   margin-left: 90px;
   padding: var(--spacing-xs);
   width: 180px;
-  border-radius: 0;
+  border-radius: var(--radius-md);
   z-index: 20;
   background-color: var(--color-bg);
-  border: 1px solid var(--color-border);
+  border: 1px solid var(--color-separator);
+  box-shadow: var(--shadow-lg);
 
   &:hover {
     display: flex;
@@ -24,21 +25,22 @@ div[data-type='memos_view'] .menu-btns-popup {
     .flex(row, flex-start, center);
     width: 100%;
     padding: var(--spacing-sm) var(--spacing-xs);
-    font-size: var(--font-size-base);
+    font-size: var(--font-size-sm);
     line-height: 1.6;
-    border-radius: 0;
+    border-radius: var(--radius-sm);
     text-align: left;
+    transition: background-color 0.15s ease;
 
     > .icon {
       display: block;
       width: 28px;
       text-align: center;
       margin-right: var(--spacing-xs);
-      font-size: var(--font-size-base);
+      font-size: var(--font-size-sm);
     }
 
     &:hover {
-      opacity: 0.8;
+      background-color: var(--color-surface);
     }
   }
 }

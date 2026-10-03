@@ -2,6 +2,7 @@ import { moment, TFile } from 'obsidian';
 import { getDailyNote } from 'obsidian-daily-notes-interface';
 import { DefaultMemoComposition } from '../memos';
 import dailyNotesService from '../services/dailyNotesService';
+import memoIndexService from '../services/memoIndexService';
 import appStore from '../stores/appStore';
 import { sendMemoToDelete } from './obDeleteMemo';
 
@@ -32,6 +33,8 @@ async function deleteIndividualFileMemo(memo: Model.Memo): Promise<Model.Memo> {
 
   // Delete the actual file
   await vault.delete(file);
+
+  memoIndexService.removeEntry(memo.id);
 
   // Send to delete.md for restoration capability
   const deleteDate = await sendMemoToDelete(originalLine);
@@ -67,10 +70,7 @@ async function deleteDailyNoteMemo(memo: Model.Memo): Promise<Model.Memo> {
 
   // Remove the line and its newline character
   // Handle both \n and \r\n line endings
-  const lineWithNewline = new RegExp(
-    lineToRemove.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + '\\r?\\n?',
-    ''
-  );
+  const lineWithNewline = new RegExp(lineToRemove.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + '\\r?\\n?', '');
   let newFileContent = fileContent.replace(lineWithNewline, '');
 
   // If the regex replacement didn't work, try simple string replacement

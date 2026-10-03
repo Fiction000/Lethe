@@ -1,15 +1,10 @@
 import { moment, normalizePath } from 'obsidian';
 import { getAllDailyNotes, getDailyNote } from 'obsidian-daily-notes-interface';
 import appStore from '../stores/appStore';
-import {
-  DefaultMemoComposition,
-  IndividualMemoFolder,
-  InsertAfter,
-  MemoStorageMode,
-} from '../memos';
+import { DefaultMemoComposition, DefaultTag, IndividualMemoFolder, InsertAfter, MemoStorageMode } from '../memos';
 // IndividualMemoFileNameLength removed - hardcoded to 30 (Phase 3)
 // IndividualMemoTags removed - hardcoded to '' (Phase 3)
-import { dailyNotesService } from '../services';
+import { dailyNotesService, globalStateService, memoIndexService } from '../services';
 import utils from '../helpers/utils';
 
 interface MContent {
@@ -38,7 +33,12 @@ export function getLinesInString(input: string) {
   return lines;
 }
 
-export async function waitForInsert(MemoContent: string, isTASK: boolean, insertDate?: any, tags?: string[]): Promise<Model.Memo> {
+export async function waitForInsert(
+  MemoContent: string,
+  isTASK: boolean,
+  insertDate?: any,
+  tags?: string[],
+): Promise<Model.Memo> {
   let date;
   if (insertDate !== undefined) {
     date = insertDate;
@@ -86,6 +86,7 @@ export async function waitForInsert(MemoContent: string, isTASK: boolean, insert
     await dailyNotesService.getMyAllDailyNotes();
     const fileContents = await vault.read(file);
     const newFileContent = await insertAfterHandler(InsertAfter, newEvent, fileContents);
+    globalStateService.setChangedByMemos(true);
     await vault.modify(file, newFileContent.content);
     if (newFileContent.posNum === -1) {
       const allLines = getAllLinesFromFile(newFileContent.content);
@@ -121,6 +122,7 @@ export async function waitForInsert(MemoContent: string, isTASK: boolean, insert
   } else {
     const fileContents = await vault.read(existingFile);
     const newFileContent = await insertAfterHandler(InsertAfter, newEvent, fileContents);
+    globalStateService.setChangedByMemos(true);
     await vault.modify(existingFile, newFileContent.content);
     if (newFileContent.posNum === -1) {
       const allLines = getAllLinesFromFile(newFileContent.content);
@@ -277,8 +279,11 @@ export async function createIndividualMemoFile(
   const timestamp = date.format('YYYYMMDDHHmmss');
   const filename = await utils.generateUniqueFilename(vault, folderPath, sanitizedName, timestamp);
 
-  // Use provided tags or empty array
+  // Use provided tags or empty array, ensuring DefaultTag is included
   const memoTags: string[] = tags || [];
+  if (DefaultTag && !memoTags.includes(DefaultTag)) {
+    memoTags.unshift(DefaultTag);
+  }
 
   // Build frontmatter
   let frontmatter = `---\ncreated: ${date.format('YYYY-MM-DD HH:mm:ss')}\ntype: ${isTASK ? 'task' : 'memo'}`;
@@ -299,6 +304,7 @@ export async function createIndividualMemoFile(
   // Create the file
   let file;
   try {
+    globalStateService.setChangedByMemos(true);
     file = await vault.create(filename, fileContent);
   } catch (error) {
     console.error('Failed to create memo file:', error);
@@ -307,7 +313,7 @@ export async function createIndividualMemoFile(
 
   const id = timestamp + '001';
 
-  return {
+  const memo: Model.Memo = {
     id: id,
     content: MemoContent,
     deletedAt: '',
@@ -317,5 +323,10 @@ export async function createIndividualMemoFile(
     path: file.path,
     hasId: '',
     linkId: '',
+    tags: memoTags,
   };
+
+  memoIndexService.addEntry(memo);
+
+  return memo;
 }

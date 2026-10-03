@@ -265,7 +265,7 @@ namespace utils {
    * Strips illegal characters and truncates to max length
    * @returns sanitized string or null if empty after sanitization
    */
-  export function sanitizeFilename(content: string, maxLength: number = 30): string | null {
+  export function sanitizeFilename(content: string, maxLength = 30): string | null {
     // Input validation
     if (!content || typeof content !== 'string') {
       return null;
@@ -276,13 +276,13 @@ namespace utils {
     }
 
     // Characters illegal in filenames: [ ] / \ : * ? " < > | # ^
-    const illegalChars = /[\[\]\/\\:*?"<>|#^\n\r]/g;
+    const illegalChars = new RegExp('[\\\\:*?"<>|#^\\n\\r/]', 'g');
 
     // Remove HTML tags like <br>
     let sanitized = content.replace(/<[^>]*>/g, ' ');
 
     // Remove illegal characters
-    sanitized = sanitized.replace(illegalChars, '');
+    sanitized = sanitized.replace(illegalChars, '').replaceAll('[', '').replaceAll(']', '');
 
     // Remove leading/trailing whitespace and collapse multiple spaces
     sanitized = sanitized.trim().replace(/\s+/g, ' ');

@@ -1,19 +1,76 @@
-import { Notice, Platform, Plugin, TFile } from 'obsidian';
+import { Notice, Platform, Plugin, TFile, parseYaml, requestUrl, stringifyYaml } from 'obsidian';
+import * as ObsidianApi from 'obsidian';
 import { FocusOnEditor, Memos, initializeSettings } from './memos';
 // OpenDailyMemosWithMemos removed - was Phase 2 orphaned setting
 import { MEMOS_VIEW_TYPE } from './constants';
 import addIcons from './obComponents/customIcons';
 import { DEFAULT_SETTINGS, MemosSettings, MemosSettingTab } from './setting';
 import { QuickCaptureModal } from './obComponents/QuickCaptureModal';
-import { dailyNotesService, memoService } from './services';
+import { dailyNotesService, memoIndexService, memoService } from './services';
 import { dailyNotePreCreationService } from './services/dailyNotePreCreationService';
+import { ObsidianVaultAdapter } from './capture/obsidianAdapter';
+import { CaptureRuntime } from './capture/runtime';
+import { SerializedDataRepository, type LetheDataRepository } from './capture/repository';
+import { setCaptureRuntime } from './capture/runtimeRegistry';
+import {
+  JEV_DEFAULT_MANAGED_FOLDERS,
+  applyLocalOnlyFallback,
+  hasNativeSecretStorage,
+  serializeJevSettings,
+  type JevSettings,
+} from './jevSettings';
+import {
+  createObsidianFrontmatterPort,
+  createObsidianJevTransport,
+  ObsidianOrganizationVaultAdapter,
+} from './organization/obsidianAdapter';
+import { createObsidianSecretReader, OrganizationRuntimeBridge } from './organization/runtimeBridge';
 
 export default class MemosPlugin extends Plugin {
   public settings: MemosSettings;
+  public memoIndex: Model.MemoIndex = { version: 1, entries: {} };
+  public dataRepository: LetheDataRepository;
+  public captureRuntime?: CaptureRuntime;
 
   async onload(): Promise<void> {
     console.log('lethe loading...');
+    this.dataRepository = new SerializedDataRepository({
+      loadData: () => this.loadData(),
+      saveData: (data) => this.saveData(data),
+    });
     await this.loadSettings();
+
+    const vaultAdapter = new ObsidianVaultAdapter(this.app);
+    const organizationVault = new ObsidianOrganizationVaultAdapter(this.app);
+    const organization = new OrganizationRuntimeBridge({
+      repository: this.dataRepository,
+      vault: organizationVault,
+      frontmatter: createObsidianFrontmatterPort({ parseYaml, stringifyYaml }),
+      settings: this.settings.Jev,
+      readApiKey: createObsidianSecretReader(this.app, hasNativeSecretComponent()),
+      transport: createObsidianJevTransport(requestUrl),
+      remoteProcessingAvailable: () => hasNativeJevSecretCapabilities(this.app),
+      inboxFolder: JEV_DEFAULT_MANAGED_FOLDERS.inbox,
+      notesFolder: JEV_DEFAULT_MANAGED_FOLDERS.notes,
+    });
+    this.captureRuntime = new CaptureRuntime({
+      repository: this.dataRepository,
+      vault: vaultAdapter,
+      organization,
+      defaultTags: this.settings.DefaultTag === '' ? [] : [this.settings.DefaultTag],
+      openNote: (note) => vaultAdapter.openNote(note),
+    });
+    setCaptureRuntime(this.captureRuntime);
+    this.registerEvent(
+      this.app.vault.on('delete', (file) => {
+        void this.captureRuntime?.handleVaultDelete(file.path);
+      }),
+    );
+    this.registerEvent(
+      this.app.vault.on('rename', (file, oldPath) => {
+        void this.captureRuntime?.handleVaultRename(oldPath, file.path);
+      }),
+    );
 
     this.registerView(MEMOS_VIEW_TYPE, (leaf) => new Memos(leaf, this));
 
@@ -22,53 +79,98 @@ export default class MemosPlugin extends Plugin {
   }
 
   public async loadSettings() {
-    const loadedData = await this.loadData();
+    if (!this.dataRepository) {
+      this.dataRepository = new SerializedDataRepository({
+        loadData: () => this.loadData(),
+        saveData: (data) => this.saveData(data),
+      });
+    }
+    const envelope = await this.dataRepository.read();
+    const loadedData = isRecord(envelope) ? { ...envelope } : {};
 
     // Clean up removed settings from old versions (Phase 2 + Phase 3)
-    if (loadedData) {
-      // Phase 2 orphaned settings
-      delete loadedData.OpenDailyMemosWithMemos;
-      delete loadedData.ShareFooterStart;
-      delete loadedData.ShareFooterEnd;
-      delete loadedData.AutoSaveWhenOnMobile;
-      delete loadedData.QueryFileName;
-      delete loadedData.DefaultDarkBackgroundImage;
-      delete loadedData.DefaultLightBackgroundImage;
-
-      // Phase 3 settings to be removed
-      delete loadedData.SaveMemoButtonLabel;
-      delete loadedData.SaveMemoButtonIcon;
-      delete loadedData.ShowTaskLabel;
-      delete loadedData.ShowLeftSideBar;
-      delete loadedData.UseButtonToShowEditor;
-      delete loadedData.DefaultEditorLocation;
-      delete loadedData.UseDailyOrPeriodic;
-      delete loadedData.CommentOnMemos;
-      delete loadedData.ShowCommentOnMemos;
-      delete loadedData.CommentsInOriginalNotes;
-      delete loadedData.OpenMemosAutomatically;
-      delete loadedData.IndividualMemoFileNameLength;
-      delete loadedData.ProcessEntriesBelow;
-      delete loadedData.Language;
-      delete loadedData.UseVaultTags;
-      delete loadedData.InsertDateFormat;
-      delete loadedData.DeleteFileName;
-      delete loadedData.FetchMemosMark;
-      delete loadedData.FetchMemosFromNote;
-      delete loadedData.AddBlankLineWhenDate;
-      delete loadedData.HideDoneTasks;
-      delete loadedData.ShowTime;
-      delete loadedData.ShowDate;
+    // Extract memo index before cleaning. Reserved runtime namespaces never become settings.
+    if (isMemoIndex(loadedData._memoIndex)) {
+      this.memoIndex = loadedData._memoIndex;
     }
+    delete loadedData._memoIndex;
+    delete loadedData._captureStore;
+    delete loadedData._captureSessions;
+    delete loadedData._organizationStore;
+    delete loadedData._organizationEnrollment;
+
+    // Phase 2 orphaned settings
+    delete loadedData.OpenDailyMemosWithMemos;
+    delete loadedData.ShareFooterStart;
+    delete loadedData.ShareFooterEnd;
+    delete loadedData.AutoSaveWhenOnMobile;
+    delete loadedData.QueryFileName;
+    delete loadedData.DefaultDarkBackgroundImage;
+    delete loadedData.DefaultLightBackgroundImage;
+
+    // Phase 3 settings to be removed
+    delete loadedData.SaveMemoButtonLabel;
+    delete loadedData.SaveMemoButtonIcon;
+    delete loadedData.ShowTaskLabel;
+    delete loadedData.ShowLeftSideBar;
+    delete loadedData.UseButtonToShowEditor;
+    delete loadedData.DefaultEditorLocation;
+    delete loadedData.UseDailyOrPeriodic;
+    delete loadedData.CommentOnMemos;
+    delete loadedData.ShowCommentOnMemos;
+    delete loadedData.CommentsInOriginalNotes;
+    delete loadedData.OpenMemosAutomatically;
+    delete loadedData.IndividualMemoFileNameLength;
+    delete loadedData.ProcessEntriesBelow;
+    delete loadedData.Language;
+    delete loadedData.UseVaultTags;
+    delete loadedData.InsertDateFormat;
+    delete loadedData.DeleteFileName;
+    delete loadedData.FetchMemosMark;
+    delete loadedData.FetchMemosFromNote;
+    delete loadedData.AddBlankLineWhenDate;
+    delete loadedData.HideDoneTasks;
+    delete loadedData.ShowTime;
+    delete loadedData.ShowDate;
 
     this.settings = Object.assign({}, DEFAULT_SETTINGS, loadedData);
+    this.settings.Jev = runtimeJevSettings(this.app, loadedData.Jev);
+    await this.captureRuntime?.updateOrganizationSettings(this.settings.Jev);
   }
 
-  async saveSettings() {
-    await this.saveData(this.settings);
+  async saveSettings(): Promise<void> {
+    if (!this.dataRepository) {
+      this.dataRepository = new SerializedDataRepository({
+        loadData: () => this.loadData(),
+        saveData: (data) => this.saveData(data),
+      });
+    }
+    this.settings.Jev = runtimeJevSettings(this.app, this.settings.Jev);
+    // Quiesce organization first. This closes the settings-update race where
+    // an in-flight request could finish while the new settings are serialized.
+    await this.captureRuntime?.updateOrganizationSettings(this.settings.Jev);
+    await this.dataRepository.transact((current) => {
+      const root = isRecord(current) ? { ...current } : {};
+      const settings = { ...(this.settings as unknown as Record<string, unknown>) };
+      settings.Jev = serializeJevSettings(this.settings.Jev);
+      delete settings._captureStore;
+      delete settings._captureSessions;
+      delete settings._organizationStore;
+      delete settings._organizationEnrollment;
+      delete settings._memoIndex;
+      return {
+        next: { ...root, ...settings, _memoIndex: this.memoIndex },
+        result: undefined,
+      };
+    });
+    this.captureRuntime?.setDefaultTags(this.settings.DefaultTag === '' ? [] : [this.settings.DefaultTag]);
   }
 
-  onunload() {
+  async onunload(): Promise<void> {
+    const runtime = this.captureRuntime;
+    setCaptureRuntime(undefined);
+    await runtime?.dispose().catch(() => undefined);
+    memoIndexService.flush();
     this.app.workspace.detachLeavesOfType(MEMOS_VIEW_TYPE);
     new Notice('Close Lethe Successfully');
   }
@@ -130,6 +232,16 @@ export default class MemosPlugin extends Plugin {
     // Initialize exported settings EARLY so Quick Capture can access them
     // This ensures MemoStorageMode and other settings are available before the main view opens
     initializeSettings(this.settings);
+
+    // Initialize memo index service
+    memoIndexService.setPlugin(this);
+
+    // Recover pending capture notes once Obsidian's layout and vault are ready.
+    if (this.captureRuntime) {
+      this.captureRuntime.initialize().catch((error: unknown) => {
+        console.error('[Lethe] Failed to recover capture notes:', error);
+      });
+    }
 
     // Set plugin instance for daily note pre-creation service
     dailyNotePreCreationService.setPlugin(this);
@@ -218,7 +330,7 @@ export default class MemosPlugin extends Plugin {
     }
     if (this.settings.FocusOnEditor) {
       const leaf = leaves[0];
-      leaf.view.containerEl.querySelector('textarea').focus();
+      focusEditor(leaf.view.containerEl);
       return;
     }
     // OpenMemosAutomatically removed - hardcoded to false (don't auto-open)
@@ -233,9 +345,7 @@ export default class MemosPlugin extends Plugin {
     if (this.settings.ShowInSidebar) {
       // Open in sidebar
       const sidebarLeaf =
-        this.settings.SidebarLocation === 'left'
-          ? workspace.getLeftLeaf(false)
-          : workspace.getRightLeaf(false);
+        this.settings.SidebarLocation === 'left' ? workspace.getLeftLeaf(false) : workspace.getRightLeaf(false);
       leaf = sidebarLeaf ?? workspace.getLeaf(false);
     } else {
       // Open in tab (default behavior)
@@ -249,9 +359,7 @@ export default class MemosPlugin extends Plugin {
       return;
     }
 
-    if (leaf.view.containerEl.querySelector('textarea') !== undefined) {
-      leaf.view.containerEl.querySelector('textarea').focus();
-    }
+    focusEditor(leaf.view.containerEl);
   }
 
   searchIt() {
@@ -279,7 +387,7 @@ export default class MemosPlugin extends Plugin {
 
     const leaf = leaves[0];
     workspace.setActiveLeaf(leaf);
-    leaf.view.containerEl.querySelector('textarea').focus();
+    focusEditor(leaf.view.containerEl);
   }
 
   noteIt() {
@@ -322,9 +430,7 @@ export default class MemosPlugin extends Plugin {
       return;
     }
 
-    if (leaf.view.containerEl.querySelector('textarea') !== undefined) {
-      leaf.view.containerEl.querySelector('textarea').focus();
-    }
+    focusEditor(leaf.view.containerEl);
   }
 
   async toggleSidebarDisplay() {
@@ -345,17 +451,11 @@ export default class MemosPlugin extends Plugin {
       workspace.detachLeavesOfType(MEMOS_VIEW_TYPE);
       await this.openMemos();
 
-      new Notice(
-        this.settings.ShowInSidebar
-          ? 'Lethe will now open in sidebar'
-          : 'Lethe will now open in tab'
-      );
+      new Notice(this.settings.ShowInSidebar ? 'Lethe will now open in sidebar' : 'Lethe will now open in tab');
     } else {
       // Just save the setting
       new Notice(
-        this.settings.ShowInSidebar
-          ? 'Lethe will open in sidebar next time'
-          : 'Lethe will open in tab next time'
+        this.settings.ShowInSidebar ? 'Lethe will open in sidebar next time' : 'Lethe will open in tab next time',
       );
     }
   }
@@ -363,4 +463,34 @@ export default class MemosPlugin extends Plugin {
   quickCapture() {
     new QuickCaptureModal(this.app).open();
   }
+}
+
+interface ObsidianSecretExports {
+  SecretComponent?: unknown;
+}
+
+function hasNativeSecretComponent(): boolean {
+  const candidate = (ObsidianApi as unknown as ObsidianSecretExports).SecretComponent;
+  return typeof candidate === 'function';
+}
+
+function hasNativeJevSecretCapabilities(app: unknown): boolean {
+  return hasNativeSecretStorage(app) && hasNativeSecretComponent();
+}
+
+function runtimeJevSettings(app: unknown, input: unknown): JevSettings {
+  return applyLocalOnlyFallback(input, app, hasNativeSecretComponent());
+}
+
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return typeof value === 'object' && value !== null && !Array.isArray(value);
+}
+
+function isMemoIndex(value: unknown): value is Model.MemoIndex {
+  return isRecord(value) && typeof value.version === 'number' && isRecord(value.entries);
+}
+
+function focusEditor(containerEl: HTMLElement): void {
+  const editor = containerEl.querySelector<HTMLElement>('.cm-content, textarea');
+  editor?.focus();
 }

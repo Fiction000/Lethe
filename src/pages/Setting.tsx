@@ -33,7 +33,7 @@ const Setting: React.FC<Props> = () => {
               <MenuSvg className="icon-img" />
             </button>
           </Only>
-          <span className="normal-text">账号与设置</span>
+          <span className="normal-text">Preferences</span>
         </div>
       </div>
 

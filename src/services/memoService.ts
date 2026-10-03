@@ -4,6 +4,7 @@ import utils from '../helpers/utils';
 import appStore from '../stores/appStore';
 import { waitForInsert } from '../obComponents/obCreateMemo';
 import { changeMemo } from '../obComponents/obUpdateMemo';
+import memoIndexService from './memoIndexService';
 // commentMemo import removed - comment system removed in Phase 3
 // import { TFile } from 'obsidian';
 
@@ -234,6 +235,15 @@ class MemoService {
       counts[x] = (counts[x] || 0) + 1;
     });
 
+    // Merge tags from the persistent index (fallback for deleted files)
+    const indexTags = memoIndexService.getTagsFromIndex();
+    for (const tag of indexTags.tags) {
+      tagsSet.add(tag);
+    }
+    for (const [tag, num] of Object.entries(indexTags.tagsNum)) {
+      counts[tag] = Math.max(counts[tag] || 0, num);
+    }
+
     appStore.dispatch({
       type: 'SET_TAGS',
       payload: {
@@ -280,8 +290,9 @@ class MemoService {
     text: string,
     type?: string,
     path?: string,
+    tags?: string[],
   ): Promise<Model.Memo> {
-    const memo = await changeMemo(memoId, originalText, text, type, path);
+    const memo = await changeMemo(memoId, originalText, text, type, path, tags);
     return memo;
   }
 }

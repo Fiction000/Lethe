@@ -1,9 +1,10 @@
 import { useContext, useEffect, useMemo, useRef } from 'react';
 import appContext from '../stores/appContext';
 import { SHOW_SIDERBAR_MOBILE_CLASSNAME } from '../helpers/consts';
-import { globalStateService } from '../services';
+import { globalStateService, locationService } from '../services';
 import UserBanner from './UserBanner';
-import TagList from './TagList';
+import RecentNotes from './RecentNotes';
+
 import '../less/siderbar.less';
 import React from 'react';
 
@@ -61,10 +62,14 @@ const Sidebar: React.FC<Props> = () => {
     }
   }, [isMobileView, showSiderbarInMobileView]);
 
+  const handleNavClick = (path: string) => {
+    locationService.pushHistory(path);
+  };
+
   return (
     <aside className="memos-sidebar-wrapper" ref={wrapperElRef}>
       <UserBanner />
-      <TagList />
+      <RecentNotes />
     </aside>
   );
 };

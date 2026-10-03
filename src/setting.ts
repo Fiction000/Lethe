@@ -2,6 +2,9 @@ import { App, DropdownComponent, PluginSettingTab, Setting } from 'obsidian';
 import type MemosPlugin from './index';
 import memoService from './services/memoService';
 import { getDailyNotePath } from './helpers/utils';
+import { createDefaultJevSettings, normalizeJevSettings } from './jevSettings';
+import type { JevSettings } from './jevSettings';
+import { renderJevSettingsSection } from './obComponents/JevSettingsSection';
 
 export interface MemosSettings {
   // Section 1: Storage & Content
@@ -10,6 +13,7 @@ export interface MemosSettings {
   IndividualMemoFolder: string;
   DefaultPrefix: string;
   DefaultMemoComposition: string;
+  DefaultTag: string;
   // Section 2: User Interface
   UserName: string;
   ShowInSidebar: boolean;
@@ -17,6 +21,8 @@ export interface MemosSettings {
   FocusOnEditor: boolean;
   // Section 3: Performance
   PreCreateDailyNotes: boolean;
+  // Section 4: Optional Jev processing
+  Jev: JevSettings;
 }
 
 export const DEFAULT_SETTINGS: MemosSettings = {
@@ -26,6 +32,7 @@ export const DEFAULT_SETTINGS: MemosSettings = {
   IndividualMemoFolder: 'Thino/Memos',
   DefaultPrefix: 'List',
   DefaultMemoComposition: '{TIME} {CONTENT}',
+  DefaultTag: '',
   // Section 2: User Interface
   UserName: 'MEMO 😉',
   ShowInSidebar: false,
@@ -33,6 +40,8 @@ export const DEFAULT_SETTINGS: MemosSettings = {
   FocusOnEditor: true,
   // Section 3: Performance
   PreCreateDailyNotes: false,
+  // Section 4: Optional Jev processing
+  Jev: createDefaultJevSettings(),
 };
 
 export class MemosSettingTab extends PluginSettingTab {
@@ -103,7 +112,9 @@ export class MemosSettingTab extends PluginSettingTab {
     // Insert After (for daily notes mode)
     new Setting(containerEl)
       .setName('Insert after heading')
-      .setDesc('Heading in daily notes where memos will be inserted (e.g., "# Journal"). Only used in daily notes mode.')
+      .setDesc(
+        'Heading in daily notes where memos will be inserted (e.g., "# Journal"). Only used in daily notes mode.',
+      )
       .addText((text) =>
         text
           .setPlaceholder(DEFAULT_SETTINGS.InsertAfter)
@@ -156,6 +167,20 @@ export class MemosSettingTab extends PluginSettingTab {
           .setValue(this.plugin.settings.DefaultMemoComposition)
           .onChange(async (value) => {
             this.plugin.settings.DefaultMemoComposition = value;
+            this.applySettingsUpdate();
+          }),
+      );
+
+    // Default Tag
+    new Setting(containerEl)
+      .setName('Default tag')
+      .setDesc('Tag automatically added to all new memos (individual files mode). Leave empty for none.')
+      .addText((text) =>
+        text
+          .setPlaceholder('e.g. lethe')
+          .setValue(this.plugin.settings.DefaultTag)
+          .onChange(async (value) => {
+            this.plugin.settings.DefaultTag = value.replace(/^#/, '').trim();
             this.applySettingsUpdate();
           }),
       );
@@ -250,5 +275,17 @@ export class MemosSettingTab extends PluginSettingTab {
           }
         }),
       );
+
+    const jevSettings = normalizeJevSettings(this.plugin.settings.Jev);
+    this.plugin.settings.Jev = jevSettings;
+    renderJevSettingsSection({
+      app: this.app,
+      containerEl,
+      settings: jevSettings,
+      onChange: (nextSettings) => {
+        this.plugin.settings.Jev = nextSettings;
+        this.applySettingsUpdate();
+      },
+    });
   }
 }

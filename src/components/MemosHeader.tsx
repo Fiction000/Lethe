@@ -39,7 +39,7 @@ const MemosHeader: React.FC<Props> = () => {
             <MenuSvg className="icon-img" />
           </button>
         </Only>
-        <span className="normal-text">MEMOS</span>
+        <span className="normal-text">Memos</span>
         {/*<span className="refresh-icon" onClick={handleRefreshClick}>*/}
         {/*  🔄*/}
         {/*</span>*/}

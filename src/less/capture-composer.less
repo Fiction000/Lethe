@@ -1,0 +1,461 @@
+/* Shared CaptureComposer surface. Keep this vocabulary native to Obsidian. */
+.capture-composer {
+  --lethe-composer-measure: 72ch;
+  width: 100%;
+  max-width: 58rem;
+  margin: 0 auto;
+  padding: var(--size-4-4);
+  color: var(--text-normal);
+  background: var(--background-primary);
+  font-family: var(--font-interface);
+  box-sizing: border-box;
+}
+
+.capture-composer,
+.capture-composer * {
+  box-sizing: border-box;
+}
+
+.capture-composer__service-state {
+  margin: 0;
+  padding: var(--size-4-4) 0;
+  color: var(--text-muted);
+  font-size: var(--font-ui-small);
+}
+
+.capture-composer__service-state--error {
+  color: var(--text-error);
+}
+
+.capture-composer__service-state--error p {
+  margin: 0 0 var(--size-4-2);
+}
+
+.capture-composer__profile-row {
+  display: flex;
+  align-items: center;
+  gap: var(--size-4-1);
+  width: 100%;
+  margin-bottom: var(--size-4-3);
+  border-bottom: 1px solid var(--background-modifier-border);
+}
+
+.capture-composer__profile {
+  appearance: none;
+  margin: 0;
+  padding: var(--size-4-2) var(--size-4-3);
+  border: 0;
+  border-bottom: 2px solid transparent;
+  border-radius: 0;
+  color: var(--text-muted);
+  background: transparent;
+  font: inherit;
+  font-size: var(--font-ui-small);
+  cursor: pointer;
+}
+
+.capture-composer__profile:hover {
+  color: var(--text-normal);
+}
+
+.capture-composer__profile.is-active {
+  border-bottom-color: var(--interactive-accent);
+  color: var(--text-normal);
+  font-weight: var(--font-medium);
+}
+
+.capture-composer__profile:focus-visible,
+.capture-composer__section-button:focus-visible,
+.capture-composer__quiet-button:focus-visible,
+.capture-composer__send:focus-visible,
+.capture-composer__skip-ai input:focus-visible,
+.capture-composer__recent-actions button:focus-visible,
+.capture-composer__tag button:focus-visible {
+  outline: 2px solid var(--interactive-accent);
+  outline-offset: 2px;
+}
+
+.capture-composer__body {
+  width: 100%;
+  max-width: var(--lethe-composer-measure);
+}
+
+.capture-composer .common-editor-wrapper {
+  display: block;
+  width: 100%;
+  background: transparent;
+}
+
+.capture-composer .common-editor-wrapper > .cm-editor-container {
+  width: 100%;
+  min-height: 12rem;
+  margin: 0;
+}
+
+.capture-composer .common-editor-wrapper .cm-editor {
+  min-height: 12rem;
+  background: transparent;
+  color: var(--text-normal);
+}
+
+.capture-composer .common-editor-wrapper .cm-content {
+  min-height: 12rem;
+  padding: var(--size-4-3) 0 var(--size-4-5);
+  font-family: var(--font-text);
+  font-size: var(--font-text-size);
+  line-height: var(--line-height-normal);
+}
+
+.capture-composer .common-editor-wrapper .cm-scroller {
+  max-height: min(52vh, 34rem);
+  overflow: auto;
+}
+
+.capture-composer .common-editor-wrapper .cm-placeholder {
+  color: var(--text-faint);
+}
+
+.capture-composer .common-tools-wrapper {
+  display: none;
+}
+
+.capture-composer__fields {
+  display: grid;
+  gap: var(--size-4-2);
+  width: 100%;
+  max-width: var(--lethe-composer-measure);
+  margin-top: var(--size-4-2);
+}
+
+.capture-composer__fields--primary {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.capture-composer__fields--additional {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  padding-top: var(--size-4-2);
+}
+
+.capture-composer__field {
+  display: grid;
+  gap: var(--size-4-1);
+  min-width: 0;
+  color: var(--text-muted);
+  font-size: var(--font-ui-small);
+}
+
+.capture-composer__field input,
+.capture-composer__tag-input {
+  width: 100%;
+  min-height: var(--input-height);
+  padding: var(--size-4-1) var(--size-4-2);
+  border: 1px solid var(--background-modifier-border);
+  border-radius: var(--radius-s);
+  color: var(--text-normal);
+  background: var(--background-primary);
+  font: inherit;
+}
+
+.capture-composer__field input:hover,
+.capture-composer__tag-input:hover {
+  border-color: var(--background-modifier-border-hover);
+}
+
+.capture-composer__field input:focus,
+.capture-composer__tag-input:focus {
+  border-color: var(--interactive-accent);
+  outline: 2px solid var(--interactive-accent);
+  outline-offset: 1px;
+}
+
+.capture-composer__progressive-section {
+  width: 100%;
+  max-width: var(--lethe-composer-measure);
+  margin-top: var(--size-4-3);
+  border-top: 1px solid var(--background-modifier-border);
+}
+
+.capture-composer__section-button {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--size-4-1);
+  margin: 0;
+  padding: var(--size-4-2) 0;
+  border: 0;
+  color: var(--text-muted);
+  background: transparent;
+  font: inherit;
+  font-size: var(--font-ui-small);
+  cursor: pointer;
+}
+
+.capture-composer__section-button:hover {
+  color: var(--text-normal);
+}
+
+.capture-composer__tags {
+  display: grid;
+  gap: var(--size-4-2);
+  padding: 0 0 var(--size-4-2);
+}
+
+.capture-composer__tag-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--size-4-1);
+}
+
+.capture-composer__tag {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--size-4-1);
+  padding: var(--size-4-1) var(--size-4-2);
+  border: 1px solid var(--background-modifier-border);
+  border-radius: var(--radius-s);
+  color: var(--text-muted);
+  font-size: var(--font-ui-small);
+}
+
+.capture-composer__tag button {
+  padding: 0;
+  border: 0;
+  color: var(--text-muted);
+  background: transparent;
+  font: inherit;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.capture-composer__tag button:hover {
+  color: var(--text-normal);
+}
+
+.capture-composer__footer {
+  display: flex;
+  align-items: center;
+  gap: var(--size-4-3);
+  width: 100%;
+  max-width: var(--lethe-composer-measure);
+  margin-top: var(--size-4-4);
+  padding-top: var(--size-4-3);
+  border-top: 1px solid var(--background-modifier-border);
+  justify-content: space-between;
+}
+
+.capture-composer__status {
+  flex: 1 1 auto;
+  min-width: 0;
+  color: var(--text-muted);
+  font-size: var(--font-ui-small);
+  white-space: normal;
+  overflow-wrap: anywhere;
+}
+
+.capture-composer__status--error {
+  flex-basis: 100%;
+  overflow: visible;
+  overflow-wrap: anywhere;
+  text-overflow: clip;
+  white-space: normal;
+}
+
+.capture-composer__keep-profile,
+.capture-composer__skip-ai {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--size-4-1);
+  flex: 0 0 auto;
+  color: var(--text-muted);
+  font-size: var(--font-ui-small);
+  cursor: pointer;
+}
+
+.capture-composer__keep-profile input,
+.capture-composer__skip-ai input {
+  margin: 0;
+}
+
+.capture-composer__send,
+.capture-composer__quiet-button {
+  flex: 0 0 auto;
+  min-height: var(--input-height);
+  padding: var(--size-4-1) var(--size-4-3);
+  border: 1px solid var(--interactive-accent);
+  border-radius: var(--radius-s);
+  color: var(--text-on-accent);
+  background: var(--interactive-accent);
+  font: inherit;
+  font-size: var(--font-ui-small);
+  cursor: pointer;
+}
+
+.capture-composer__send:hover,
+.capture-composer__quiet-button:hover {
+  filter: brightness(1.05);
+}
+
+.capture-composer__send:disabled {
+  cursor: not-allowed;
+  opacity: 0.45;
+}
+
+.capture-composer__send kbd {
+  margin-left: var(--size-4-1);
+  color: inherit;
+  font: inherit;
+  opacity: 0.75;
+}
+
+.capture-composer__quiet-button {
+  color: var(--text-normal);
+  background: transparent;
+}
+
+.capture-composer__recent {
+  width: 100%;
+  max-width: var(--lethe-composer-measure);
+  margin-top: var(--size-4-5);
+  border-top: 1px solid var(--background-modifier-border);
+}
+
+.capture-composer__recent-heading {
+  padding: var(--size-4-2) 0;
+  color: var(--text-muted);
+  font-size: var(--font-ui-small);
+}
+
+.capture-composer__recent ul {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.capture-composer__recent li {
+  display: flex;
+  align-items: center;
+  gap: var(--size-4-3);
+  padding: var(--size-4-2) 0;
+  border-top: 1px solid var(--background-modifier-border);
+}
+
+.capture-composer__recent-copy {
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: var(--size-4-2);
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.capture-composer__recent-title {
+  min-width: 0;
+  overflow: hidden;
+  color: var(--text-normal);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.capture-composer__recent-state {
+  flex: 0 0 auto;
+  color: var(--text-muted);
+  font-size: var(--font-ui-smaller);
+}
+
+.capture-composer__recent-state--failed,
+.capture-composer__recent-state--conflict {
+  color: var(--text-error);
+}
+
+.capture-composer__recent-state--written {
+  color: var(--text-success);
+}
+
+.capture-composer__organization-state {
+  flex: 0 0 auto;
+  color: var(--text-faint);
+  font-size: var(--font-ui-smaller);
+}
+
+.capture-composer__organization-state--advisory,
+.capture-composer__organization-state--uncertain {
+  color: var(--text-warning);
+}
+
+.capture-composer__organization-state--applied {
+  color: var(--text-success);
+}
+
+.capture-composer__organization-state--failed,
+.capture-composer__organization-state--conflict,
+.capture-composer__organization-state--deleted {
+  color: var(--text-error);
+}
+
+.capture-composer__organization-preview {
+  flex: 1 1 100%;
+  min-width: 0;
+  overflow: hidden;
+  color: var(--text-faint);
+  font-size: var(--font-ui-smaller);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.capture-composer__recent-actions {
+  display: inline-flex;
+  gap: var(--size-4-1);
+  flex: 0 0 auto;
+}
+
+.capture-composer__recent-actions button {
+  padding: 0;
+  border: 0;
+  color: var(--text-muted);
+  background: transparent;
+  font: inherit;
+  font-size: var(--font-ui-small);
+  cursor: pointer;
+}
+
+.capture-composer__recent-actions button:hover:not(:disabled) {
+  color: var(--text-normal);
+}
+
+.capture-composer__recent-actions button:disabled {
+  cursor: not-allowed;
+  opacity: 0.4;
+}
+
+.lethe-quick-capture {
+  padding: 0;
+}
+
+.lethe-quick-capture .modal-content {
+  padding: 0;
+}
+
+.lethe-quick-capture .capture-composer {
+  width: min(100%, 48rem);
+  max-width: none;
+  padding: var(--size-4-5);
+}
+
+@media (max-width: 42rem) {
+  .capture-composer {
+    padding: var(--size-4-3);
+  }
+
+  .capture-composer__fields--primary,
+  .capture-composer__fields--additional {
+    grid-template-columns: 1fr;
+  }
+
+  .capture-composer__footer {
+    align-items: flex-start;
+    flex-wrap: wrap;
+  }
+
+  .capture-composer__status {
+    flex-basis: 100%;
+  }
+}
