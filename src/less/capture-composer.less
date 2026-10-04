@@ -175,18 +175,27 @@
   border-top: 1px solid var(--background-modifier-border);
 }
 
-.capture-composer__section-button {
-  display: inline-flex;
+.capture-composer .capture-composer__section-button {
+  display: flex;
   align-items: center;
-  gap: var(--size-4-1);
+  justify-content: space-between;
+  width: 100%;
+  appearance: none;
+  box-shadow: none;
+  border: 0;
+  border-radius: 0;
   margin: 0;
   padding: var(--size-4-2) 0;
-  border: 0;
   color: var(--text-muted);
   background: transparent;
   font: inherit;
   font-size: var(--font-ui-small);
+  text-align: left;
   cursor: pointer;
+}
+
+.capture-composer .capture-composer__section-button span {
+  margin-left: var(--size-4-2);
 }
 
 .capture-composer__section-button:hover {
@@ -299,6 +308,22 @@
   opacity: 0.45;
 }
 
+.capture-composer__send-control {
+  display: flex;
+  flex: 0 0 auto;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: var(--size-4-1);
+}
+
+.capture-composer__send-hint {
+  max-width: 12rem;
+  color: var(--text-muted);
+  font-size: var(--font-ui-smaller);
+  line-height: 1.25;
+  text-align: right;
+}
+
 .capture-composer__send kbd {
   margin-left: var(--size-4-1);
   color: inherit;
@@ -339,11 +364,9 @@
 }
 
 .capture-composer__recent-copy {
-  display: flex;
-  align-items: baseline;
-  flex-wrap: wrap;
-  gap: var(--size-4-2);
+  display: grid;
   flex: 1 1 auto;
+  gap: var(--size-4-1);
   min-width: 0;
 }
 
@@ -351,8 +374,17 @@
   min-width: 0;
   overflow: hidden;
   color: var(--text-normal);
+  font-weight: var(--font-medium);
   text-overflow: ellipsis;
   white-space: nowrap;
+}
+
+.capture-composer__recent-meta {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--size-4-2);
+  min-width: 0;
 }
 
 .capture-composer__recent-state {
@@ -407,13 +439,21 @@
   flex: 0 0 auto;
 }
 
-.capture-composer__recent-actions button {
-  padding: 0;
-  border: 0;
+.capture-composer .capture-composer__recent-actions button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: var(--input-height);
+  padding: 0 var(--size-4-2);
+  border: 1px solid var(--background-modifier-border);
+  border-radius: var(--radius-s);
+  box-shadow: none;
   color: var(--text-muted);
   background: transparent;
   font: inherit;
   font-size: var(--font-ui-small);
+  line-height: 1.2;
+  white-space: nowrap;
   cursor: pointer;
 }
 

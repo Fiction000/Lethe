@@ -11,6 +11,7 @@ import {
 } from '../capture/profiles';
 import {
   canSkipAI,
+  getSendDisabledReason,
   isOrganizationPendingStatus,
   isOrganizationRetryableStatus,
   isOrganizationUndoableStatus,
@@ -463,6 +464,9 @@ const CaptureComposer: React.FC<CaptureComposerProps> = ({ surface }) => {
   const canSubmit = Boolean(
     snapshot && !isSubmitDisabled(snapshot.body, isSubmitting, isComposing, pendingUploads > 0),
   );
+  const sendDisabledReason = snapshot
+    ? getSendDisabledReason(snapshot.body, isSubmitting, isComposing, pendingUploads > 0)
+    : undefined;
   const latestReceiptState = submissionWriteState(lastReceipt, recent);
 
   const editor = snapshot ? (
@@ -640,15 +644,28 @@ const CaptureComposer: React.FC<CaptureComposerProps> = ({ surface }) => {
                 Skip AI
               </label>
             )}
-            <button
-              type="button"
-              className="capture-composer__send"
-              disabled={!canSubmit}
-              onClick={() => void editorRef.current?.confirm()}
-              title={sendShortcut.title}
-            >
-              Send <kbd>{sendShortcut.key}</kbd>
-            </button>
+            <div className="capture-composer__send-control">
+              <button
+                type="button"
+                className="capture-composer__send"
+                disabled={!canSubmit}
+                onClick={() => void editorRef.current?.confirm()}
+                title={sendShortcut.title}
+                aria-describedby={sendDisabledReason ? `capture-composer-send-hint-${surface}` : undefined}
+              >
+                Send <kbd>{sendShortcut.key}</kbd>
+              </button>
+              {sendDisabledReason && (
+                <span
+                  id={`capture-composer-send-hint-${surface}`}
+                  className="capture-composer__send-hint"
+                  role="status"
+                  aria-live="polite"
+                >
+                  {sendDisabledReason}
+                </span>
+              )}
+            </div>
           </footer>
 
           {recent.length > 0 && (
@@ -663,22 +680,24 @@ const CaptureComposer: React.FC<CaptureComposerProps> = ({ surface }) => {
                   const showOrganizationStatus = organizationMode !== 'off' || organizationJob !== undefined;
                   return (
                     <li key={`${record.snapshot.id}-${record.submittedRevision ?? record.snapshot.revision}`}>
-                      <span className="capture-composer__recent-copy">
+                      <div className="capture-composer__recent-copy">
                         <span className="capture-composer__recent-title">{previewBody(record.snapshot.body)}</span>
-                        <span
-                          className={`capture-composer__recent-state capture-composer__recent-state--${record.write.state}`}
-                        >
-                          Local · {writeStateLabel(record.write.state)}
-                        </span>
-                        {showOrganizationStatus && organizationLabel && (
+                        <div className="capture-composer__recent-meta">
                           <span
-                            className={`capture-composer__organization-state${
-                              organizationJob ? ` capture-composer__organization-state--${organizationJob.status}` : ''
-                            }`}
+                            className={`capture-composer__recent-state capture-composer__recent-state--${record.write.state}`}
                           >
-                            {organizationLabel}
+                            Local · {writeStateLabel(record.write.state)}
                           </span>
-                        )}
+                          {showOrganizationStatus && organizationLabel && (
+                            <span
+                              className={`capture-composer__organization-state${
+                                organizationJob ? ` capture-composer__organization-state--${organizationJob.status}` : ''
+                              }`}
+                            >
+                              {organizationLabel}
+                            </span>
+                          )}
+                        </div>
                         {organizationPreview && (
                           <span className="capture-composer__organization-preview">
                             Proposed
@@ -687,7 +706,7 @@ const CaptureComposer: React.FC<CaptureComposerProps> = ({ surface }) => {
                               ` · tags: ${organizationPreview.tags.map((tag) => `#${tag}`).join(', ')}`}
                           </span>
                         )}
-                      </span>
+                      </div>
                       <span className="capture-composer__recent-actions">
                         <button
                           type="button"
