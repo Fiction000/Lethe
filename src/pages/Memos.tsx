@@ -1,16 +1,21 @@
-import MemoEditor from '../components/MemoEditor';
+import React, { useContext } from 'react';
+import appContext from '../stores/appContext';
+import { MemoStorageMode } from '../memos';
+import CaptureComposer from '../components/CaptureComposer';
+import LegacyMemoEditor from '../components/LegacyMemoEditor';
 import MemosHeader from '../components/MemosHeader';
 import MemoFilter from '../components/MemoFilter';
 import MemoList from '../components/MemoList';
-import React from 'react';
-// DefaultEditorLocation removed - hardcoded to 'Top' (Phase 3)
 
 function Memos() {
-  // DefaultEditorLocation hardcoded to 'Top' - editor always at top
+  const { globalState } = useContext(appContext);
+  const legacyEditor = Boolean(globalState.editMemoId) || MemoStorageMode === 'daily-notes';
+  if (!legacyEditor) return <CaptureComposer surface="main" />;
+
   return (
     <>
       <MemosHeader />
-      <MemoEditor />
+      <LegacyMemoEditor />
       <MemoFilter />
       <MemoList />
     </>

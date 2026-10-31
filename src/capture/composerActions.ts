@@ -73,6 +73,19 @@ export function resetComposerDraft(draft: ComposerDraft, keepProfile = false): C
   };
 }
 
+export function getSendDisabledReason(
+  body: string,
+  isSubmitting: boolean,
+  isComposing: boolean,
+  hasPendingUploads: boolean,
+): string | undefined {
+  if (isSubmitting) return 'Saving capture';
+  if (hasPendingUploads) return 'Wait for the image upload to finish';
+  if (isComposing) return 'Finish composing to enable Send';
+  if (body.trim().length === 0) return 'Write something to enable Send';
+  return undefined;
+}
+
 export function isSubmitDisabled(
   body: string,
   isSubmitting: boolean,
