@@ -24,17 +24,29 @@ div[data-type='memos_view'] #page-wrapper {
     padding: 0 var(--spacing-lg);
     gap: var(--spacing-sm);
   }
+}
 
-  > .content-wrapper-padding-fix {
-    .flex(column, flex-start, flex-start);
-    position: relative;
-    flex: 1;
-    max-width: 680px;
-    height: 100%;
-    overflow-y: hidden;
-    padding: 0 var(--spacing-lg);
-    gap: var(--spacing-sm);
+div[data-type='memos_view'] #page-wrapper.is-writing-surface {
+  max-width: none;
+
+  > .content-wrapper {
+    max-width: none;
+    width: 100%;
+    min-height: 0;
+    overflow-y: auto;
+    overscroll-behavior-y: contain;
   }
+}
+
+div[data-type='memos_view'] #page-wrapper > .content-wrapper-padding-fix {
+  .flex(column, flex-start, flex-start);
+  position: relative;
+  flex: 1;
+  max-width: 680px;
+  height: 100%;
+  overflow-y: hidden;
+  padding: 0 var(--spacing-lg);
+  gap: var(--spacing-sm);
 }
 
 div[data-type='memos_view'].mobile-view body.mobile-show-sidebar {
@@ -63,7 +75,7 @@ div[data-type='memos_view'].mobile-view #page-wrapper {
   }
 }
 
-.workspace-leaf-content[data-type="memos_view"] {
+.workspace-leaf-content[data-type='memos_view'] {
   .react-transform-wrapper {
     overflow: unset;
   }

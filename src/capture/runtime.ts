@@ -528,7 +528,11 @@ export class CaptureRuntime {
 
       let next: SessionAllocation;
       try {
-        next = await this.allocateSession(session.key, keepProfile ? frozen.profile : 'auto', busy);
+        const keptProfile =
+          resolved.effectiveProfile === 'book' || resolved.effectiveProfile === 'movie'
+            ? resolved.effectiveProfile
+            : frozen.profile;
+        next = await this.allocateSession(session.key, keepProfile ? keptProfile : 'auto', busy);
       } catch (error) {
         session.blockAfterCommit();
         if (this.sessions.get(session.key) === session) {

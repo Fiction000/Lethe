@@ -1,7 +1,17 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { Platform } from 'obsidian';
+import {
+  composerPlaceholder,
+  composerSectionOrder,
+  formatCaptureAge,
+  recentRowAction,
+  shouldOfferKeepProfile,
+  noteWriteLabel,
+  type ComposerSection,
+} from '../capture/composerSurface';
 import type { CaptureId, CaptureRecord, CaptureSnapshot, FieldIntent, SubmissionReceipt } from '../capture/core';
 import { getCaptureRuntime } from '../capture/runtimeRegistry';
+import { availableNativeNoteSearch, openNativeNoteSearch, type NativeCommandRegistry } from '../capture/nativeSearch';
 import {
   CAPTURE_PROFILES,
   normalizeTag,
@@ -11,16 +21,16 @@ import {
 } from '../capture/profiles';
 import {
   canSkipAI,
+  getSendDisabledReason,
   isOrganizationPendingStatus,
   isOrganizationRetryableStatus,
   isOrganizationUndoableStatus,
   isSubmitDisabled,
   removeComposerTag,
   organizationDecisionPreview,
-  organizationStatusLabel,
+  submissionWriteState,
   resolveComposerState,
   selectComposerProfile,
-  submissionWriteState,
   type ComposerPatch,
   type OrganizationMode,
 } from '../capture/composerActions';
@@ -40,6 +50,7 @@ type OrganizationCaptureSession = Omit<CaptureSession, 'submit'> & {
   submit(keepProfile?: boolean, options?: { readonly skipAI?: boolean }): Promise<SubmissionReceipt>;
 };
 type OrganizationCaptureRuntime = CaptureRuntime & {
+  retry?: (id: CaptureId) => Promise<void>;
   getOrganizationMode?: () => OrganizationMode;
   getOrganizationStatus?: (id: CaptureId) => Promise<OrganizationJob | undefined>;
   retryOrganization?: (id: CaptureId) => Promise<void>;
@@ -61,8 +72,8 @@ const PROFILE_OPTIONS: readonly { id: CaptureProfileId; label: string }[] = [
 
 const PRIMARY_FIELDS: Readonly<Record<ConcreteProfileId, readonly string[]>> = {
   plain: [],
-  book: ['author', 'startDate', 'endDate'],
-  movie: ['director', 'startDate', 'endDate'],
+  book: ['author', 'startDate'],
+  movie: ['director', 'startDate'],
 };
 
 const CaptureComposer: React.FC<CaptureComposerProps> = ({ surface }) => {
@@ -76,6 +87,7 @@ const CaptureComposer: React.FC<CaptureComposerProps> = ({ surface }) => {
   const [pendingUploads, setPendingUploads] = useState(0);
   const [draftState, setDraftState] = useState<DraftState>('idle');
   const [composerError, setComposerError] = useState<string>();
+  const [operationError, setOperationError] = useState<string>();
   const [keepProfile, setKeepProfile] = useState(false);
   const [skipAI, setSkipAI] = useState(false);
   const [organizationMode, setOrganizationMode] = useState<OrganizationMode>('off');
@@ -85,7 +97,9 @@ const CaptureComposer: React.FC<CaptureComposerProps> = ({ surface }) => {
   const [moreFieldsOpen, setMoreFieldsOpen] = useState(false);
   const [tagsOpen, setTagsOpen] = useState(false);
   const [lastReceipt, setLastReceipt] = useState<SubmissionReceipt>();
+
   const [busyReceiptId, setBusyReceiptId] = useState<string>();
+  const [nativeSearchUnavailable, setNativeSearchUnavailable] = useState(false);
 
   const editorRef = useRef<EditorRefActions>(null);
   const profileButtonRefs = useRef<Array<HTMLButtonElement | null>>([]);
@@ -205,11 +219,14 @@ const CaptureComposer: React.FC<CaptureComposerProps> = ({ surface }) => {
   const snapshotId = snapshot?.id;
 
   useEffect(() => {
-    if (snapshotId) {
-      editorRef.current?.focus();
-      setSkipAI(false);
-    }
+    if (snapshotId) setSkipAI(false);
   }, [snapshotId]);
+
+  useEffect(() => {
+    if (snapshotId && serviceState === 'ready' && !isSubmitting) {
+      editorRef.current?.focus();
+    }
+  }, [snapshotId, serviceState, isSubmitting]);
 
   useEffect(() => {
     if (!canSkipAI(organizationMode)) {
@@ -279,6 +296,7 @@ const CaptureComposer: React.FC<CaptureComposerProps> = ({ surface }) => {
         const nextSnapshot = activeSession.getSnapshot();
         setSnapshot(nextSnapshot);
         setLastReceipt(receipt);
+
         setSkipAI(false);
         setDraftState('saved');
         if (nextSnapshot.id !== submittedId) {
@@ -397,10 +415,11 @@ const CaptureComposer: React.FC<CaptureComposerProps> = ({ surface }) => {
     const runtime = runtimeRef.current;
     if (isSubmittingRef.current || !runtime || record.write.state !== 'written') return;
     setBusyReceiptId(record.snapshot.id);
+    setOperationError(undefined);
     try {
       await runtime.openNote(record.snapshot.id);
     } catch (error) {
-      setComposerError(errorMessage(error, 'The note could not be opened.'));
+      setOperationError(errorMessage(error, 'The note could not be opened.'));
     } finally {
       setBusyReceiptId(undefined);
     }
@@ -421,6 +440,7 @@ const CaptureComposer: React.FC<CaptureComposerProps> = ({ surface }) => {
       }
 
       setBusyReceiptId(record.snapshot.id);
+      setOperationError(undefined);
       try {
         if (action === 'retry') {
           await runtime.retryOrganization(record.snapshot.id);
@@ -432,7 +452,7 @@ const CaptureComposer: React.FC<CaptureComposerProps> = ({ surface }) => {
         await refreshRecent();
       } catch (error) {
         if (mountedRef.current) {
-          setComposerError(errorMessage(error, `Organization ${action} could not be completed.`));
+          setOperationError(errorMessage(error, `Organization ${action} could not be completed.`));
         }
       } finally {
         if (mountedRef.current) {
@@ -441,6 +461,46 @@ const CaptureComposer: React.FC<CaptureComposerProps> = ({ surface }) => {
       }
     },
     [organizationStatuses, refreshRecent],
+  );
+
+  const handleRowAction = useCallback(
+    async (record: RecentRecord, action: 'retry' | 'skip' | 'undo'): Promise<void> => {
+      const writeNeedsRetry = record.write.state === 'failed' || record.write.state === 'pending';
+      if (action === 'retry' && writeNeedsRetry) {
+        const runtime = runtimeRef.current;
+        if (isSubmittingRef.current || runtime?.retry === undefined) return;
+        setBusyReceiptId(record.snapshot.id);
+        setOperationError(undefined);
+        try {
+          await runtime.retry(record.snapshot.id);
+          await refreshRecent();
+        } catch (error) {
+          if (mountedRef.current) {
+            setOperationError(errorMessage(error, 'The capture could not be retried.'));
+          }
+        } finally {
+          if (mountedRef.current) setBusyReceiptId(undefined);
+        }
+        return;
+      }
+      await handleOrganizationAction(record, action);
+    },
+    [handleOrganizationAction, refreshRecent],
+  );
+
+  const openReceipt = useCallback(
+    async (receipt: SubmissionReceipt): Promise<void> => {
+      if (submissionWriteState(receipt, recent) !== 'written') return;
+      const runtime = runtimeRef.current;
+      if (isSubmittingRef.current || !runtime) return;
+      setOperationError(undefined);
+      try {
+        await runtime.openNote(receipt.captureId);
+      } catch (error) {
+        setOperationError(errorMessage(error, 'The note could not be opened.'));
+      }
+    },
+    [recent],
   );
 
   const composerState = snapshot
@@ -463,7 +523,9 @@ const CaptureComposer: React.FC<CaptureComposerProps> = ({ surface }) => {
   const canSubmit = Boolean(
     snapshot && !isSubmitDisabled(snapshot.body, isSubmitting, isComposing, pendingUploads > 0),
   );
-  const latestReceiptState = submissionWriteState(lastReceipt, recent);
+  const sendDisabledReason = snapshot
+    ? getSendDisabledReason(snapshot.body, isSubmitting, isComposing, pendingUploads > 0)
+    : undefined;
 
   const editor = snapshot ? (
     <Editor
@@ -472,7 +534,7 @@ const CaptureComposer: React.FC<CaptureComposerProps> = ({ surface }) => {
       className="capture-composer__editor"
       inputerType={`capture-${surface}`}
       initialContent={snapshot.body}
-      placeholder="Start writing…"
+      placeholder={composerPlaceholder(Platform.isMacOS)}
       showConfirmBtn={false}
       showCancelBtn={false}
       showTools={false}
@@ -489,6 +551,270 @@ const CaptureComposer: React.FC<CaptureComposerProps> = ({ surface }) => {
       onDrop={handleDrop}
     />
   ) : null;
+
+  const showReceipt = Boolean(lastReceipt && snapshot && snapshot.body.trim() === '');
+  const latestReceiptState = submissionWriteState(lastReceipt, recent);
+  const offerKeepProfile = shouldOfferKeepProfile(activeProfile);
+  const nativeCommands =
+    typeof app === 'undefined' ? undefined : (app as unknown as { commands: NativeCommandRegistry }).commands;
+  const nativeSearchCommand = nativeCommands ? availableNativeNoteSearch(nativeCommands) : undefined;
+  const sections: Partial<Record<ComposerSection | 'profile' | 'fields' | 'tags', React.ReactNode>> = {
+    details: null,
+    editor: <div className="capture-composer__body">{editor}</div>,
+    action: (
+      <footer className="capture-composer__footer">
+        <div
+          className={`capture-composer__status${draftState === 'error' ? ' capture-composer__status--error' : ''}`}
+          role="status"
+          aria-live="polite"
+        >
+          {pendingUploads > 0 && 'Uploading image…'}
+          {pendingUploads === 0 && (draftState === 'saving' || isSubmitting) && 'Saving capture'}
+          {pendingUploads === 0 && draftState === 'error' && composerError}
+          {pendingUploads === 0 && draftState !== 'error' && !isSubmitting && showReceipt && lastReceipt && (
+            <>
+              <span>{latestReceiptState ? noteWriteLabel(latestReceiptState) : 'Queued'}</span>
+              {latestReceiptState === 'written' && (
+                <button
+                  type="button"
+                  className="capture-composer__receipt-open"
+                  onClick={() => void openReceipt(lastReceipt)}
+                >
+                  Open note
+                </button>
+              )}
+            </>
+          )}
+          {pendingUploads === 0 && draftState !== 'error' && !isSubmitting && !showReceipt && sendDisabledReason}
+        </div>
+        <button
+          type="button"
+          className="capture-composer__send"
+          disabled={!canSubmit}
+          onClick={() => void editorRef.current?.confirm()}
+          title={sendShortcut.title}
+          aria-describedby={sendDisabledReason ? `capture-composer-send-hint-${surface}` : undefined}
+        >
+          Send
+        </button>
+        {sendDisabledReason && (
+          <span id={`capture-composer-send-hint-${surface}`} className="capture-composer__send-hint sr-only">
+            {sendDisabledReason}
+          </span>
+        )}
+      </footer>
+    ),
+    profile: (
+      <div className="capture-composer__profile-row">
+        <div role="radiogroup" aria-label="Capture profile">
+          {PROFILE_OPTIONS.map((option, index) => (
+            <button
+              key={option.id}
+              type="button"
+              role="radio"
+              aria-checked={selectedProfile === option.id}
+              tabIndex={selectedProfile === option.id ? 0 : -1}
+              className={`capture-composer__profile ${selectedProfile === option.id ? 'is-active' : ''}`}
+              disabled={isSubmitting}
+              ref={(element) => {
+                profileButtonRefs.current[index] = element;
+              }}
+              onKeyDown={(event) => {
+                const nextIndex = getProfileRadioNextIndex(selectedProfileIndex, event.key, PROFILE_OPTIONS.length);
+                if (nextIndex === undefined) return;
+                event.preventDefault();
+                const nextOption = PROFILE_OPTIONS[nextIndex];
+                const current = sessionRef.current?.getSnapshot();
+                if (current) updateSession(selectComposerProfile(current.tags, nextOption.id));
+                profileButtonRefs.current[nextIndex]?.focus();
+              }}
+              onClick={() => {
+                const current = sessionRef.current?.getSnapshot();
+                if (current) updateSession(selectComposerProfile(current.tags, option.id));
+              }}
+            >
+              {option.label}
+            </button>
+          ))}
+        </div>
+        <button
+          type="button"
+          className="capture-composer__section-button"
+          aria-expanded={tagsOpen}
+          disabled={isSubmitting}
+          onClick={() => setTagsOpen((open) => !open)}
+        >
+          Tags
+        </button>
+      </div>
+    ),
+    fields: (
+      <>
+        {primaryFields.length > 0 && (
+          <div className="capture-composer__fields capture-composer__fields--primary">
+            {primaryFields.map((field) => renderField(field, snapshot!, handleFieldChange, isSubmitting))}
+          </div>
+        )}
+        {additionalFields.length > 0 && (
+          <div className="capture-composer__progressive-section">
+            <button
+              type="button"
+              className="capture-composer__section-button"
+              aria-expanded={moreFieldsOpen}
+              disabled={isSubmitting}
+              onClick={() => setMoreFieldsOpen((open) => !open)}
+            >
+              More fields <span aria-hidden="true">{moreFieldsOpen ? '−' : '+'}</span>
+            </button>
+            {moreFieldsOpen && (
+              <div className="capture-composer__fields capture-composer__fields--additional">
+                {additionalFields.map((field) => renderField(field, snapshot!, handleFieldChange, isSubmitting))}
+              </div>
+            )}
+          </div>
+        )}
+      </>
+    ),
+    tags: tagsOpen ? (
+      <div className="capture-composer__tags">
+        <div className="capture-composer__tag-list">
+          {(resolvedTags?.bindings ?? []).map((binding) => (
+            <span className="capture-composer__tag" key={`${binding.source}-${binding.tag}`}>
+              #{binding.tag}
+              <button
+                type="button"
+                onClick={() => removeTag(binding.tag)}
+                disabled={isSubmitting}
+                aria-label={`Remove tag ${binding.tag}`}
+              >
+                ×
+              </button>
+            </span>
+          ))}
+        </div>
+        <input
+          type="text"
+          className="capture-composer__tag-input"
+          placeholder="Add a tag and press Enter"
+          aria-label="Add tag"
+          disabled={isSubmitting}
+          onKeyDown={handleTagInput}
+        />
+      </div>
+    ) : null,
+    recent: (
+      <section className="capture-composer__recent" aria-label="Recent captures">
+        <header className="capture-composer__recent-header">
+          <h2>Recent captures</h2>
+          {nativeSearchCommand && (
+            <button
+              type="button"
+              className="capture-composer__quiet-button"
+              onClick={() => {
+                const opened = nativeCommands ? openNativeNoteSearch(nativeCommands) : false;
+                setNativeSearchUnavailable(!opened);
+              }}
+            >
+              {nativeSearchCommand === 'global-search:open' ? 'Search notes' : 'Find a note'}
+            </button>
+          )}
+          {!nativeSearchCommand && (
+            <span className="capture-composer__search-unavailable">
+              Obsidian Search is unavailable. Enable the core Search plugin to search notes.
+            </span>
+          )}
+          {nativeSearchUnavailable && (
+            <span className="capture-composer__search-unavailable" role="status">
+              Obsidian could not open note search.
+            </span>
+          )}
+        </header>
+        <ul>
+          {recent.map((record) => {
+            const isBusy = busyReceiptId === record.snapshot.id;
+            const organizationJob = organizationStatuses[record.snapshot.id];
+            const action = recentRowAction(record.write.state, organizationJob?.status);
+            const preview = organizationDecisionPreview(organizationJob);
+            const age = formatCaptureAge(record.snapshot.createdAt, new Date());
+            const canOpen = record.write.state === 'written' && !isBusy && !isSubmitting;
+            return (
+              <li key={`${record.snapshot.id}-${record.submittedRevision ?? record.snapshot.revision}`}>
+                <button
+                  type="button"
+                  className="capture-composer__recent-open"
+                  disabled={!canOpen}
+                  onClick={() => void handleOpen(record)}
+                >
+                  <span className="capture-composer__recent-title">{previewBody(record.snapshot.body)}</span>
+                  {record.write.state === 'written' && record.write.note?.path && (
+                    <span className="capture-composer__recent-path">{record.write.note.path}</span>
+                  )}
+                  <span className="capture-composer__recent-meta">
+                    {noteWriteLabel(record.write.state)} · {age}
+                    {preview && (
+                      <span className="capture-composer__organization-preview">
+                        Proposed
+                        {preview.profile && ` · ${preview.profile}`}
+                        {preview.tags.length > 0 && ` · ${preview.tags.map((tag) => `#${tag}`).join(' ')}`}
+                      </span>
+                    )}
+                  </span>
+                </button>
+                {action && (
+                  <button
+                    type="button"
+                    className="capture-composer__recent-action-button"
+                    disabled={isBusy || isSubmitting}
+                    onClick={() => void handleRowAction(record, action)}
+                  >
+                    {action === 'retry' ? 'Retry' : action === 'skip' ? 'Skip' : 'Undo'}
+                  </button>
+                )}
+              </li>
+            );
+          })}
+        </ul>
+      </section>
+    ),
+  };
+
+  sections.details = (
+    <details className="capture-composer__details">
+      <summary>Details</summary>
+      <div className="capture-composer__details-content">
+        {sections.profile}
+        {sections.fields}
+        {sections.tags}
+        {(offerKeepProfile || canSkipAI(organizationMode)) && (
+          <div className="capture-composer__preferences">
+            {offerKeepProfile && (
+              <label className="capture-composer__keep-profile">
+                <input
+                  type="checkbox"
+                  checked={keepProfile}
+                  disabled={isSubmitting}
+                  onChange={(event) => setKeepProfile(event.target.checked)}
+                />
+                Keep profile
+              </label>
+            )}
+            {canSkipAI(organizationMode) && (
+              <label className="capture-composer__skip-ai" title="Skip AI organization for this capture">
+                <input
+                  type="checkbox"
+                  checked={skipAI}
+                  disabled={isSubmitting}
+                  aria-label="Skip AI organization for this capture"
+                  onChange={(event) => setSkipAI(event.target.checked)}
+                />
+                Skip AI
+              </label>
+            )}
+          </div>
+        )}
+      </div>
+    </details>
+  );
 
   return (
     <section className={`capture-composer capture-composer--${surface}`} aria-label="Capture composer">
@@ -508,228 +834,14 @@ const CaptureComposer: React.FC<CaptureComposerProps> = ({ surface }) => {
 
       {serviceState === 'ready' && snapshot && (
         <>
-          <div className="capture-composer__profile-row" role="radiogroup" aria-label="Capture profile">
-            {PROFILE_OPTIONS.map((option, index) => (
-              <button
-                key={option.id}
-                type="button"
-                role="radio"
-                aria-checked={selectedProfile === option.id}
-                tabIndex={selectedProfile === option.id ? 0 : -1}
-                className={`capture-composer__profile ${selectedProfile === option.id ? 'is-active' : ''}`}
-                disabled={isSubmitting}
-                ref={(element) => {
-                  profileButtonRefs.current[index] = element;
-                }}
-                onKeyDown={(event) => {
-                  const nextIndex = getProfileRadioNextIndex(selectedProfileIndex, event.key, PROFILE_OPTIONS.length);
-                  if (nextIndex === undefined) return;
-                  event.preventDefault();
-                  const nextOption = PROFILE_OPTIONS[nextIndex];
-                  const current = sessionRef.current?.getSnapshot();
-                  if (current) updateSession(selectComposerProfile(current.tags, nextOption.id));
-                  profileButtonRefs.current[nextIndex]?.focus();
-                }}
-                onClick={() => {
-                  const current = sessionRef.current?.getSnapshot();
-                  if (current) updateSession(selectComposerProfile(current.tags, option.id));
-                }}
-              >
-                {option.label}
-              </button>
-            ))}
-          </div>
-
-          <div className="capture-composer__body">{editor}</div>
-
-          {primaryFields.length > 0 && (
-            <div className="capture-composer__fields capture-composer__fields--primary">
-              {primaryFields.map((field) => renderField(field, snapshot, handleFieldChange, isSubmitting))}
-            </div>
+          {operationError && (
+            <p className="capture-composer__operation-error" role="alert">
+              {operationError}
+            </p>
           )}
-
-          {additionalFields.length > 0 && (
-            <div className="capture-composer__progressive-section">
-              <button
-                type="button"
-                className="capture-composer__section-button"
-                aria-expanded={moreFieldsOpen}
-                disabled={isSubmitting}
-                onClick={() => setMoreFieldsOpen((open) => !open)}
-              >
-                More fields <span aria-hidden="true">{moreFieldsOpen ? '−' : '+'}</span>
-              </button>
-              {moreFieldsOpen && (
-                <div className="capture-composer__fields capture-composer__fields--additional">
-                  {additionalFields.map((field) => renderField(field, snapshot, handleFieldChange, isSubmitting))}
-                </div>
-              )}
-            </div>
-          )}
-
-          <div className="capture-composer__progressive-section">
-            <button
-              type="button"
-              className="capture-composer__section-button"
-              aria-expanded={tagsOpen}
-              disabled={isSubmitting}
-              onClick={() => setTagsOpen((open) => !open)}
-            >
-              Tags <span aria-hidden="true">{tagsOpen ? '−' : '+'}</span>
-            </button>
-            {tagsOpen && (
-              <div className="capture-composer__tags">
-                <div className="capture-composer__tag-list">
-                  {(resolvedTags?.bindings ?? []).map((binding) => (
-                    <span className="capture-composer__tag" key={`${binding.source}-${binding.tag}`}>
-                      #{binding.tag}
-                      <button
-                        type="button"
-                        onClick={() => removeTag(binding.tag)}
-                        disabled={isSubmitting}
-                        aria-label={`Remove tag ${binding.tag}`}
-                      >
-                        ×
-                      </button>
-                    </span>
-                  ))}
-                </div>
-                <input
-                  type="text"
-                  className="capture-composer__tag-input"
-                  placeholder="Add a tag and press Enter"
-                  aria-label="Add tag"
-                  disabled={isSubmitting}
-                  onKeyDown={handleTagInput}
-                />
-              </div>
-            )}
-          </div>
-
-          <footer className="capture-composer__footer">
-            <div
-              className={`capture-composer__status${draftState === 'error' ? ' capture-composer__status--error' : ''}`}
-              role="status"
-              aria-live="polite"
-            >
-              {pendingUploads > 0 && 'Uploading image…'}
-              {pendingUploads === 0 && draftState === 'saving' && 'Saving draft…'}
-              {pendingUploads === 0 && draftState === 'error' && composerError}
-              {pendingUploads === 0 &&
-                draftState === 'saved' &&
-                (latestReceiptState ? `Saved · ${writeStateLabel(latestReceiptState)}` : 'Draft saved locally')}
-            </div>
-            <label className="capture-composer__keep-profile">
-              <input
-                type="checkbox"
-                checked={keepProfile}
-                disabled={isSubmitting}
-                onChange={(event) => setKeepProfile(event.target.checked)}
-              />
-              Keep profile
-            </label>
-            {canSkipAI(organizationMode) && (
-              <label className="capture-composer__skip-ai" title="Skip AI organization for this capture">
-                <input
-                  type="checkbox"
-                  checked={skipAI}
-                  disabled={isSubmitting}
-                  aria-label="Skip AI organization for this capture"
-                  onChange={(event) => setSkipAI(event.target.checked)}
-                />
-                Skip AI
-              </label>
-            )}
-            <button
-              type="button"
-              className="capture-composer__send"
-              disabled={!canSubmit}
-              onClick={() => void editorRef.current?.confirm()}
-              title={sendShortcut.title}
-            >
-              Send <kbd>{sendShortcut.key}</kbd>
-            </button>
-          </footer>
-
-          {recent.length > 0 && (
-            <section className="capture-composer__recent" aria-label="Recent captures">
-              <div className="capture-composer__recent-heading">Recent</div>
-              <ul>
-                {recent.map((record) => {
-                  const isBusy = busyReceiptId === record.snapshot.id;
-                  const organizationJob = organizationStatuses[record.snapshot.id];
-                  const organizationLabel = organizationStatusLabel(organizationJob?.status, record.write.state);
-                  const organizationPreview = organizationDecisionPreview(organizationJob);
-                  const showOrganizationStatus = organizationMode !== 'off' || organizationJob !== undefined;
-                  return (
-                    <li key={`${record.snapshot.id}-${record.submittedRevision ?? record.snapshot.revision}`}>
-                      <span className="capture-composer__recent-copy">
-                        <span className="capture-composer__recent-title">{previewBody(record.snapshot.body)}</span>
-                        <span
-                          className={`capture-composer__recent-state capture-composer__recent-state--${record.write.state}`}
-                        >
-                          Local · {writeStateLabel(record.write.state)}
-                        </span>
-                        {showOrganizationStatus && organizationLabel && (
-                          <span
-                            className={`capture-composer__organization-state${
-                              organizationJob ? ` capture-composer__organization-state--${organizationJob.status}` : ''
-                            }`}
-                          >
-                            {organizationLabel}
-                          </span>
-                        )}
-                        {organizationPreview && (
-                          <span className="capture-composer__organization-preview">
-                            Proposed
-                            {organizationPreview.profile && ` · profile: ${organizationPreview.profile}`}
-                            {organizationPreview.tags.length > 0 &&
-                              ` · tags: ${organizationPreview.tags.map((tag) => `#${tag}`).join(', ')}`}
-                          </span>
-                        )}
-                      </span>
-                      <span className="capture-composer__recent-actions">
-                        <button
-                          type="button"
-                          onClick={() => void handleOpen(record)}
-                          disabled={isBusy || isSubmitting || record.write.state !== 'written'}
-                        >
-                          Open
-                        </button>
-                        {organizationJob && isOrganizationRetryableStatus(organizationJob.status) && (
-                          <button
-                            type="button"
-                            onClick={() => void handleOrganizationAction(record, 'retry')}
-                            disabled={isBusy || isSubmitting}
-                          >
-                            Retry organization
-                          </button>
-                        )}
-                        {organizationJob && isOrganizationPendingStatus(organizationJob.status) && (
-                          <button
-                            type="button"
-                            onClick={() => void handleOrganizationAction(record, 'skip')}
-                            disabled={isBusy || isSubmitting}
-                          >
-                            Skip
-                          </button>
-                        )}
-                        {organizationJob && isOrganizationUndoableStatus(organizationJob.status) && (
-                          <button
-                            type="button"
-                            onClick={() => void handleOrganizationAction(record, 'undo')}
-                            disabled={isBusy || isSubmitting}
-                          >
-                            Undo
-                          </button>
-                        )}
-                      </span>
-                    </li>
-                  );
-                })}
-              </ul>
-            </section>
-          )}
+          {composerSectionOrder(surface).map((section) => (
+            <React.Fragment key={section}>{sections[section]}</React.Fragment>
+          ))}
         </>
       )}
     </section>
@@ -791,23 +903,6 @@ function previewBody(body: string): string {
       .find((line) => line.trim() !== '')
       ?.trim() || 'Untitled capture'
   );
-}
-
-function writeStateLabel(state: RecentRecord['write']['state']): string {
-  switch (state) {
-    case 'written':
-      return 'Written';
-    case 'pending':
-      return 'Pending';
-    case 'failed':
-      return 'Write failed';
-    case 'conflict':
-      return 'Conflict';
-    case 'deleted':
-      return 'Deleted';
-    default:
-      return 'Not started';
-  }
 }
 
 function readOrganizationMode(runtime: OrganizationCaptureRuntime): OrganizationMode {

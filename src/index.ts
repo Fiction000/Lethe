@@ -12,6 +12,7 @@ import { ObsidianVaultAdapter } from './capture/obsidianAdapter';
 import { CaptureRuntime } from './capture/runtime';
 import { SerializedDataRepository, type LetheDataRepository } from './capture/repository';
 import { setCaptureRuntime } from './capture/runtimeRegistry';
+import { availableNativeNoteSearch, openNativeNoteSearch, type NativeCommandRegistry } from './capture/nativeSearch';
 import {
   JEV_DEFAULT_MANAGED_FOLDERS,
   applyLocalOnlyFallback,
@@ -363,17 +364,12 @@ export default class MemosPlugin extends Plugin {
   }
 
   searchIt() {
-    const workspace = this.app.workspace;
-    const leaves = workspace.getLeavesOfType(MEMOS_VIEW_TYPE);
-    if (!(leaves.length > 0)) {
-      this.openMemos();
-      return;
-      // this.openMemos();
+    const commands = (this.app as unknown as { commands: NativeCommandRegistry }).commands;
+    if (!availableNativeNoteSearch(commands)) {
+      new Notice('Obsidian Search is unavailable. Enable the core Search plugin to search notes.');
+    } else if (!openNativeNoteSearch(commands)) {
+      new Notice('Obsidian could not open note search.');
     }
-
-    const leaf = leaves[0];
-    workspace.setActiveLeaf(leaf);
-    (leaf.view.containerEl.querySelector('.search-bar-inputer .text-input') as HTMLElement).focus();
   }
 
   focusOnEditor() {

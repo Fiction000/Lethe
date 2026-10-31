@@ -6,6 +6,7 @@ import { EditorView } from '@codemirror/view';
 import { createCaptureId, createDraftSnapshot, type CaptureRecord, type SubmissionReceipt } from '../src/capture/core';
 import {
   applyComposerPatch,
+  getSendDisabledReason,
   isRetryableWriteState,
   isSubmitDisabled,
   isSubmitShortcut,
@@ -94,6 +95,14 @@ test('disables submit for blank drafts, composition, uploads, or an in-flight su
   assert.equal(isSubmitDisabled('body', false, true, false), true);
   assert.equal(isSubmitDisabled('body', false, false, true), true);
   assert.equal(isSubmitDisabled('body', false, false, false), false);
+});
+
+test('explains each state that keeps Send disabled', () => {
+  assert.equal(getSendDisabledReason('  ', false, false, false), 'Write something to enable Send');
+  assert.equal(getSendDisabledReason('body', false, false, true), 'Wait for the image upload to finish');
+  assert.equal(getSendDisabledReason('body', false, true, false), 'Finish composing to enable Send');
+  assert.equal(getSendDisabledReason('body', true, false, false), 'Saving capture');
+  assert.equal(getSendDisabledReason('body', false, false, false), undefined);
 });
 
 test('resolves Auto profile tags into fields and tombstones removed profile tags', () => {

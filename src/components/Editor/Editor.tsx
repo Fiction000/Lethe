@@ -124,6 +124,21 @@ const Editor = forwardRef((props: EditorProps, ref: React.ForwardedRef<EditorRef
     }
   }, [clearOnConfirm, handleConfirmBtnClickCallback, isSubmitting, useContentCache]);
 
+  useEffect(() => {
+    const win = cmRef.current?.element.ownerDocument.defaultView;
+    if (!win) return;
+    const handleSubmitShortcut = (event: KeyboardEvent): void => {
+      const view = cmRef.current?.view;
+      if (!view || !event.composedPath().includes(view.contentDOM) || !isSubmitShortcut(event, view.composing)) return;
+      // Obsidian can stop propagation at window before CM6 sees the shortcut.
+      event.preventDefault();
+      event.stopPropagation();
+      void handleConfirmClick();
+    };
+    win.addEventListener('keydown', handleSubmitShortcut, true);
+    return () => win.removeEventListener('keydown', handleSubmitShortcut, true);
+  }, [handleConfirmClick]);
+
   useImperativeHandle(
     ref,
     () => ({

@@ -179,6 +179,37 @@ test('commits before save-and-next, keeps the profile, and exposes a retryable r
   );
 });
 
+for (const profile of ['book', 'movie'] as const) {
+  for (const keep of [true, false]) {
+    test(`Auto type/${profile} Keep profile=${keep} resets item data and persists the next draft`, async () => {
+      const setup = makeRuntime();
+      const session = await setup.runtime.openSession('main');
+      await session.update({
+        profile: 'auto',
+        body: 'tag-derived body',
+        fields: { title: { state: 'set', value: 'One item only' } },
+        tags: { userAdded: [`type/${profile}`, 'custom-item-tag'], userRemoved: [] },
+      });
+      const id = session.getSnapshot().id;
+      await session.submit(keep);
+      const next = session.getSnapshot();
+      assert.equal(next.profile, keep ? profile : 'auto');
+      assert.equal(next.body, '');
+      assert.deepEqual(next.fields, {});
+      assert.deepEqual(next.tags, { userAdded: [], userRemoved: [] });
+      await waitFor(() => records(setup.persisted())[id]?.write.state === 'written');
+      const path = records(setup.persisted())[id].write.note?.path as string;
+      assert.match((await setup.vault.read(path)) ?? '', new RegExp(`lethe_profile_id: ${profile}`));
+      assert.equal(records(setup.persisted())[id].snapshot.profile, 'auto');
+      const restarted = makeRuntime(setup.persisted());
+      const restored = await restarted.runtime.openSession('main');
+      assert.equal(restored.getSnapshot().profile, keep ? profile : 'auto');
+      assert.deepEqual(restored.getSnapshot().fields, {});
+      assert.deepEqual(restored.getSnapshot().tags.userAdded, []);
+    });
+  }
+}
+
 test('applies changed default tags to captures without rebuilding the runtime', async () => {
   const setup = makeRuntime({}, () => undefined, undefined, ['old-default']);
   const session = await setup.runtime.openSession('main');

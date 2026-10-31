@@ -11,6 +11,7 @@ export class Memos extends ItemView {
   plugin: MemosPlugin;
   hoverPopover: HoverPopover | null;
   private memosComponent: React.ReactElement;
+  private rootEl?: HTMLElement;
 
   constructor(leaf: WorkspaceLeaf, plugin: MemosPlugin) {
     super(leaf);
@@ -145,8 +146,8 @@ export class Memos extends ItemView {
 
     this.memosComponent = React.createElement(App);
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    ReactDOM.render(this.memosComponent, (this as any).contentEl);
+    this.rootEl = (this as unknown as { contentEl: HTMLElement }).contentEl;
+    ReactDOM.render(this.memosComponent, this.rootEl);
 
     // Fetch memos after rendering to populate the list
     memoService.fetchAllMemos().catch((err) => {
@@ -155,7 +156,10 @@ export class Memos extends ItemView {
   }
 
   async onClose() {
-    // Nothing to clean up.
+    if (this.rootEl) {
+      ReactDOM.unmountComponentAtNode(this.rootEl);
+      this.rootEl = undefined;
+    }
   }
 }
 
