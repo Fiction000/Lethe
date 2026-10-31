@@ -7,14 +7,48 @@ import less from 'less';
 const stylesheetPath = path.resolve('src/less/capture-composer.less');
 const testPath = path.resolve('test/capture-visual-polish.test.ts');
 
+interface LessSelector {
+  toCSS: (context: object) => string;
+}
+
+interface LessDeclaration {
+  type: 'Declaration';
+  name: Array<{ value: string }>;
+  value: { toCSS: (context: object) => string };
+}
+
+interface LessRuleSet {
+  type: 'Ruleset';
+  selectors: LessSelector[];
+  rules: Array<LessDeclaration | { type: string }>;
+}
+
+interface LessRoot {
+  rules: Array<LessRuleSet | { type: string }>;
+}
+
+function isRuleSet(node: LessRoot['rules'][number]): node is LessRuleSet {
+  return (
+    node.type === 'Ruleset' &&
+    'selectors' in node &&
+    Array.isArray(node.selectors) &&
+    'rules' in node &&
+    Array.isArray(node.rules)
+  );
+}
+
+function isDeclaration(node: LessRuleSet['rules'][number]): node is LessDeclaration {
+  return node.type === 'Declaration' && 'name' in node && Array.isArray(node.name) && 'value' in node;
+}
+
 async function compiledRules() {
   const source = await readFile(stylesheetPath, 'utf8');
   const { css } = await less.render(source, { filename: stylesheetPath });
-  const root = await less.parse(css, { filename: stylesheetPath });
-  return root.rules.filter((node) => node.type === 'Ruleset');
+  const root = (await less.parse(css, { filename: stylesheetPath })) as LessRoot;
+  return root.rules.filter(isRuleSet);
 }
 
-function selectors(rule: (typeof compiledRules extends () => Promise<infer T> ? T : never)[number]) {
+function selectors(rule: LessRuleSet) {
   return rule.selectors.map((selector) => selector.toCSS({}).trim());
 }
 
@@ -25,9 +59,7 @@ function declarations(rules: Awaited<ReturnType<typeof compiledRules>>, selector
     {},
     ...matching.map((rule) =>
       Object.fromEntries(
-        rule.rules
-          .filter((node) => node.type === 'Declaration')
-          .map(({ name, value }) => [name[0].value, value.toCSS({})]),
+        rule.rules.filter(isDeclaration).map((declaration) => [declaration.name[0].value, declaration.value.toCSS({})]),
       ),
     ),
   );
@@ -59,7 +91,7 @@ test('keeps exactly one editor focus outline on the focused content', async () =
       (selector) =>
         (selector === '.capture-composer .common-editor-wrapper .cm-editor:focus-within' ||
           selector === '.capture-composer .common-editor-wrapper .cm-content:focus-visible') &&
-        rule.rules.some((node) => node.type === 'Declaration' && node.name[0].value === 'outline'),
+        rule.rules.some((node) => isDeclaration(node) && node.name[0].value === 'outline'),
     ),
   );
 
@@ -82,6 +114,16 @@ test('gives the capture editor a persistent native-contrast boundary and an inst
   assert.equal(focus.outline, '2px solid var(--text-normal)');
   assert.equal(focus['outline-offset'], '2px');
   assert.equal(focus.transition, undefined);
+});
+
+test('constrains the format menu and row to their local editor width', async () => {
+  const rules = await compiledRules();
+  const menu = declarations(rules, '.capture-composer .lethe-format-menu');
+  const row = declarations(rules, '.capture-composer .lethe-format-row');
+
+  assert.equal(menu.width, 'min(15rem, 100%)');
+  assert.equal(menu['min-width'], 'min(11.25rem, 100%)');
+  assert.equal(row.width, '100%');
 });
 
 test('gives disabled recent items legible state channels and pressed feedback', async () => {

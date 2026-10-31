@@ -3,10 +3,12 @@ import Only from '../common/OnlyWhen';
 import '../../less/editor.less';
 import { FocusOnEditor } from '../../memos';
 import { storage } from '../../helpers/storage';
-import { MEMOS_VIEW_TYPE } from '../../constants';
 import CMEditor, { CMEditorRefActions } from './CMEditor';
+import type { EditorSelection } from '@codemirror/state';
+import type { EditorView } from '@codemirror/view';
 import useState from 'react-usestateref';
 import { isSubmitShortcut } from '../../capture/composerActions';
+import { applyFormatCommand, findFormatCommand, formattingCommands, type FormatCommandId } from './formattingCommands';
 
 export interface EditorRefActions {
   /** The editor container element */
@@ -66,20 +68,18 @@ const Editor = forwardRef((props: EditorProps, ref: React.ForwardedRef<EditorRef
 
   const cmRef = useRef<CMEditorRefActions>(null);
   const submitLockRef = useRef(false);
+  const escapeArmedRef = useRef(false);
+  const [formatOpen, setFormatOpen] = React.useState(false);
+  const [formatIndex, setFormatIndex] = React.useState(0);
+  const formatTriggerRef = useRef<HTMLButtonElement>(null);
+  const formatSelectionRef = useRef<EditorSelection | null>(null);
+  const formatMenuRef = useRef<HTMLDivElement>(null);
+  const formatMenuIdRef = useRef(`lethe-format-menu-${Math.random().toString(36).slice(2)}`);
+  const formatIds = Object.keys(formattingCommands) as FormatCommandId[];
+  const shortcutMod =
+    typeof navigator !== 'undefined' && navigator.platform.toLowerCase().includes('mac') ? '⌘' : 'Ctrl+';
+  const formatDisabled = isSubmitting || submitLockRef.current || isComposing;
   const [hasContent, setHasContent] = useState(initialContent.length > 0);
-  const [, setHeight, currentHeightRef] = useState(0);
-
-  useEffect(() => {
-    const leaves = typeof app === 'undefined' ? [] : app.workspace.getLeavesOfType(MEMOS_VIEW_TYPE);
-    let memosHeight;
-    if (leaves.length > 0) {
-      const leaf = leaves[0];
-      memosHeight = leaf.view.containerEl.offsetHeight;
-    } else {
-      memosHeight = typeof window === 'undefined' ? 300 : window.outerHeight;
-    }
-    setHeight(memosHeight);
-  }, [setHeight]);
 
   // Set initial content from cache on mount
   useEffect(() => {
@@ -185,33 +185,76 @@ const Editor = forwardRef((props: EditorProps, ref: React.ForwardedRef<EditorRef
     handleCancelBtnClickCallback();
   }, [handleCancelBtnClickCallback]);
 
-  /** Wrap selected text (or insert placeholder) with before/after markers in CM6 */
-  const wrapCMSelection = useCallback((before: string, after: string, placeholderText: string) => {
-    const view = cmRef.current?.view;
-    if (!view) return;
-
-    const { from, to } = view.state.selection.main;
-    const selectedText = view.state.sliceDoc(from, to);
-    const textToWrap = selectedText || placeholderText;
-    const wrapped = before + textToWrap + after;
-
-    view.dispatch({
-      changes: { from, to, insert: wrapped },
-      selection: selectedText
-        ? { anchor: from, head: from + wrapped.length }
-        : { anchor: from + before.length, head: from + before.length + textToWrap.length },
-    });
-    view.focus();
+  const closeFormatMenu = useCallback((returnToEditor: boolean) => {
+    setFormatOpen(false);
+    if (returnToEditor) {
+      const view = cmRef.current?.view;
+      if (view && formatSelectionRef.current) view.dispatch({ selection: formatSelectionRef.current });
+      cmRef.current?.focus();
+    }
+    formatSelectionRef.current = null;
   }, []);
 
-  // CM6 keydown handler — return true to prevent CM6 default handling
+  const runFormat = useCallback(
+    (id: FormatCommandId) => {
+      if (isSubmitting || submitLockRef.current || isComposing) return;
+      const view = cmRef.current?.view;
+      if (view && applyFormatCommand(view, id, formatSelectionRef.current ?? view.state.selection)) {
+        formatSelectionRef.current = null;
+        setFormatOpen(false);
+      }
+    },
+    [isComposing, isSubmitting],
+  );
+
+  useEffect(() => {
+    if (!formatOpen) return;
+    const ownerDocument = cmRef.current?.element.ownerDocument;
+    const dismiss = (event: PointerEvent) => {
+      if (
+        !formatMenuRef.current?.contains(event.target as Node) &&
+        !formatTriggerRef.current?.contains(event.target as Node)
+      ) {
+        formatSelectionRef.current = null;
+        setFormatOpen(false);
+      }
+    };
+    ownerDocument?.addEventListener('pointerdown', dismiss);
+    formatMenuRef.current?.querySelector<HTMLButtonElement>('[role="menuitem"]')?.focus();
+    return () => ownerDocument?.removeEventListener('pointerdown', dismiss);
+  }, [formatOpen]);
+
+  const handleFocusEscape = useCallback(
+    (view: EditorView): boolean => {
+      if (isComposing || view.composing) {
+        escapeArmedRef.current = false;
+        return false;
+      }
+      if (!escapeArmedRef.current) return false;
+      escapeArmedRef.current = false;
+      const root = view.dom.closest('.capture-composer') ?? view.dom.parentElement;
+      const nextControl = Array.from(
+        root?.querySelectorAll<HTMLElement>('button:not(:disabled), input:not(:disabled), [tabindex="0"]') ?? [],
+      ).find((control) => Boolean(control.compareDocumentPosition(view.contentDOM) & Node.DOCUMENT_POSITION_PRECEDING));
+      if (!nextControl) return false;
+      nextControl.focus();
+      return true;
+    },
+    [isComposing],
+  );
+
+  const handleEditorEscape = useCallback(
+    (view: EditorView): boolean => {
+      if (isComposing || view.composing || view.dom.querySelector('.cm-tooltip-autocomplete')) return false;
+      escapeArmedRef.current = true;
+      return true;
+    },
+    [isComposing],
+  );
+
   const handleKeyDown = useCallback(
     (event: KeyboardEvent) => {
       event.stopPropagation();
-
-      const isMod = event.metaKey || event.ctrlKey;
-      const isShift = event.shiftKey;
-
       const view = cmRef.current?.view;
       const isEditorComposing = Boolean(view?.composing);
 
@@ -219,20 +262,22 @@ const Editor = forwardRef((props: EditorProps, ref: React.ForwardedRef<EditorRef
         event.preventDefault();
         return true;
       }
-
-      // Cmd/Ctrl+Enter submits only after IME composition has settled.
       if (isSubmitShortcut(event, isEditorComposing)) {
         event.preventDefault();
         void handleConfirmClick();
         return true;
       }
+      if (event.isComposing || isEditorComposing || event.keyCode === 229 || event.which === 229) return false;
 
-      if (event.isComposing || isEditorComposing || event.keyCode === 229 || event.which === 229) {
-        return false;
+      if (event.key !== 'Tab') escapeArmedRef.current = false;
+      if (event.key === 'Escape') {
+        if (view?.dom.querySelector('.cm-tooltip-autocomplete')) return false;
+        event.preventDefault();
+        escapeArmedRef.current = true;
+        return true;
       }
 
-      // Ctrl+Shift+Enter to insert task checkbox
-      if (event.code === 'Enter' && (event.ctrlKey || event.metaKey) && isShift) {
+      if (event.code === 'Enter' && (event.ctrlKey || event.metaKey) && event.shiftKey) {
         event.preventDefault();
         if (view) {
           const { from } = view.state.selection.main;
@@ -241,41 +286,15 @@ const Editor = forwardRef((props: EditorProps, ref: React.ForwardedRef<EditorRef
         }
         return true;
       }
-
-      // Markdown formatting hotkeys
-      if (isMod && !isShift) {
-        switch (event.key.toLowerCase()) {
-          case 'b':
-            event.preventDefault();
-            wrapCMSelection('**', '**', 'bold text');
-            return true;
-          case 'i':
-            event.preventDefault();
-            wrapCMSelection('*', '*', 'italic text');
-            return true;
-          case 'k':
-            event.preventDefault();
-            wrapCMSelection('[', ']()', 'link text');
-            return true;
-          case 'e':
-            event.preventDefault();
-            wrapCMSelection('`', '`', 'code');
-            return true;
-        }
-      }
-
-      if (isMod && isShift) {
-        switch (event.key.toLowerCase()) {
-          case 'x':
-            event.preventDefault();
-            wrapCMSelection('~~', '~~', 'strikethrough');
-            return true;
-        }
-      }
-
-      return false;
+      const isMod = event.metaKey || event.ctrlKey;
+      if (!isMod) return false;
+      const id = findFormatCommand(event.key, event.shiftKey);
+      if (!id) return false;
+      event.preventDefault();
+      if (view) applyFormatCommand(view, id);
+      return true;
     },
-    [handleConfirmClick, isSubmitting, wrapCMSelection],
+    [handleConfirmClick, isSubmitting],
   );
 
   // Handle paste events for image upload
@@ -312,21 +331,99 @@ const Editor = forwardRef((props: EditorProps, ref: React.ForwardedRef<EditorRef
     [isSubmitting, onDrop],
   );
 
-  const maxHeight = currentHeightRef.current > 400 ? currentHeightRef.current - 400 : 300;
+  const handleMenuKeyDown = (event: React.KeyboardEvent<HTMLDivElement>) => {
+    if (event.key === 'ArrowDown' || event.key === 'ArrowUp') {
+      event.preventDefault();
+      const next = (formatIndex + (event.key === 'ArrowDown' ? 1 : formatIds.length - 1)) % formatIds.length;
+      setFormatIndex(next);
+      formatMenuRef.current?.querySelectorAll<HTMLButtonElement>('[role="menuitem"]')[next]?.focus();
+    } else if (event.key === 'Escape') {
+      event.preventDefault();
+      closeFormatMenu(true);
+    } else if (event.key === 'Tab') {
+      event.preventDefault();
+      setFormatOpen(false);
+      if (event.shiftKey) formatTriggerRef.current?.focus();
+      else cmRef.current?.view.contentDOM.focus();
+    }
+  };
 
   return (
     <div className={'common-editor-wrapper ' + className}>
+      <div className="lethe-format-row">
+        <button
+          ref={formatTriggerRef}
+          className="lethe-format-trigger"
+          type="button"
+          aria-label="Format"
+          aria-haspopup="menu"
+          aria-expanded={formatOpen}
+          aria-controls={formatMenuIdRef.current}
+          disabled={formatDisabled}
+          onMouseDown={(event) => event.preventDefault()}
+          onClick={() => {
+            if (formatOpen) {
+              closeFormatMenu(true);
+              return;
+            }
+            formatSelectionRef.current = cmRef.current?.view?.state.selection ?? null;
+            setFormatIndex(0);
+            setFormatOpen(true);
+          }}
+        >
+          Format <span aria-hidden="true">▾</span>
+        </button>
+        {formatOpen && (
+          <div
+            id={formatMenuIdRef.current}
+            ref={formatMenuRef}
+            className="lethe-format-menu"
+            role="menu"
+            aria-label="Format"
+            onKeyDown={handleMenuKeyDown}
+          >
+            {formatIds.map((id, index) => {
+              const command = formattingCommands[id];
+              const labels: Record<FormatCommandId, string> = {
+                bold: 'Bold',
+                italic: 'Italic',
+                link: 'Link',
+                code: 'Inline code',
+                strikethrough: 'Strikethrough',
+              };
+              const shortcut = command.shift ? `${shortcutMod}⇧X` : `${shortcutMod}${command.key.toUpperCase()}`;
+              return (
+                <button
+                  key={id}
+                  type="button"
+                  role="menuitem"
+                  tabIndex={index === formatIndex ? 0 : -1}
+                  disabled={formatDisabled}
+                  onFocus={() => setFormatIndex(index)}
+                  onClick={() => runFormat(id)}
+                >
+                  {labels[id]}
+                  <span className="lethe-format-shortcut">{shortcut}</span>
+                </button>
+              );
+            })}
+            <span className="lethe-format-hint">Esc to return to writing</span>
+          </div>
+        )}
+      </div>
       <CMEditor
         ref={cmRef}
         initialContent={initialContent}
         placeholder={placeholder}
         onContentChange={handleContentChange}
         onKeyDown={handleKeyDown}
+        onEscape={handleEditorEscape}
+        onFocusEscape={handleFocusEscape}
         onPaste={handlePaste}
         onDrop={handleDrop}
         onCompositionChange={onCompositionChange}
         editable={!isSubmitting}
-        maxHeight={maxHeight}
+        maxHeight={300}
       />
 
       <div className="common-tools-wrapper">
