@@ -1,5 +1,6 @@
 /* Hallmark · checked: 2026-10-31 · genre: modern-minimal (inferred) · built: the project · redesign: polish · v2.0.0 */
 /* Hallmark · dismissed F3 · Recent is a small section label, not a display heading */
+/* Hallmark · waive 39b · app screen with multi-line Recent note rows · preserve this project's existing Recent captures height for the title, path and Saved status */
 .capture-composer {
   --lethe-composer-measure: 72ch;
   width: 100%;
@@ -462,7 +463,7 @@ div[data-type='memos_view'] .capture-composer__recent li::before {
   display: grid;
   grid-template-columns: minmax(0, 1fr);
   justify-content: stretch;
-  justify-items: start;
+  justify-items: stretch;
   flex: 1 1 auto;
   gap: var(--size-4-1);
   min-width: 0;

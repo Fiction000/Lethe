@@ -41,7 +41,7 @@ test('keeps every recent title on the same left edge while preserving narrow ell
   assert.equal(header['min-width'], '0');
   assert.equal(button['grid-template-columns'], 'minmax(0, 1fr)');
   assert.equal(button['justify-content'], 'stretch');
-  assert.equal(button['justify-items'], 'start');
+  assert.equal(button['justify-items'], 'stretch');
   assert.equal(button['min-width'], '0');
   assert.equal(button['text-align'], 'left');
   assert.equal(title['text-overflow'], 'ellipsis');
