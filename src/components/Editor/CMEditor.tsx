@@ -25,6 +25,8 @@ interface CMEditorProps {
   placeholder?: string;
   onContentChange?: (content: string) => void;
   onKeyDown?: (event: KeyboardEvent) => boolean;
+  onEscape?: (view: EditorView) => boolean;
+  onFocusEscape?: (view: EditorView) => boolean;
   onPaste?: (event: ClipboardEvent) => boolean;
   onDrop?: (event: DragEvent) => boolean;
   onCompositionChange?: (composing: boolean) => void;
@@ -55,6 +57,8 @@ const CMEditor = forwardRef<CMEditorRefActions, CMEditorProps>((props, ref) => {
   const editLock = editLockRef.current;
   const onContentChangeRef = useRef(onContentChange);
   const onKeyDownRef = useRef(onKeyDown);
+  const onEscapeRef = useRef(props.onEscape);
+  const onFocusEscapeRef = useRef(props.onFocusEscape);
   const onPasteRef = useRef(onPaste);
   const onDropRef = useRef(onDrop);
   const onCompositionChangeRef = useRef(onCompositionChange);
@@ -67,6 +71,11 @@ const CMEditor = forwardRef<CMEditorRefActions, CMEditorProps>((props, ref) => {
   useEffect(() => {
     onKeyDownRef.current = onKeyDown;
   }, [onKeyDown]);
+
+  useEffect(() => {
+    onEscapeRef.current = props.onEscape;
+    onFocusEscapeRef.current = props.onFocusEscape;
+  }, [props.onEscape, props.onFocusEscape]);
 
   useEffect(() => {
     onPasteRef.current = onPaste;
@@ -133,7 +142,11 @@ const CMEditor = forwardRef<CMEditorRefActions, CMEditorProps>((props, ref) => {
         // Core
         history(),
         keymap.of([
-          { key: 'Tab', run: indentMore },
+          { key: 'Escape', run: (view) => onEscapeRef.current?.(view) ?? false },
+          {
+            key: 'Tab',
+            run: (view) => (onFocusEscapeRef.current?.(view) ? true : indentMore(view)),
+          },
           { key: 'Shift-Tab', run: indentLess },
           ...defaultKeymap,
           ...historyKeymap,

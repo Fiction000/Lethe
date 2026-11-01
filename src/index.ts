@@ -487,6 +487,6 @@ function isMemoIndex(value: unknown): value is Model.MemoIndex {
 }
 
 function focusEditor(containerEl: HTMLElement): void {
-  const editor = containerEl.querySelector<HTMLElement>('.cm-content, textarea');
+  const editor = containerEl.querySelector<HTMLElement>('.lethe-milkdown .ProseMirror, .cm-content, textarea');
   editor?.focus();
 }

@@ -1,4 +1,6 @@
-/* Shared CaptureComposer surface. Keep this vocabulary native to Obsidian. */
+/* Hallmark · checked: 2026-10-31 · genre: modern-minimal (inferred) · built: the project · redesign: polish · v2.0.0 */
+/* Hallmark · dismissed F3 · Recent is a small section label, not a display heading */
+/* Hallmark · waive 39b · app screen with multi-line Recent note rows · preserve this project's existing Recent captures height for the title, path and Saved status */
 .capture-composer {
   --lethe-composer-measure: 72ch;
   width: 100%;
@@ -95,9 +97,85 @@
 }
 
 .capture-composer .common-editor-wrapper {
+  position: relative;
   display: block;
   width: 100%;
   background: transparent;
+}
+
+.capture-composer .lethe-format-row {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  min-height: 32px;
+  width: 100%;
+  margin-bottom: var(--size-4-2);
+}
+
+.capture-composer .lethe-format-trigger,
+.capture-composer .lethe-format-menu button {
+  appearance: none;
+  box-shadow: none;
+  border: 1px solid var(--background-modifier-border);
+  border-radius: var(--radius-s);
+  color: var(--text-normal);
+  background: var(--background-primary);
+  font: inherit;
+}
+
+.capture-composer .lethe-format-trigger {
+  min-height: 32px;
+  padding: 0 var(--size-4-3);
+  font-size: var(--font-ui-small);
+  cursor: pointer;
+}
+
+.capture-composer .lethe-format-trigger:focus-visible,
+.capture-composer .lethe-format-menu button:focus-visible {
+  outline: 2px solid var(--interactive-accent);
+  outline-offset: 2px;
+}
+
+.capture-composer .lethe-format-menu {
+  position: absolute;
+  z-index: 10;
+  top: calc(100% + var(--size-4-1));
+  left: 0;
+  display: grid;
+  width: min(15rem, 100%);
+  min-width: min(11.25rem, 100%);
+  max-height: min(70vh, 24rem);
+  overflow: auto;
+  padding: var(--size-4-1);
+  border: 1px solid var(--background-modifier-border);
+  border-radius: var(--radius-m);
+  background: var(--background-primary);
+  box-shadow: var(--shadow-s);
+}
+
+.capture-composer .lethe-format-menu button {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--size-4-2);
+  min-width: 0;
+  min-height: 32px;
+  padding: var(--size-4-1) var(--size-4-2);
+  border-color: transparent;
+  text-align: left;
+  cursor: pointer;
+}
+
+.capture-composer .lethe-format-shortcut {
+  color: var(--text-muted);
+  white-space: nowrap;
+}
+
+.capture-composer .lethe-format-hint {
+  padding: var(--size-4-1) var(--size-4-2);
+  color: var(--text-muted);
+  font-size: var(--font-ui-smaller);
 }
 
 .capture-composer .common-editor-wrapper > .cm-editor-container {
@@ -108,13 +186,20 @@
 
 .capture-composer .common-editor-wrapper .cm-editor {
   min-height: 12rem;
+  border: 1px solid var(--text-normal);
+  border-radius: var(--radius-s);
   background: transparent;
   color: var(--text-normal);
 }
 
+.capture-composer .common-editor-wrapper .cm-content:focus-visible {
+  outline: 2px solid var(--text-normal);
+  outline-offset: 2px;
+}
+
 .capture-composer .common-editor-wrapper .cm-content {
   min-height: 12rem;
-  padding: var(--size-4-3) 0 var(--size-4-5);
+  padding: var(--size-4-3) var(--size-4-3) var(--size-4-5);
   font-family: var(--font-text);
   font-size: var(--font-text-size);
   line-height: var(--line-height-normal);
@@ -387,9 +472,11 @@
 .capture-composer__preferences,
 .capture-composer__recent-header {
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
   justify-content: space-between;
   gap: var(--size-4-3);
+  min-width: 0;
 }
 
 .capture-composer__recent-header h2 {
@@ -408,6 +495,7 @@
 
 .capture-composer__recent-path {
   display: block;
+  color: var(--text-muted);
 }
 
 .capture-composer__search-unavailable {
@@ -448,6 +536,9 @@ div[data-type='memos_view'] .capture-composer__recent li::before {
 
 .capture-composer .capture-composer__recent-open[type='button'] {
   display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  justify-content: stretch;
+  justify-items: stretch;
   flex: 1 1 auto;
   gap: var(--size-4-1);
   min-width: 0;
@@ -469,8 +560,13 @@ div[data-type='memos_view'] .capture-composer__recent li::before {
   background: var(--background-modifier-hover);
 }
 
-.capture-composer__recent-open:disabled {
-  opacity: 0.7;
+.capture-composer .capture-composer__recent-open:active:not(:disabled) {
+  background-color: var(--background-modifier-active-hover);
+}
+
+.capture-composer .capture-composer__recent-open[type='button']:disabled {
+  color: var(--text-muted);
+  background-color: var(--background-primary);
   cursor: default;
 }
 

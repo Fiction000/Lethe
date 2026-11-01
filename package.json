@@ -13,7 +13,7 @@
     "format": "npm run prettier:fix && npm run lint:fix",
     "build:nolint": "NODE_ENV=production rollup -c",
     "build": "vite build",
-    "test": "node --import tsx --test test/*.test.ts",
+    "test": "node --import tsx --test test/*.test.ts && node --import tsx/esm --test test/esm/*.test.ts",
     "test:watch": "node --import tsx --test --watch test/*.test.ts"
   },
   "dependencies": {
@@ -24,6 +24,8 @@
     "@codemirror/state": "^6.6.0",
     "@codemirror/view": "^6.38.6",
     "@lezer/highlight": "^1.2.3",
+    "@milkdown/crepe": "7.23.0",
+    "@milkdown/kit": "7.23.0",
     "obsidian": "0.16.3",
     "obsidian-daily-notes-interface": "^0.9.4",
     "react": "^17.0.2",
