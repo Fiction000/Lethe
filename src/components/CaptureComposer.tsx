@@ -794,7 +794,7 @@ const CaptureComposer: React.FC<CaptureComposerProps> = ({ surface }) => {
             const organizationJob = organizationStatuses[record.snapshot.id];
             const action = recentRowAction(record.write.state, organizationJob?.status);
             const preview = organizationDecisionPreview(organizationJob);
-            const age = formatCaptureAge(record.snapshot.createdAt, new Date());
+            const age = formatCaptureAge(record.snapshot.updatedAt, new Date());
             const canOpen = record.write.state === 'written' && !isBusy && !isSubmitting;
             return (
               <li key={`${record.snapshot.id}-${record.submittedRevision ?? record.snapshot.revision}`}>
