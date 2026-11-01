@@ -7,12 +7,23 @@ import svgr from 'vite-plugin-svgr';
 export default defineConfig(({ mode }) => {
   return {
     plugins: [
+      // Vite 3 does not resolve vfile 6's package-import aliases. Keep the
+      // compatibility mapping local to vfile and select its browser shims.
+      {
+        name: 'lethe-vfile-browser-imports',
+        resolveId(id, importer) {
+          if (importer?.includes('/node_modules/vfile/lib/') && ['#minpath', '#minproc', '#minurl'].includes(id)) {
+            return path.join(path.dirname(importer), `${id.slice(1)}.browser.js`);
+          }
+          return null;
+        },
+      },
       react(),
       svgr({
         svgrOptions: {
           exportType: 'default',
         },
-      })
+      }),
     ],
     css: {
       preprocessorOptions: {
@@ -31,6 +42,8 @@ export default defineConfig(({ mode }) => {
       },
       rollupOptions: {
         output: {
+          // Obsidian installs one main.js; do not leave runtime require chunks.
+          inlineDynamicImports: true,
           // Overwrite default Vite output fileName
           entryFileNames: 'main.js',
           assetFileNames: 'styles.css',

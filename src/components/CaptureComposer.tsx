@@ -84,6 +84,7 @@ const CaptureComposer: React.FC<CaptureComposerProps> = ({ surface }) => {
   const [recent, setRecent] = useState<readonly RecentRecord[]>([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isComposing, setIsComposing] = useState(false);
+  const [readyEditorId, setReadyEditorId] = useState<string>();
   const [pendingUploads, setPendingUploads] = useState(0);
   const [draftState, setDraftState] = useState<DraftState>('idle');
   const [composerError, setComposerError] = useState<string>();
@@ -521,10 +522,14 @@ const CaptureComposer: React.FC<CaptureComposerProps> = ({ surface }) => {
     (field) => !PRIMARY_FIELDS[activeProfile ?? 'plain'].includes(field.id),
   );
   const canSubmit = Boolean(
-    snapshot && !isSubmitDisabled(snapshot.body, isSubmitting, isComposing, pendingUploads > 0),
+    snapshot &&
+      readyEditorId === snapshot.id &&
+      !isSubmitDisabled(snapshot.body, isSubmitting, isComposing, pendingUploads > 0),
   );
   const sendDisabledReason = snapshot
-    ? getSendDisabledReason(snapshot.body, isSubmitting, isComposing, pendingUploads > 0)
+    ? readyEditorId !== snapshot.id
+      ? 'Opening your draft…'
+      : getSendDisabledReason(snapshot.body, isSubmitting, isComposing, pendingUploads > 0)
     : undefined;
 
   const editor = snapshot ? (
@@ -547,6 +552,7 @@ const CaptureComposer: React.FC<CaptureComposerProps> = ({ surface }) => {
       onCancelBtnClick={() => undefined}
       onContentChange={handleBodyChange}
       onCompositionChange={setIsComposing}
+      onReadyChange={(ready) => setReadyEditorId(ready ? snapshot.id : undefined)}
       onPaste={handlePaste}
       onDrop={handleDrop}
     />
