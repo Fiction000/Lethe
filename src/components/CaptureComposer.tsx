@@ -70,6 +70,7 @@ const PROFILE_OPTIONS: readonly { id: CaptureProfileId; label: string }[] = [
   { id: 'movie', label: 'Movie' },
 ];
 
+const DRAFT_SAVE_IDLE_MS = 2000;
 const PRIMARY_FIELDS: Readonly<Record<ConcreteProfileId, readonly string[]>> = {
   plain: [],
   book: ['author', 'startDate'],
@@ -111,6 +112,13 @@ const CaptureComposer: React.FC<CaptureComposerProps> = ({ surface }) => {
   const isSubmittingRef = useRef(false);
   const mountedRef = useRef(false);
   const recentRefreshSequenceRef = useRef(0);
+  const rootRef = useRef<HTMLElement>(null);
+  const pendingDraftRef = useRef<{ sessionId: string | undefined; body: string }>();
+  const draftTimerRef = useRef<ReturnType<typeof setTimeout>>();
+  const flushDraftRef = useRef<() => void>(() => undefined);
+  const savedFlashTimerRef = useRef<ReturnType<typeof setTimeout>>();
+  const [draftHasText, setDraftHasText] = useState<boolean>();
+  const [savedFlash, setSavedFlash] = useState(false);
 
   const refreshRecent = useCallback(async (): Promise<void> => {
     const runtime = runtimeRef.current;
@@ -207,6 +215,7 @@ const CaptureComposer: React.FC<CaptureComposerProps> = ({ surface }) => {
 
     void open();
     return () => {
+      flushDraftRef.current();
       disposed = true;
       mountedRef.current = false;
       recentRefreshSequenceRef.current += 1;
@@ -262,12 +271,46 @@ const CaptureComposer: React.FC<CaptureComposerProps> = ({ surface }) => {
     );
   }, []);
 
-  const handleBodyChange = useCallback(
-    (body: string): void => {
-      updateSession({ body });
-    },
-    [updateSession],
-  );
+  // Typing must not re-render the composer or rewrite plugin data on every
+  // change, so the draft is saved quietly after a pause, on blur, and on Cmd+S.
+  const flushDraft = useCallback((): void => {
+    clearTimeout(draftTimerRef.current);
+    draftTimerRef.current = undefined;
+    const pending = pendingDraftRef.current;
+    pendingDraftRef.current = undefined;
+    if (!pending || pending.sessionId !== sessionIdRef.current) return;
+    updateSession({ body: pending.body });
+    setDraftHasText(undefined);
+  }, [updateSession]);
+  flushDraftRef.current = flushDraft;
+
+  const handleBodyChange = useCallback((body: string): void => {
+    pendingDraftRef.current = { sessionId: sessionIdRef.current, body };
+    setDraftHasText(body.trim().length > 0);
+    clearTimeout(draftTimerRef.current);
+    draftTimerRef.current = setTimeout(() => flushDraftRef.current(), DRAFT_SAVE_IDLE_MS);
+  }, []);
+
+  useEffect(() => {
+    const win = rootRef.current?.ownerDocument.defaultView;
+    if (!win) return;
+    const handleSaveShortcut = (event: KeyboardEvent): void => {
+      if (event.key.toLowerCase() !== 's' || !(event.metaKey || event.ctrlKey) || event.shiftKey || event.altKey)
+        return;
+      if (!rootRef.current || !event.composedPath().includes(rootRef.current)) return;
+      event.preventDefault();
+      event.stopPropagation();
+      flushDraftRef.current();
+      setSavedFlash(true);
+      clearTimeout(savedFlashTimerRef.current);
+      savedFlashTimerRef.current = setTimeout(() => setSavedFlash(false), 1500);
+    };
+    win.addEventListener('keydown', handleSaveShortcut, true);
+    return () => {
+      win.removeEventListener('keydown', handleSaveShortcut, true);
+      clearTimeout(savedFlashTimerRef.current);
+    };
+  }, [serviceState]);
 
   const handleSubmit = useCallback(
     async (content: string): Promise<void> => {
@@ -281,6 +324,9 @@ const CaptureComposer: React.FC<CaptureComposerProps> = ({ surface }) => {
         return;
       }
 
+      clearTimeout(draftTimerRef.current);
+      pendingDraftRef.current = undefined;
+      setDraftHasText(undefined);
       const submittedId = currentSnapshot.id;
       isSubmittingRef.current = true;
       setIsSubmitting(true);
@@ -521,15 +567,16 @@ const CaptureComposer: React.FC<CaptureComposerProps> = ({ surface }) => {
   const additionalFields = profileFields.filter(
     (field) => !PRIMARY_FIELDS[activeProfile ?? 'plain'].includes(field.id),
   );
+  const gateBody = draftHasText === undefined ? snapshot?.body ?? '' : draftHasText ? 'x' : '';
   const canSubmit = Boolean(
     snapshot &&
       readyEditorId === snapshot.id &&
-      !isSubmitDisabled(snapshot.body, isSubmitting, isComposing, pendingUploads > 0),
+      !isSubmitDisabled(gateBody, isSubmitting, isComposing, pendingUploads > 0),
   );
   const sendDisabledReason = snapshot
     ? readyEditorId !== snapshot.id
       ? 'Opening your draft…'
-      : getSendDisabledReason(snapshot.body, isSubmitting, isComposing, pendingUploads > 0)
+      : getSendDisabledReason(gateBody, isSubmitting, isComposing, pendingUploads > 0)
     : undefined;
 
   const editor = snapshot ? (
@@ -575,7 +622,8 @@ const CaptureComposer: React.FC<CaptureComposerProps> = ({ surface }) => {
           aria-live="polite"
         >
           {pendingUploads > 0 && 'Uploading image…'}
-          {pendingUploads === 0 && (draftState === 'saving' || isSubmitting) && 'Saving capture'}
+          {pendingUploads === 0 && isSubmitting && 'Saving capture'}
+          {pendingUploads === 0 && !isSubmitting && savedFlash && draftState !== 'error' && 'Draft saved'}
           {pendingUploads === 0 && draftState === 'error' && composerError}
           {pendingUploads === 0 && draftState !== 'error' && !isSubmitting && showReceipt && lastReceipt && (
             <>
@@ -591,7 +639,12 @@ const CaptureComposer: React.FC<CaptureComposerProps> = ({ surface }) => {
               )}
             </>
           )}
-          {pendingUploads === 0 && draftState !== 'error' && !isSubmitting && !showReceipt && sendDisabledReason}
+          {pendingUploads === 0 &&
+            draftState !== 'error' &&
+            !isSubmitting &&
+            !showReceipt &&
+            !savedFlash &&
+            sendDisabledReason}
         </div>
         <button
           type="button"
@@ -823,7 +876,14 @@ const CaptureComposer: React.FC<CaptureComposerProps> = ({ surface }) => {
   );
 
   return (
-    <section className={`capture-composer capture-composer--${surface}`} aria-label="Capture composer">
+    <section
+      ref={rootRef}
+      className={`capture-composer capture-composer--${surface}`}
+      aria-label="Capture composer"
+      onBlur={(event) => {
+        if (!event.currentTarget.contains(event.relatedTarget as Node | null)) flushDraft();
+      }}
+    >
       {serviceState === 'loading' && <p className="capture-composer__service-state">Opening your draft…</p>}
       {serviceState === 'error' && (
         <div className="capture-composer__service-state capture-composer__service-state--error" role="alert">
