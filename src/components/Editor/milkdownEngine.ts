@@ -41,6 +41,7 @@ export class MilkdownEngine {
   private phase: Phase;
   private editable: boolean;
   private composing = false;
+  private changeTimer: ReturnType<typeof setTimeout> | undefined;
   private crepe: Crepe;
   private popup: Popup | null = null;
   private dismissed = '';
@@ -202,7 +203,7 @@ export class MilkdownEngine {
                       view.state.doc.firstChild?.type.name === 'paragraph' &&
                       view.state.doc.firstChild?.content.size === 0,
                   );
-                  if (!view.state.doc.eq(previous.doc)) options().onChange(this.crepe.getMarkdown());
+                  if (!view.state.doc.eq(previous.doc)) this.scheduleChange();
                   this.refreshPopup();
                 },
               }),
@@ -234,6 +235,19 @@ export class MilkdownEngine {
           this.phase = { status: 'failed', error: error instanceof Error ? error : new Error(String(error)) };
         throw error;
       });
+  }
+  // Serializing the whole document and persisting the draft on every keystroke
+  // makes typing lag as notes grow, so coalesce bursts of edits into one change.
+  private scheduleChange() {
+    clearTimeout(this.changeTimer);
+    this.changeTimer = setTimeout(() => this.flushChange(), 200);
+  }
+  private flushChange() {
+    if (this.changeTimer === undefined) return;
+    clearTimeout(this.changeTimer);
+    this.changeTimer = undefined;
+    if (this.phase.status !== 'ready') return;
+    this.options().onChange(this.crepe.getMarkdown());
   }
   private handleKeyDown(view: EditorView, event: KeyboardEvent): boolean {
     if (!this.editable) {
@@ -420,6 +434,7 @@ export class MilkdownEngine {
   }
   destroy() {
     const ready = this.phase.status === 'ready';
+    this.flushChange();
     this.phase = { status: 'destroyed' };
     this.hidePopup();
     if (ready) void this.crepe.destroy();

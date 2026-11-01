@@ -221,6 +221,9 @@ div[data-type='memos_view'] .memo-editor-wrapper {
   outline-offset: 2px;
 }
 .common-editor-wrapper .lethe-milkdown .ProseMirror p { margin: 0.5em 0; }
+.common-editor-wrapper .lethe-milkdown .ProseMirror li { list-style-type: inherit; }
+.common-editor-wrapper .lethe-milkdown .ProseMirror li::before { content: none; margin: 0; }
+.common-editor-wrapper .lethe-milkdown .ProseMirror li > p { margin: 0; }
 .common-editor-wrapper .lethe-milkdown .ProseMirror > p:first-child { margin-top: 0; }
 .common-editor-wrapper .lethe-milkdown .ProseMirror[data-empty='true']::before {
   position: absolute;
