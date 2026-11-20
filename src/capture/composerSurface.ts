@@ -61,8 +61,8 @@ export function noteWriteLabel(state: NoteWriteState): string {
   }
 }
 
-export function formatCaptureAge(createdAt: string, now: Date): string {
-  const then = Date.parse(createdAt);
+export function formatCaptureAge(timestamp: string, now: Date): string {
+  const then = Date.parse(timestamp);
   if (Number.isNaN(then)) return '';
   const minutes = Math.max(0, Math.floor((now.getTime() - then) / 60_000));
   if (minutes < 1) return 'just now';
